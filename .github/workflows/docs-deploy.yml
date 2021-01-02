@@ -10,10 +10,12 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - name: parent working directory
+        run: pwd
       - name: Copy docs to Toolforge
         uses: garygrossgarten/github-action-scp@release
         with:
-          local: docs
+          local: /home/runner/work/wikimedia-gadgets/twinkle-core/docs
           remote: /data/project/twinkle/www/static/core-docs
           host: login.toolforge.org
           username: ${{ secrets.TOOLFORGE_USERNAME }}
