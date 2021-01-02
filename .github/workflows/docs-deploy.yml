@@ -1,0 +1,22 @@
+name: Docs deploy
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Copy docs to Toolforge
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: docs
+          remote: /data/project/twinkle/www/static/core-docs
+          host: login.toolforge.org
+          username: ${{ secrets.TOOLFORGE_USERNAME }}
+          privateKey: ${{ secrets.TOOLFORGE_PRIVATE_KEY }}
+          rmRemote: true
+          dotfiles: true

@@ -984,6 +984,8 @@ export abstract class Speedy extends TwinkleModule {
 			click: () => {
 				Morebits.wiki.actionCompleted.redirect = null;
 				this.dialog.close();
+				// XXX
+				// @ts-ignore
 				Twinkle.unlink.callback(isFile ? 'Removing usages of and/or links to deleted file ' + Morebits.pageNameNorm : 'Removing links to deleted page ' + Morebits.pageNameNorm);
 			}
 		});

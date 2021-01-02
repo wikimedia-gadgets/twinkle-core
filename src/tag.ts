@@ -67,6 +67,7 @@ export class Tag extends TwinkleModule {
 	static makeArrowLinks(checkbox: HTMLInputElement) {
 		var link = Morebits.htmlNode('a', '>');
 		link.setAttribute('class', 'tag-template-link');
+		// @ts-ignore
 		var tagname = checkbox.values;
 		link.setAttribute('href', mw.util.getUrl(
 			(tagname.indexOf(':') === -1 ? 'Template:' : '') +
@@ -310,6 +311,8 @@ export abstract class TagMode {
 			});
 		} else {
 			obj_values(this.tagList).forEach((group: tagData[] | Record<string, tagData[]>) => {
+				// XXX: Can't figure out what's wrong with the type
+				// @ts-ignore
 				obj_values(group).forEach((subgroup: tagData | tagData[]) => {
 					if (Array.isArray(subgroup)) {
 						subgroup.forEach((item) => {

@@ -1,19 +1,4 @@
-/**
- * +-------------------------------------------------------------------------+
- * |                  === WARNING: GLOBAL GADGET FILE ===                    |
- * |                Changes to this page affect many users.                  |
- * |           Please discuss changes at [[WT:TW]] before editing.           |
- * +-------------------------------------------------------------------------+
- *
- * Imported from github [https://github.com/azatoth/twinkle].
- * All changes should be made in the repository, otherwise they will be lost.
- *
- * ----------
- *
- * This is AzaToth's Twinkle, the popular script sidekick for newbies, admins, and
- * every Wikipedian in between. Visit [[WP:TW]] for more information.
- */
-// <nowiki>
+
 
 // Use a namespace here so that things like Twinkle.addPortletLink
 // still work like they used to.
@@ -642,5 +627,3 @@ declare global {
 	}
 }
 
-
-// </nowiki>

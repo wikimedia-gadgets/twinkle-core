@@ -15,14 +15,14 @@
 		"types": [
 			"jest",
 			"./node_modules/types-mediawiki",
-			"./morebits/morebits.d.ts"
+			"./morebits"
 		],
 		"esModuleInterop": true,
 		"newLine": "lf"
 	},
 	"include": [
 		"src/**/*",
-		"morebits/morebits.d.ts"
+		"morebits/index.d.ts"
 	],
 	"compileOnSave": true
 }
