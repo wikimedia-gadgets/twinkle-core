@@ -13,6 +13,7 @@
 		"sourceMap": true,
 		"moduleResolution": "node",
 		"types": [
+			"jest",
 			"./node_modules/types-mediawiki",
 			"./morebits/morebits.d.ts"
 		],
