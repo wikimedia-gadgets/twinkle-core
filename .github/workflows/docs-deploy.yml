@@ -16,7 +16,17 @@ jobs:
         run: npm ci
       - name: build docs
         run: npx typedoc
-      - name: Copy docs to Toolforge
+      - name: Copy docs to Toolforge (twinkle.toolforge.org)
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: /home/runner/work/twinkle-core/twinkle-core/docs
+          remote: /data/project/twinkle/public-html/core-docs
+          host: login.toolforge.org
+          username: ${{ secrets.TOOLFORGE_USERNAME }}
+          privateKey: ${{ secrets.TOOLFORGE_PRIVATE_KEY }}
+          rmRemote: true
+          dotfiles: true
+      - name: Copy docs to Toolforge (tools-static.wmflabs.org/twinkle)
         uses: garygrossgarten/github-action-scp@release
         with:
           local: /home/runner/work/twinkle-core/twinkle-core/docs
