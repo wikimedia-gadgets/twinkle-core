@@ -394,6 +394,8 @@ export namespace Twinkle {
 
 	let disabledModules: string[] = [];
 
+	export let registeredModules: (typeof TwinkleModule)[] = [];
+
 	export function load() {
 		// Don't activate on special pages other than those listed here, so
 		// that others load faster, especially the watchlist.
@@ -622,8 +624,12 @@ export class TwinkleModule {
 	portletId: string
 	portletTooltip: string
 	addMenu() {
-		Twinkle.addPortletLink(this.makeWindow, this.portletName, this.portletId,
-			this.portletTooltip)
+		Twinkle.addPortletLink(
+			() => this.makeWindow(),
+			this.portletName,
+			this.portletId,
+			this.portletTooltip
+		);
 	}
 	makeWindow() {}
 }

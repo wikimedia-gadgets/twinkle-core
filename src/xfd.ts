@@ -315,7 +315,7 @@ export abstract class XfdMode {
 		pageobj.getStatusElement().warn('Page protected, requesting edit');
 
 		var editRequest = '{{subst:Xfd edit protected|page=' + pageobj.getPageName() +
-			'|discussion=' + params.discussionpage + '|tag=<no' + 'wiki>' + params.tagText + '<no' + 'wiki>}}';
+			'|discussion=' + params.discussionpage + '|tag=<nowiki>' + params.tagText + '</nowiki>}}';
 
 		var talk_page = new Twinkle.page(talkName, 'Automatically posting edit request on talk page');
 		talk_page.setNewSectionTitle('Edit request to complete ' + toTLACase(params.venue) + ' nomination');

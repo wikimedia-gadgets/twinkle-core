@@ -14,16 +14,14 @@
 		"moduleResolution": "node",
 		"types": [
 			"./node_modules/types-mediawiki",
-			"./morebits/morebits.d.ts",
-			"./jquery.d.ts"
+			"./morebits/morebits.d.ts"
 		],
 		"esModuleInterop": true,
 		"newLine": "lf"
 	},
 	"include": [
 		"src/**/*",
-		"morebits/morebits.d.ts",
-		"jquery.d.ts"
+		"morebits/morebits.d.ts"
 	],
 	"compileOnSave": true
 }

@@ -30,7 +30,7 @@ export interface criteriaSubgroup extends quickFormElementData {
 	log?: string | null
 }
 
-export class Speedy extends TwinkleModule {
+export abstract class Speedy extends TwinkleModule {
 	static moduleName = 'CSD';
 
 	dialog: Morebits.simpleWindow;
@@ -42,7 +42,7 @@ export class Speedy extends TwinkleModule {
 	namespace: number;
 	mode: {isSysop: boolean, isMultiple: boolean, isRadioClick: boolean}
 	isRedirect: boolean
-	static criteriaLists: Array<{label: string, visible: ((self: Speedy) => boolean), list: Array<criterion>}>;
+	abstract criteriaLists: Array<{label: string, visible: ((self: Speedy) => boolean), list: Array<criterion>}>;
 
 	portletName = 'CSD';
 	portletId = 'twinkle-csd';
@@ -343,7 +343,7 @@ export class Speedy extends TwinkleModule {
 
 		let inputType = (this.mode.isMultiple ? 'checkbox' : 'radio') as 'radio' | 'checkbox';
 
-		Speedy.criteriaLists.forEach((criteriaList) => {
+		this.criteriaLists.forEach((criteriaList) => {
 			if (criteriaList.visible(this)) {
 				work_area.append({ type: 'header', label: criteriaList.label });
 				work_area.append({ type: inputType, name: 'csd', list: this.generateCsdList(criteriaList.list) });
@@ -430,7 +430,7 @@ export class Speedy extends TwinkleModule {
 
 	makeFlatObject() {
 		this.flatObject = {};
-		Speedy.criteriaLists.forEach((criteria) => {
+		this.criteriaLists.forEach((criteria) => {
 			criteria.list.forEach((criterion) => {
 				this.flatObject[criterion.value] = criterion;
 			});
