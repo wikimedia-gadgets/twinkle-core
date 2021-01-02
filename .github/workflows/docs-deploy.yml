@@ -16,8 +16,6 @@ jobs:
         run: npm ci
       - name: build docs
         run: npx typedoc
-      - name: parent working directory
-        run: pwd
       - name: Copy docs to Toolforge
         uses: garygrossgarten/github-action-scp@release
         with:
