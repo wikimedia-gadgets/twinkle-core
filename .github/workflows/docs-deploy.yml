@@ -1,7 +1,9 @@
 name: Docs deploy
 
 on:
-  push
+  push:
+    branches: ['master']
+  workflow_dispatch:
 
 jobs:
   build:
@@ -10,6 +12,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - name: npm install
+        run: npm ci
+      - name: build docs
+        run: npx typedoc
       - name: parent working directory
         run: pwd
       - name: Copy docs to Toolforge
