@@ -15,7 +15,7 @@ jobs:
       - name: npm install
         run: npm ci
       - name: build docs
-        run: npx typedoc
+        run: npm run docs
       - name: Copy docs to Toolforge (twinkle.toolforge.org)
         uses: garygrossgarten/github-action-scp@release
         with:
