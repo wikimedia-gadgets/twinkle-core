@@ -1,5 +1,7 @@
 import { Twinkle, TwinkleModule } from './twinkle';
 import { makeArray, obj_entries } from './utils';
+import { Page } from './Page';
+import { Api } from './Api';
 
 // TODO: still quite a bit of enwiki specific logic here
 
@@ -252,7 +254,7 @@ export abstract class Speedy extends TwinkleModule {
 			lelimit: 5  // A little bit goes a long way
 		};
 
-		new Morebits.wiki.api('Checking for past deletions', query, function(apiobj) {
+		new Api('Checking for past deletions', query).post().then(apiobj => {
 			let response = apiobj.getResponse();
 			let delCount = response.query.logevents.length;
 			if (delCount) {
@@ -277,7 +279,7 @@ export abstract class Speedy extends TwinkleModule {
 				$('#prior-deletion-count').text(message + ' '); // Space before log link
 				$('#prior-deletion-count').append(link);
 			}
-		}).post();
+		});
 	}
 
 	getMode() {
@@ -631,37 +633,33 @@ export abstract class Speedy extends TwinkleModule {
 	}
 
 	fetchCreatorInfo() {
-		let def = $.Deferred();
 		// No user notification being made, no need to fetch creator
 		if (!this.params.notifyUser && !this.params.warnUser) {
-			return def.resolve();
+			return $.Deferred().resolve();
 		}
-		let thispage = new Morebits.wiki.page(Morebits.pageNameNorm, 'Finding page creator');
-		thispage.lookupCreation((pageobj) => {
+		let thispage = new Page(Morebits.pageNameNorm, 'Finding page creator');
+		return thispage.lookupCreation().then((pageobj) => {
 			this.params.initialContrib = pageobj.getCreator();
 			pageobj.getStatusElement().info('Found ' + pageobj.getCreator());
-			def.resolve();
 		});
-		return def;
 	}
 
 	patrolPage() {
 		if (Twinkle.getPref('markSpeedyPagesAsPatrolled')) {
-			new Morebits.wiki.page(Morebits.pageNameNorm).triage();
+			new Page(Morebits.pageNameNorm).triage();
 		}
 		return $.Deferred().resolve();
 	}
 
 	checkPage() {
-		let def = $.Deferred();
-		let pageobj = new Morebits.wiki.page(mw.config.get('wgPageName'), 'Tagging page');
+		let pageobj = new Page(mw.config.get('wgPageName'), 'Tagging page');
 		pageobj.setChangeTags(Twinkle.changeTags);
-		pageobj.load((pageobj) => {
+		return pageobj.load().then((pageobj) => {
 			let statelem = pageobj.getStatusElement();
 
 			if (!pageobj.exists()) {
 				statelem.error("It seems that the page doesn't exist; perhaps it has already been deleted");
-				return def.reject();
+				return $.Deferred().reject();
 			}
 
 			let text = pageobj.getPageText();
@@ -672,22 +670,20 @@ export abstract class Speedy extends TwinkleModule {
 			let tag = /(?:\{\{\s*(db|delete|db-.*?|speedy deletion-.*?)(?:\s*\||\s*\}\}))/.exec(text);
 			// This won't make use of the db-multiple template but it probably should
 			if (tag && !confirm('The page already has the CSD-related template {{' + tag[1] + '}} on it.  Do you want to add another CSD template?')) {
-				return def.reject();
+				return $.Deferred().reject();
 			}
 
 			// check for existing XFD tags
 			let xfd = /\{\{((?:article for deletion|proposed deletion|prod blp|template for discussion)\/dated|[cfm]fd\b)/i.exec(text) || /#invoke:(RfD)/.exec(text);
 			if (xfd && !confirm('The deletion-related template {{' + xfd[1] + '}} was found on the page. Do you still want to add a CSD template?')) {
-				return def.reject();
+				return $.Deferred().reject();
 			}
 
-			def.resolve(pageobj);
-		}, def.reject);
-		return def;
+			return pageobj;
+		});
 	}
 
-	tagPage(pageobj: Morebits.wiki.page) {
-		let def = $.Deferred();
+	tagPage(pageobj: Page) {
 		let params = this.params;
 		let text = pageobj.getPageText();
 		let code = this.getTaggingCode();
@@ -706,20 +702,19 @@ export abstract class Speedy extends TwinkleModule {
 
 			if (talkName === pageobj.getPageName()) {
 				pageobj.getStatusElement().error('Page protected and nowhere to add an edit request, aborting');
-				return def.reject();
+				return $.Deferred().reject();
 			}
 
 			pageobj.getStatusElement().warn('Unable to edit page, placing tag on talk page');
 
-			let talk_page = new Morebits.wiki.page(talkName, 'Automatically placing tag on talk page');
+			let talk_page = new Page(talkName, 'Automatically placing tag on talk page');
 			talk_page.setNewSectionTitle(pageobj.getPageName() + ' nominated for CSD, request deletion');
 			talk_page.setNewSectionText(code + '\n\nI was unable to tag ' + pageobj.getPageName() + ' so please delete it. ~~~~');
 			talk_page.setCreateOption('recreate');
 			talk_page.setFollowRedirect(true);
 			talk_page.setWatchlist(params.watch);
 			talk_page.setChangeTags(Twinkle.changeTags);
-			talk_page.newSection(def.resolve, def.reject);
-			return def;
+			return talk_page.newSection();
 		}
 
 		// Remove tags that become superfluous with this action
@@ -769,9 +764,7 @@ export abstract class Speedy extends TwinkleModule {
 		pageobj.setPageText(text);
 		pageobj.setEditSummary(editsummary);
 		pageobj.setWatchlist(params.watch);
-		pageobj.save(def.resolve, def.reject);
-
-		return def;
+		return pageobj.save();
 	}
 
 	/**
@@ -786,13 +779,12 @@ export abstract class Speedy extends TwinkleModule {
 	}
 
 	noteToCreator() {
-		let def = $.Deferred();
 		let params = this.params;
 		let initialContrib = params.initialContrib;
 
 		// User notification not chosen
 		if (!initialContrib) {
-			return def.resolve();
+			return $.Deferred().resolve();
 
 			// disallow notifying yourself
 		} else if (initialContrib === mw.config.get('wgUserName')) {
@@ -817,10 +809,10 @@ export abstract class Speedy extends TwinkleModule {
 
 		if (!initialContrib) {
 			params.initialContrib = null;
-			return def.resolve();
+			return $.Deferred().resolve();
 		}
 
-		let usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, 'Notifying initial contributor (' + initialContrib + ')');
+		let usertalkpage = new Page('User talk:' + initialContrib, 'Notifying initial contributor (' + initialContrib + ')');
 
 		let editsummary = 'Notification: speedy deletion' + (params.warnUser ? '' : ' nomination');
 		if (!params.redactContents) {  // no article name in summary for attack page taggings
@@ -834,13 +826,12 @@ export abstract class Speedy extends TwinkleModule {
 		usertalkpage.setChangeTags(Twinkle.changeTags);
 		usertalkpage.setCreateOption('recreate');
 		usertalkpage.setFollowRedirect(true, false);
-		usertalkpage.append(def.resolve, def.reject);
-		return def;
+		return usertalkpage.append();
 	}
 
 	parseWikitext(wikitext): JQuery.Promise<string> {
 		let statusIndicator = new Morebits.status('Building deletion summary');
-		let api = new Morebits.wiki.api('Parsing deletion template', {
+		let api = new Api('Parsing deletion template', {
 			action: 'parse',
 			prop: 'text',
 			pst: 'true',
@@ -879,54 +870,48 @@ export abstract class Speedy extends TwinkleModule {
 	}
 
 	deletePage() {
-		let def = $.Deferred();
 		let params = this.params;
 
-		let thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), 'Deleting page');
+		let thispage = new Page(mw.config.get('wgPageName'), 'Deleting page');
 
 		if (params.deleteReason === null) {
 			Morebits.status.error('Asking for reason', 'User cancelled');
-			return def.reject();
+			return $.Deferred().reject();
 		} else if (!params.deleteReason || !params.deleteReason.trim()) {
 			Morebits.status.error('Asking for reason', "you didn't give one.  I don't know... what with admins and their apathetic antics... I give up...");
-			return def.reject();
+			return $.Deferred().reject();
 		}
 
 		thispage.setEditSummary(params.deleteReason);
 		thispage.setChangeTags(Twinkle.changeTags);
 		thispage.setWatchlist(params.watch);
-		thispage.deletePage(() => {
+		return thispage.deletePage().then(() => {
 			thispage.getStatusElement().info('done');
-			def.resolve();
-		}, def.reject);
-		return def;
+		});
 	}
 
 	deleteTalk() {
-		let def = $.Deferred();
 		let params = this.params;
 		if (params.deleteTalkPage &&
 			document.getElementById('ca-talk').className !== 'new') {
 
-			let talkpage = new Morebits.wiki.page(new mw.Title(Morebits.pageNameNorm).getTalkPage().toText(),
+			let talkpage = new Page(new mw.Title(Morebits.pageNameNorm).getTalkPage().toText(),
 				'Deleting talk page');
 			talkpage.setEditSummary('[[WP:CSD#G8|G8]]: Talk page of deleted page "' + Morebits.pageNameNorm + '"');
 			talkpage.setChangeTags(Twinkle.changeTags);
-			talkpage.deletePage(() => {
+			return talkpage.deletePage().then(() => {
 				talkpage.getStatusElement().info('done');
-				def.resolve();
-			}, def.reject);
+			});
 		} else {
-			def.resolve();
+			return $.Deferred().resolve();
 		}
-		return def;
 	}
 
 	deleteRedirects() {
 		let def = $.Deferred();
 		let params = this.params;
 		if (params.deleteRedirects) {
-			let wikipedia_api = new Morebits.wiki.api('getting list of redirects...', {
+			let wikipedia_api = new Api('getting list of redirects...', {
 				action: 'query',
 				titles: mw.config.get('wgPageName'),
 				prop: 'redirects',
@@ -949,7 +934,7 @@ export abstract class Speedy extends TwinkleModule {
 				statusIndicator.status('0%');
 
 				let current = 0;
-				let onsuccess = function(apiobjInner: Morebits.wiki.api) {
+				let onsuccess = function(apiobjInner: Api) {
 					let now = Math.round(100 * ++current / total) + '%';
 					statusIndicator.update(now);
 					apiobjInner.getStatusElement().unlink();
@@ -964,10 +949,10 @@ export abstract class Speedy extends TwinkleModule {
 
 				snapshot.forEach(function(value) {
 					let title = value.title;
-					let page = new Morebits.wiki.page(title, 'Deleting redirect "' + title + '"');
+					let page = new Page(title, 'Deleting redirect "' + title + '"');
 					page.setEditSummary('[[WP:CSD#G8|G8]]: Redirect to deleted page "' + Morebits.pageNameNorm + '"');
 					page.setChangeTags(Twinkle.changeTags);
-					page.deletePage(onsuccess);
+					page.deletePage().then(onsuccess);
 				});
 			});
 		} else {

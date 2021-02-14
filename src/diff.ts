@@ -1,4 +1,5 @@
 import { Twinkle, TwinkleModule } from './twinkle';
+import { Api } from "./Api";
 
 export class Diff extends TwinkleModule {
 	static moduleName = 'Diff';
@@ -62,7 +63,7 @@ export class Diff extends TwinkleModule {
 			user = $(node).find('a').first().text();
 		}
 		Morebits.status.init(document.getElementById('mw-content-text'));
-		var wikipedia_api = new Morebits.wiki.api('Grabbing data of initial contributor', {
+		var wikipedia_api = new Api('Grabbing data of initial contributor', {
 			prop: 'revisions',
 			action: 'query',
 			titles: mw.config.get('wgPageName'),

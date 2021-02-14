@@ -1,37 +1,67 @@
+import {arr_includes, obj_entries} from './utils';
+import { loadMessages } from "./messenger";
+import { messages } from "./messages";
+import { Config, configPreference } from "./Config";
 
-
-// Use a namespace here so that things like Twinkle.addPortletLink
-// still work like they used to.
+/**
+ * Defined as a namespace: anything that's exported from here (such as
+ * addInitCallback) is accessible from outside (as Twinkle.addInitCallback)
+ * Other items (like initCallbacks) can only be accessed from within here
+ * TODO: Convert this to a class? Namespace is unconventional
+ */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Twinkle {
-	/**
-	 * Defined as a namespace: anything that's exported from here (such as
-	 * addInitCallback) is accessible from outside (as Twinkle.addInitCallback)
-	 * Other items (like initCallbacks) can only be accessed from within here
-	 */
-
-
-	let initCallbacks = [];
 
 	/**
-	 * Adds a callback to execute when Twinkle has loaded.
-	 * @param {function} func
-	 * @param {string} [name] - name of module used to check if is disabled.
-	 * If name is not given, module is loaded unconditionally.
+	 * Localised script name
 	 */
-	export function addInitCallback(func: (() => void), name: string) {
-		initCallbacks.push({ func: func, name: name });
-	}
+	export let scriptName = 'Twinkle';
 
+	/**
+	 * User agent
+	 * @see https://meta.wikimedia.org/wiki/User-Agent_policy
+	 */
+	export let userAgent = 'Twinkle (' + mw.config.get('wgWikiID') + ')';
+
+	/**
+	 * Custom change tag(s) to be applied to all Twinkle actions, create at [[Special:Tags]]
+	 * Use of changeTags is recommended over summaryAd as it enables better usage tracking,
+	 * however summaryAd is set by default as it doesn't require creation of a tag
+	 */
+	export let changeTags = '';
+
+	/**
+	 * Text appended to all edit summaries and log summaries for Twinkle actions. This is automatically
+	 * used by Twinkle.page if changeTags isn't specified above. This may also be used manually
+	 * for any actions that don't support use of change tags.
+	 *
+	 * You'd want to override this, providing a link to the local project page
+	 * about Twinkle.
+	 */
+	export let summaryAd = ` (${scriptName})`;
+
+	/**
+	 * List of special pages where Twinkle is active.
+	 */
+	export let activeSpecialPages = [
+		'Block',
+		'Contributions',
+		'Recentchanges',
+		'Recentchangeslinked'
+	].concat(Morebits.userIsSysop ? [
+		'DeletedContributions',
+		'Prefixindex'
+	] : []);
+
+
+	// TODO: config and prefs setup needs proper thought
 	/**
 	 * This holds the default set of preferences used by Twinkle.
 	 * It is important that all new preferences added here, especially admin-only ones, are also added to
 	 * |Twinkle.config.sections| in twinkleconfig.js, so they are configurable via the Twinkle preferences panel.
 	 * For help on the actual preferences, see the comments in twinkleconfig.js.
-	 *
-	 * Formerly Twinkle.defaultConfig.twinkle and Twinkle.defaultConfig.friendly
 	 */
-	const defaultConfig = {
+	export const defaultConfig = {
 		optionsVersion: 2,
 
 		// General
@@ -46,69 +76,6 @@ export namespace Twinkle {
 		portletName: null,
 		portletType: null,
 		portletNext: null,
-
-		// ARV
-		spiWatchReport: 'yes',
-
-		// Block
-		defaultToPartialBlocks: false,
-		blankTalkpageOnIndefBlock: false,
-
-		// Fluff (revert and rollback)
-		autoMenuAfterRollback: false,
-		openTalkPage: [ 'agf', 'norm', 'vand' ],
-		openTalkPageOnAutoRevert: false,
-		rollbackInPlace: false,
-		markRevertedPagesAsMinor: [ 'vand' ],
-		watchRevertedPages: [ 'agf', 'norm', 'vand', 'torev' ],
-		watchRevertedExpiry: 'yes',
-		offerReasonOnNormalRevert: true,
-		confirmOnFluff: false,
-		confirmOnMobileFluff: true,
-		showRollbackLinks: [ 'diff', 'others' ],
-
-		// DI (twinkleimage)
-		notifyUserOnDeli: true,
-		deliWatchPage: 'default',
-		deliWatchUser: 'default',
-
-		// PROD
-		watchProdPages: 'yes',
-		markProdPagesAsPatrolled: false,
-		prodReasonDefault: '',
-		logProdPages: false,
-		prodLogPageName: 'PROD log',
-
-		// CSD
-		speedySelectionStyle: 'buttonClick',
-		watchSpeedyPages: [ 'g3', 'g5', 'g10', 'g11', 'g12' ],
-		watchSpeedyExpiry: 'yes',
-		markSpeedyPagesAsPatrolled: false,
-
-		// these next two should probably be identical by default
-		welcomeUserOnSpeedyDeletionNotification: [ 'db', 'g1', 'g2', 'g3', 'g4', 'g6', 'g10', 'g11', 'g12', 'g13', 'g14', 'a1', 'a2', 'a3', 'a5', 'a7', 'a9', 'a10', 'a11', 'f1', 'f2', 'f3', 'f7', 'f9', 'f10', 'u3', 'u5', 't3', 'p1', 'p2' ],
-		notifyUserOnSpeedyDeletionNomination: [ 'db', 'g1', 'g2', 'g3', 'g4', 'g6', 'g10', 'g11', 'g12', 'g13', 'g14', 'a1', 'a2', 'a3', 'a5', 'a7', 'a9', 'a10', 'a11', 'f1', 'f2', 'f3', 'f7', 'f9', 'f10', 'u3', 'u5', 't3', 'p1', 'p2' ],
-		warnUserOnSpeedyDelete: [ 'db', 'g1', 'g2', 'g3', 'g4', 'g6', 'g10', 'g11', 'g12', 'g13', 'g14', 'a1', 'a2', 'a3', 'a5', 'a7', 'a9', 'a10', 'a11', 'f1', 'f2', 'f3', 'f7', 'f9', 'f10', 'u3', 'u5', 't3', 'p1', 'p2' ],
-		promptForSpeedyDeletionSummary: [],
-		deleteTalkPageOnDelete: true,
-		deleteRedirectsOnDelete: true,
-		deleteSysopDefaultToDelete: false,
-		speedyWindowHeight: 500,
-		speedyWindowWidth: 800,
-		logSpeedyNominations: false,
-		speedyLogPageName: 'CSD log',
-		noLogOnSpeedyNomination: [ 'u1' ],
-
-		// Unlink
-		unlinkNamespaces: [ '0', '10', '100', '118' ],
-
-		// Warn
-		defaultWarningGroup: '1',
-		combinedSingletMenus: false,
-		showSharedIPNotice: true,
-		watchWarnings: 'yes',
-		oldSelect: false,
-		customWarningList: [],
 
 		// XfD
 		logXfdNominations: false,
@@ -131,44 +98,11 @@ export namespace Twinkle {
 		summaryAd: ' ([[WP:TW|TW]])',
 		deletionSummaryAd: ' ([[WP:TW|TW]])',
 		protectionSummaryAd: ' ([[WP:TW|TW]])',
-
-		// Formerly defaultConfig.friendly:
-		// Tag
-		groupByDefault: true,
-		watchTaggedPages: 'yes',
-		watchMergeDiscussions: 'yes',
-		markTaggedPagesAsMinor: false,
-		markTaggedPagesAsPatrolled: true,
-		tagArticleSortOrder: 'cat',
-		customTagList: [],
-		customFileTagList: [],
-		customRedirectTagList: [],
-
-		// Welcome
-		topWelcomes: false,
-		watchWelcomes: 'yes',
-		welcomeHeading: 'Welcome',
-		insertHeadings: true,
-		insertUsername: true,
-		insertSignature: true,  // sign welcome templates, where appropriate
-		quickWelcomeMode: 'norm',
-		quickWelcomeTemplate: 'welcome',
-		customWelcomeList: [],
-		customWelcomeSignature: true,
-
-		// Talkback
-		markTalkbackAsMinor: true,
-		insertTalkbackSignature: true,  // always sign talkback templates
-		talkbackHeading: 'New message from ' + mw.config.get('wgUserName'),
-		mailHeading: "You've got mail!",
-
-		// Shared
-		markSharedIPAsMinor: true
 	};
 
 	export let prefs: typeof defaultConfig;
 
-	export function getPref<T extends keyof typeof defaultConfig>(name: T): typeof defaultConfig[T] {
+	export function getPref(name: string): any {
 		if (typeof Twinkle.prefs === 'object' && Twinkle.prefs[name] !== undefined) {
 			return Twinkle.prefs[name];
 		}
@@ -182,6 +116,17 @@ export namespace Twinkle {
 		return defaultConfig[name];
 	}
 
+	/**
+	 * Extends the defaultConfig
+	 * @param config
+	 */
+	export function setDefaultConfig(config: {name: string, value: any}[]) {
+		$.each(config, function(name, value) {
+			defaultConfig[name] = value;
+		});
+	}
+
+	// eslint-disable-next-line no-inner-declarations
 	function setConfig() {
 		// Some skin dependent config.
 		switch (mw.config.get('skin')) {
@@ -209,8 +154,6 @@ export namespace Twinkle {
 	}
 
 	/**
-	 * **************** Twinkle.addPortlet() ****************
-	 *
 	 * Adds a portlet menu to one of the navigation areas on the page.
 	 * This is necessarily quite a hack since skins, navigation areas, and
 	 * portlet menu types all work slightly different.
@@ -229,13 +172,13 @@ export namespace Twinkle {
 	 *  "mw_contentwrapper" (top nav), outer nav class "portlet", inner div class "pBody". Existing portlets or elements: "p-cactions", "mw_content"
 	 *  "mw_portlets" (sidebar), outer nav class "portlet", inner div class "pBody". Existing portlets: "p-navigation", "p-search", "p-interaction", "p-tb", "p-coll-print_export"
 	 *
-	 * @param {string} navigation -- id of the target navigation area (skin dependant, on vector either of "left-navigation", "right-navigation", or "mw-panel")
-	 * @param {string} id -- id of the portlet menu to create, preferably start with "p-".
-	 * @param {string} text -- name of the portlet menu to create. Visibility depends on the class used.
-	 * @param {string} type -- type of portlet. Currently only used for the vector non-sidebar portlets, pass "menu" to make this portlet a drop down menu.
-	 * @param {Node} nextnodeid -- the id of the node before which the new item should be added, should be another item in the same list, or undefined to place it at the end.
+	 * @param navigation - id of the target navigation area (skin dependant, on vector either of "left-navigation", "right-navigation", or "mw-panel")
+	 * @param id - id of the portlet menu to create, preferably start with "p-".
+	 * @param text - name of the portlet menu to create. Visibility depends on the class used.
+	 * @param type - type of portlet. Currently only used for the vector non-sidebar portlets, pass "menu" to make this portlet a drop down menu.
+	 * @param nextnodeid - the id of the node before which the new item should be added, should be another item in the same list, or undefined to place it at the end.
 	 *
-	 * @return Node -- the DOM node of the new item (a DIV element) or null
+	 * @returns the DOM node of the new item (a DIV element) or null
 	 */
 	export function addPortlet(navigation: string, id: string, text: string, type: string, nextnodeid: string): HTMLElement {
 		// sanity checks, and get required DOM nodes
@@ -345,14 +288,10 @@ export namespace Twinkle {
 		} else {
 			outerNav.appendChild(ul);
 		}
-
-
 		return outerNav;
-
 	}
 
 	/**
-	 * **************** Twinkle.addPortletLink() ****************
 	 * Builds a portlet menu if it doesn't exist yet, and add the portlet link.
 	 * @param task: Either a URL for the portlet link or a function to execute.
 	 * @param text
@@ -377,237 +316,166 @@ export namespace Twinkle {
 		return link;
 	}
 
-	let disabledModules: string[] = [];
 
-	export let registeredModules: (typeof TwinkleModule)[] = [];
+	const userPrefsLoaded = $.Deferred();
 
-	export function load() {
-		// Don't activate on special pages other than those listed here, so
-		// that others load faster, especially the watchlist.
-		let activeSpecialPageList = [ 'Block', 'Contributions', 'Recentchanges', 'Recentchangeslinked' ]; // wgRelevantUserName defined for non-sysops on Special:Block
-		if (Morebits.userIsSysop) {
-			activeSpecialPageList = activeSpecialPageList.concat([ 'DeletedContributions', 'Prefixindex' ]);
-		}
-		if (mw.config.get('wgNamespaceNumber') === -1 &&
-			activeSpecialPageList.indexOf(mw.config.get('wgCanonicalSpecialPageName')) === -1) {
-			return;
-		}
-
-		// Prevent clickjacking
-		if (window.top !== window.self) {
-			return;
-		}
-
-		// Set custom Api-User-Agent header, for server-side logging purposes
-		Morebits.wiki.api.setApiUserAgent('Twinkle (' + mw.config.get('wgWikiID') + ')');
-
-		setConfig();
-
-		disabledModules = Twinkle.getPref('disabledModules').concat(Twinkle.getPref('disabledSysopModules'));
-
-		// Redefine addInitCallback so that any modules being loaded now on are directly
-		// initialised rather than added to initCallbacks array
-		Twinkle.addInitCallback = function(func, name) {
+	/**
+	 * Adds a callback to execute when Twinkle has loaded.
+	 * @param func
+	 * @param [name] - name of module used to check if is disabled.
+	 * If name is not given, module is loaded unconditionally.
+	 */
+	export function addInitCallback(func: (() => void), name: string) {
+		// initCallbacks.push({ func: func, name: name });
+		userPrefsLoaded.then(() => {
 			if (!name || disabledModules.indexOf(name) === -1) {
 				func();
 			}
-		};
-		// Initialise modules that were saved in initCallbacks array
-		initCallbacks.forEach(function(module) {
-			Twinkle.addInitCallback(module.func, module.name);
 		});
-
-		// Increases text size in Twinkle dialogs, if so configured
-		if (Twinkle.getPref('dialogLargeFont')) {
-			mw.util.addCSS('.morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } ' +
-				'.morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }');
-		}
-
-		// Hide the lingering space if the TW menu is empty
-		if (mw.config.get('skin') === 'vector' && Twinkle.getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
-			$('#p-cactions').css('margin-right', 'initial');
-		}
 	}
 
-	export class api extends Morebits.wiki.api {
-		constructor(currentAction: string, query: Record<string, any>, statusElement?: Morebits.status) {
-			query = $.extend({
-				action: 'query',
-				format: 'json',
-				// tags isn't applicable for all API actions, it gives a warning but that's harmless
-				tags: Twinkle.changeTags
-			}, query);
-			super(currentAction, query, null, statusElement, null);
-		}
-		post(ajaxParameters?: JQuery.AjaxSettings) {
-			if (!ajaxParameters) {
-				ajaxParameters = {};
-			}
-			if (!ajaxParameters.headers) {
-				ajaxParameters.headers = {};
-			}
-			ajaxParameters.headers['Api-User-Agent'] = Twinkle.userAgent;
-			return super.post(ajaxParameters);
-		}
-	}
+	// List of modules that the *user* has disabled
+	let disabledModules: string[] = [];
 
 	/**
-	 * Light but immensely hacky wrapper around Morebits.wiki.page that presets the change tags
-	 * and promisifies the core methods.
+	 * List of registered modules
 	 */
-	export class page extends Morebits.wiki.page {
-		// This is ugly, because Morebits.wiki.page uses an implementation pattern
-		// that doesn't define any methods on Morebits.wiki.page.prototype.
-		constructor(title: string, status?: string | Morebits.status) {
-			super(title, status);
-
-			// If changeTags is configured, apply it, otherwise override setEditSummary
-			// so that it appends the summaryAd
-			if (Twinkle.changeTags.length) { // check out if changeTags is a non-empty string or a non-empty array
-				this.setChangeTags(Twinkle.changeTags);
-			} else {
-				this.setEditSummary = (summary) => {
-					super.setEditSummary(summary + Twinkle.summaryAd);
-				}
-			}
-
-
-			let functionsToPromisify = ['load', 'lookupCreation', 'save', 'append', 'prepend',
-				'newSection', 'deletePage', 'undeletePage', 'protect', 'stabilize'];
-
-			functionsToPromisify.forEach(func => {
-				let origFunc = this[func].bind(this);
-				this[func] = function(onSuccess, onFailure) {
-					let def = $.Deferred();
-					origFunc(() => {
-						if (onSuccess) {
-							onSuccess.call(
-								this, // pass context as this, mostly needed everywhere
-								this // pass first arg as this, only needed for fnAutoSave
-								// which takes pageobj as argument
-							);
-						}
-						def.resolve(this);
-					}, () => {
-						if (onFailure) {
-							onFailure.call(this, this); // same as above
-						}
-						def.reject(this);
-					});
-					return def;
-				}
-			});
-		}
-
-		// Uff, the non-standard way of overriding the functions means we have to tell TS about it in some way.
-		// Using ts-ignore here as there are no definitions to go along with the declarations, but TS does
-		// take note of the new declaration.
-		// @ts-ignore
-		load(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		lookupCreation(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		save(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		append(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		prepend(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		newSection(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		deletePage(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		undeletePage(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		protect(): JQuery.Promise<Twinkle.page>
-		// @ts-ignore
-		stabilize(): JQuery.Promise<Twinkle.page>
-	}
+	export let registeredModules: (typeof TwinkleModule)[] = [];
 
 	/**
-	 * Localised script name
-	 */
-	export let scriptName = 'Twinkle';
-
-	// User Agent
-	export let userAgent = 'Twinkle (' + mw.config.get('wgWikiID') + ')';
-
-	/**
-	 * Custom change tag(s) to be applied to all Twinkle actions, create at [[Special:Tags]]
-	 * Use of changeTags is recommended over summaryAd as it enables better usage tracking,
-	 * however summaryAd is set by default as it doesn't require creation of a tag
-	 */
-	export let changeTags = '';
-
-	/**
-	 * Text appended to all edit summaries and log summaries for Twinkle actions. This is automatically
-	 * used by Twinkle.page if changeTags isn't specified above. This may also be used manually
-	 * for any actions that don't support use of change tags.
-	 *
-	 * You'd want to override this, providing a link to the local project page
-	 * about Twinkle.
-	 */
-	export let summaryAd = ` (${scriptName})`;
-
-	/**
-	 * **************** General initialization code ****************
+	 * Load user preferences from the user's /twinkleoptions.js subpage,
+	 * then initialises Twinkle
 	 */
 	export function init() {
 
-		let scriptpathbefore = mw.util.wikiScript('index') + '?title=',
-			scriptpathafter = '&action=raw&ctype=text/javascript&happy=yes';
+		getUserPrefs().always(function () {
 
-		// Retrieve the user's Twinkle preferences
-		$.ajax({
-			url: scriptpathbefore + 'User:' + encodeURIComponent(mw.config.get('wgUserName')) + '/twinkleoptions.js' + scriptpathafter,
-			dataType: 'text'
-		})
-			.fail(function () {
-				mw.notify('Could not load your Twinkle preferences', {type: 'error'});
-			})
-			.done(function (optionsText) {
+			if (mw.config.get('wgNamespaceNumber') === -1 &&
+				!arr_includes(activeSpecialPages, mw.config.get('wgCanonicalSpecialPageName'))) {
+				return;
+			}
 
-				// Quick pass if user has no options
-				if (optionsText === '') {
-					return;
-				}
+			// Prevent clickjacking
+			if (window.top !== window.self) {
+				return;
+			}
 
-				// Twinkle options are basically a JSON object with some comments. Strip those:
-				optionsText = optionsText.replace(/(?:^(?:\/\/[^\n]*\n)*\n*|(?:\/\/[^\n]*(?:\n|$))*$)/g, '');
+			setConfig();
 
-				// First version of options had some boilerplate code to make it eval-able -- strip that too. This part may become obsolete down the line.
-				if (optionsText.lastIndexOf('window.Twinkle.prefs = ', 0) === 0) {
-					optionsText = optionsText.replace(/(?:^window.Twinkle.prefs = |;\n*$)/g, '');
-				}
+			disabledModules = Twinkle.getPref('disabledModules').concat(Twinkle.getPref('disabledSysopModules'));
 
-				try {
-					let options = JSON.parse(optionsText);
-					if (options) {
-						if (options.twinkle || options.friendly) { // Old preferences format
-							Twinkle.prefs = $.extend(options.twinkle, options.friendly);
-						} else {
-							Twinkle.prefs = options;
-						}
-						// v2 established after unification of Twinkle/Friendly objects
-						Twinkle.prefs.optionsVersion = Twinkle.prefs.optionsVersion || 1;
-					}
-				} catch (e) {
-					mw.notify('Could not parse your Twinkle preferences', {type: 'error'});
-				}
-			})
-			.always(function () {
-				$(Twinkle.load);
-			});
+			userPrefsLoaded.resolve(); // this triggers loading of modules via addInitCallback()
+
+			// // Redefine addInitCallback so that any modules being loaded now on are directly
+			// // initialised rather than added to initCallbacks array
+			// Twinkle.addInitCallback = function(func, name) {
+			// 	if (!name || disabledModules.indexOf(name) === -1) {
+			// 		func();
+			// 	}
+			// };
+			// // Initialise modules that were saved in initCallbacks array
+			// initCallbacks.forEach(function(module) {
+			// 	Twinkle.addInitCallback(module.func, module.name);
+			// });
+
+			// Populate messages
+			loadMessages(messages);
+
+			// Increases text size in Twinkle dialogs, if so configured
+			if (Twinkle.getPref('dialogLargeFont')) {
+				mw.util.addCSS('.morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } ' +
+					'.morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }');
+			}
+
+			// Hide the lingering space if the TW menu is empty
+			if (mw.config.get('skin') === 'vector' && Twinkle.getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
+				$('#p-cactions').css('margin-right', 'initial');
+			}
+
+		});
+
 	}
-
 
 }
 
+function getUserPrefs(): JQuery.Promise<void> {
+	let scriptpathbefore = mw.util.wikiScript('index') + '?title=',
+		scriptpathafter = '&action=raw&ctype=text/javascript&happy=yes';
+
+	return $.ajax({
+		url: scriptpathbefore + 'User:' + encodeURIComponent(mw.config.get('wgUserName')) + '/twinkleoptions.js' + scriptpathafter,
+		dataType: 'text'
+	}).then(function (optionsText) {
+
+		// Quick pass if user has no options
+		if (optionsText === '') {
+			return;
+		}
+
+		// Twinkle options are basically a JSON object with some comments. Strip those:
+		optionsText = optionsText.replace(/(?:^(?:\/\/[^\n]*\n)*\n*|(?:\/\/[^\n]*(?:\n|$))*$)/g, '');
+
+		// First version of options had some boilerplate code to make it eval-able -- strip that too. This part may become obsolete down the line.
+		if (optionsText.lastIndexOf('window.Twinkle.prefs = ', 0) === 0) {
+			optionsText = optionsText.replace(/(?:^window.Twinkle.prefs = |;\n*$)/g, '');
+		}
+
+		try {
+			let options = JSON.parse(optionsText);
+			if (options) {
+				if (options.twinkle || options.friendly) { // Old preferences format
+					Twinkle.prefs = $.extend(options.twinkle, options.friendly);
+				} else {
+					Twinkle.prefs = options;
+				}
+				// v2 established after unification of Twinkle/Friendly objects
+				Twinkle.prefs.optionsVersion = Twinkle.prefs.optionsVersion || 1;
+			}
+		} catch (e) {
+			mw.notify('Could not parse your Twinkle preferences', {type: 'error'});
+		}
+	}).catch(function () {
+		mw.notify('Could not load your Twinkle preferences', {type: 'error'});
+		// not rejected
+	});
+}
+
+
+/**
+ * Base class for all Twinkle modules
+ */
 export class TwinkleModule {
+
+	/**
+	 * The name of the module, used to check if the user
+	 * has the module disabled
+	 */
 	static moduleName: string
+	moduleName: string
+
 	portletName: string
 	portletId: string
 	portletTooltip: string
+
+	constructor() {
+		let prefs = this.userPreferences();
+		if (prefs) {
+			Config.addSection(this.moduleName, {...prefs, module: this.moduleName});
+			Twinkle.setDefaultConfig(prefs.preferences.map(pref => {
+				return {
+					name: pref.name,
+					value: pref.default
+				}
+			}));
+		}
+	}
+
+	userPreferences(): { title: string, preferences: configPreference[] } | void {}
+
+	addPreference(pref) {
+		Config.addPreference(this.moduleName, pref);
+	}
+
 	addMenu() {
 		Twinkle.addPortletLink(
 			() => this.makeWindow(),
@@ -616,14 +484,21 @@ export class TwinkleModule {
 			this.portletTooltip
 		);
 	}
+
+	/**
+	 * Set of links shown in the bottom right of the module dialog.
+	 * Object keys are labels and values are the wiki page names
+	 */
+	footerLinks: {[label: string]: string}
+
 	makeWindow() {}
 }
 
 // Declare pre-existing globals. `Window` is the type of `window`.
 declare global {
 	interface Window {
-		TwinkleConfig?: Record<keyof typeof Twinkle.prefs, any>
-		FriendlyConfig?: Record<keyof typeof Twinkle.prefs, any>
+		TwinkleConfig?: Record<string, any>
+		FriendlyConfig?: Record<string, any>
 	}
 }
 

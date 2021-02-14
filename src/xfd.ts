@@ -1,4 +1,8 @@
 import { Twinkle, TwinkleModule } from './twinkle';
+import { Page } from './Page';
+import { Api } from './Api';
+import { msg } from './messenger';
+import { Config, configPreference } from "./Config";
 
 export class Xfd extends TwinkleModule {
 	static moduleName = 'XFD';
@@ -25,6 +29,96 @@ export class Xfd extends TwinkleModule {
 		this.addMenu();
 	}
 
+	userPreferences(): { title: string; preferences: configPreference[] } | void {
+		return {
+			title: 'XfD (deletion discussions)',
+			preferences:  [
+				{
+					name: 'logXfdNominations',
+					label: 'Keep a log in userspace of all pages you nominate for a deletion discussion (XfD)',
+					helptip: 'The userspace log offers a good way to keep track of all pages you nominate for XfD using Twinkle.',
+					type: 'boolean',
+					default: false
+				},
+				{
+					name: 'xfdLogPageName',
+					label: 'Keep the deletion discussion userspace log at this user subpage',
+					helptip: 'Enter a subpage name in this box. You will find your XfD log at User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the XfD userspace log.',
+					type: 'string',
+					default: 'XfD log'
+				},
+				{
+					name: 'noLogOnXfdNomination',
+					label: 'Do not create a userspace log entry when nominating at this venue',
+					type: 'set',
+					setValues: { afd: 'AfD', tfd: 'TfD', ffd: 'FfD', cfd: 'CfD', cfds: 'CfD/S', mfd: 'MfD', rfd: 'RfD', rm: 'RM' },
+					default: []
+				},
+
+				// TwinkleConfig.xfdWatchPage (string)
+				// The watchlist setting of the page being nominated for XfD.
+				{
+					name: 'xfdWatchPage',
+					label: 'Add the nominated page to watchlist',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default'
+				},
+
+				// TwinkleConfig.xfdWatchDiscussion (string)
+				// The watchlist setting of the newly created XfD page (for those processes that create discussion pages for each nomination),
+				// or the list page for the other processes.
+				{
+					name: 'xfdWatchDiscussion',
+					label: 'Add the deletion discussion page to watchlist',
+					helptip: 'This refers to the discussion subpage (for AfD and MfD) or the daily log page (for TfD, CfD, RfD and FfD)',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default'
+				},
+
+				// TwinkleConfig.xfdWatchList (string)
+				// The watchlist setting of the XfD list page, *if* the discussion is on a separate page.
+				{
+					name: 'xfdWatchList',
+					label: 'Add the daily log/list page to the watchlist (AfD and MfD)',
+					helptip: 'This only applies for AfD and MfD, where the discussions are transcluded onto a daily log page (for AfD) or the main MfD page (for MfD).',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'no'
+				},
+
+				// TwinkleConfig.xfdWatchUser (string)
+				// The watchlist setting of the user talk page if they receive a notification.
+				{
+					name: 'xfdWatchUser',
+					label: 'Add user talk page of initial contributor to watchlist (when notifying)',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default'
+				},
+
+				// TwinkleConfig.xfdWatchRelated (string)
+				// The watchlist setting of the target of a redirect being nominated for RfD.
+				{
+					name: 'xfdWatchRelated',
+					label: "Add the redirect's target page to watchlist (when notifying)",
+					helptip: 'This only applies for RfD, when leaving a notification on the talk page of the target of the redirect',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default'
+				},
+
+				{
+					name: 'markXfdPagesAsPatrolled',
+					label: 'Mark page as patrolled/reviewed when nominating for AFD (if possible)',
+					type: 'boolean',
+					default: true
+				}
+			]
+		}
+	}
+
 	getMenuTooltip() {
 		if (this.mode) {
 			return this.mode.getMenuTooltip();
@@ -36,10 +130,8 @@ export class Xfd extends TwinkleModule {
 	makeWindow() {
 		var Window = new Morebits.simpleWindow(700, 400);
 		Window.setTitle('Start a deletion discussion (XfD)');
-		Window.setScriptName(Twinkle.scriptName)
-		Window.addFooterLink('About deletion discussions', 'WP:XFD');
-		Window.addFooterLink('XfD prefs', 'WP:TW/PREF#xfd');
-		Window.addFooterLink('Twinkle help', 'WP:TW/DOC#xfd');
+		Window.setScriptName(Twinkle.scriptName);
+		Window.setFooterLinks(this.footerLinks || {});
 		this.makeForm(Window);
 	}
 
@@ -120,7 +212,7 @@ export class Xfd extends TwinkleModule {
 			return mode.venueCode === venueCode;
 		})[0];
 		if (!mode) {
-			throw new Error('Unrecognized venue: ' +  venueCode); // should never happen
+			throw new Error('Unrecognised venue: ' +  venueCode); // should never happen
 		}
 		// @ts-ignore
 		this.mode = new mode();
@@ -177,7 +269,7 @@ export abstract class XfdMode {
 			name: 'reason',
 			label: 'Reason: ',
 			value: $(this.result).find('textarea').val() as string || '',
-			tooltip: 'You can use wikimarkup in your reason. Twinkle will automatically sign your post.'
+			tooltip: msg('reason-tooltip')
 		});
 	}
 
@@ -235,7 +327,7 @@ export abstract class XfdMode {
 	 * This function shouldn't need to be overridden.
 	 */
 	printReasonText() {
-		Morebits.status.printUserText(this.params.reason, 'Your deletion rationale is provided below, which you can copy and paste into a new XFD dialog if you wish to try again:');
+		Morebits.status.printUserText(this.params.reason, msg('deletion-reason-here'));
 	}
 
 	/**
@@ -244,7 +336,7 @@ export abstract class XfdMode {
 	 */
 	redirectToDiscussion() {
 		let redirPage = this.params.discussionpage || this.params.logpage;
-		Morebits.status.actionCompleted("Nomination complete, now redirecting to the discussion page");
+		Morebits.status.actionCompleted(msg('nomination-complete-redirect'));
 		setTimeout(() => {
 			window.location.href = mw.util.getUrl(redirPage);
 		}, Morebits.wiki.actionCompleted.timeOut);
@@ -255,7 +347,7 @@ export abstract class XfdMode {
 	 */
 	determineDiscussionPage() {
 		let params = this.params;
-		let wikipedia_api = new Morebits.wiki.api('Looking for prior nominations of this page', {
+		let wikipedia_api = new Api(msg('looking-old-nominations'), {
 			'action': 'query',
 			'list': 'allpages',
 			'apprefix': new mw.Title(this.discussionPagePrefix).getMain() + '/' + Morebits.pageNameNorm,
@@ -317,7 +409,7 @@ export abstract class XfdMode {
 		var editRequest = '{{subst:Xfd edit protected|page=' + pageobj.getPageName() +
 			'|discussion=' + params.discussionpage + '|tag=<nowiki>' + params.tagText + '</nowiki>}}';
 
-		var talk_page = new Twinkle.page(talkName, 'Automatically posting edit request on talk page');
+		var talk_page = new Page(talkName, 'Automatically posting edit request on talk page');
 		talk_page.setNewSectionTitle('Edit request to complete ' + toTLACase(params.venue) + ' nomination');
 		talk_page.setNewSectionText(editRequest);
 		talk_page.setCreateOption('recreate');
@@ -333,7 +425,7 @@ export abstract class XfdMode {
 
 	fetchCreatorInfo() {
 
-		let thispage = new Twinkle.page(Morebits.pageNameNorm, 'Finding page creator');
+		let thispage = new Page(Morebits.pageNameNorm, 'Finding page creator');
 		thispage.setLookupNonRedirectCreator(this.params.lookupNonRedirectCreator);
 		return thispage.lookupCreation().then((pageobj) => {
 			this.params.initialContrib = pageobj.getCreator();
@@ -363,7 +455,7 @@ export abstract class XfdMode {
 			}
 		}
 
-		var usertalkpage = new Twinkle.page(notifyPageTitle, statusElement);
+		var usertalkpage = new Page(notifyPageTitle, statusElement);
 		usertalkpage.setAppendText('\n\n' + this.getNotifyText());
 		usertalkpage.setEditSummary(this.getNotifyEditSummary());
 		usertalkpage.setCreateOption('recreate');

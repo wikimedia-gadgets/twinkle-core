@@ -1,5 +1,9 @@
 import { Twinkle, TwinkleModule } from './twinkle';
 import { makeArray, obj_entries, obj_values, stripNs } from './utils';
+import { msg } from './messenger';
+import { Api } from './Api';
+import { Page } from './Page';
+import { Config } from "./Config";
 
 export interface tagData {
 	// name of the tag template, without namespace prefix (required)
@@ -50,6 +54,79 @@ export class Tag extends TwinkleModule {
 		this.addMenu();
 	}
 
+	userPreferences() {
+		return {
+			title: 'Tag',
+			preferences: [
+				{
+					name: 'watchTaggedVenues',
+					label: 'Add page to watchlist when tagging these type of pages',
+					type: 'set',
+					setValues: {articles: 'Articles', drafts: 'Drafts', redirects: 'Redirects', files: 'Files'},
+					default: ['articles', 'drafts', 'redirects', 'files']
+				},
+				{
+					name: 'watchTaggedPages',
+					label: 'When tagging a page, how long to watch it for',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'yes'
+				},
+				{
+					name: 'watchMergeDiscussions',
+					label: 'Add talk pages to watchlist when starting merge discussions',
+					type: 'enum',
+					enumValues: Config.watchlistEnums
+				},
+				{
+					name: 'markTaggedPagesAsMinor',
+					label: 'Mark addition of tags as a minor edit',
+					type: 'boolean',
+					default: false
+				},
+				{
+					name: 'markTaggedPagesAsPatrolled',
+					label: 'Check the "mark page as patrolled/reviewed" box by default',
+					type: 'boolean',
+					default: true
+				},
+				{
+					name: 'groupByDefault',
+					label: 'Check the "group into {{multiple issues}}" box by default',
+					type: 'boolean',
+					default: true
+				},
+				{
+					name: 'customTagList',
+					label: 'Custom article/draft maintenance tags to display',
+					helptip: "These appear as additional options at the bottom of the list of tags. For example, you could add new maintenance tags which have not yet been added to Twinkle's defaults.",
+					type: 'customList',
+					customListValueTitle: 'Template name (no curly brackets)',
+					customListLabelTitle: 'Text to show in Tag dialog',
+					default: []
+				},
+				{
+					name: 'customFileTagList',
+					label: 'Custom file maintenance tags to display',
+					helptip: 'Additional tags that you wish to add for files.',
+					type: 'customList',
+					customListValueTitle: 'Template name (no curly brackets)',
+					customListLabelTitle: 'Text to show in Tag dialog',
+					default: []
+				},
+				{
+					name: 'customRedirectTagList',
+					label: 'Custom redirect category tags to display',
+					helptip: 'Additional tags that you wish to add for redirects.',
+					type: 'customList',
+					customListValueTitle: 'Template name (no curly brackets)',
+					customListLabelTitle: 'Text to show in Tag dialog',
+					default: []
+				}
+			]
+		}
+	}
+
 	makeWindow() {
 		var Window = new Morebits.simpleWindow(630, 500);
 		Window.setScriptName(Twinkle.scriptName)
@@ -88,6 +165,8 @@ export class Tag extends TwinkleModule {
 			return text + ']]}}';
 		};
 		let summaryText;
+
+		// XXX: how to i18n this?
 		if (addedTags.length) {
 			summaryText = 'Added ' + mw.language.listToText(addedTags.map(makeTemplateLink));
 			summaryText += removedTags?.length ? '; and removed ' +
@@ -123,7 +202,7 @@ export abstract class TagMode {
 	params: Record<string, any>
 	templateParams: Record<string, Record<string, string>>;
 	pageText: string;
-	pageobj: Twinkle.page;
+	pageobj: Page;
 
 	static isActive() { // must be overridden
 		return false;
@@ -223,7 +302,7 @@ export abstract class TagMode {
 			this.form.append({
 				type: 'div',
 				name: 'untagnotice',
-				label: Morebits.htmlNode('div',  'For removal of existing tags, please open Tag menu from the current version of article')
+				label: Morebits.htmlNode('div',  msg('untag-from-read'))
 			});
 		}
 
@@ -277,7 +356,7 @@ export abstract class TagMode {
 		if (!this.existingTags.length) {
 			return;
 		}
-		container.append({ type: 'header', label: 'Tags already present' });
+		container.append({ type: 'header', label: msg('tags-present-header') });
 
 		let tagConfigs = this.existingTags.map((tag) => {
 			return this.flatObject[tag] || { tag };
@@ -333,7 +412,7 @@ export abstract class TagMode {
 		this.form.append({
 			type: 'checkbox',
 			list: [{
-				label: 'Mark the page as patrolled/reviewed',
+				label: msg('mark-patrolled'),
 				value: 'patrol',
 				name: 'patrol',
 				checked: Twinkle.getPref('markTaggedPagesAsPatrolled')
@@ -375,9 +454,14 @@ export abstract class TagMode {
 				removedCount += checkbox.checked ? -1 : 1;
 			}
 
-			let firstPart = `Adding ${addedCount} tag${addedCount > 1 ? 's' : ''}`;
-			let secondPart = `Removing ${removedCount} tag${removedCount > 1 ? 's' : ''}`;
-			let statusText = (addedCount ? firstPart : '') + (removedCount ? (addedCount ? '; ' : '') + secondPart : '');
+			let statusText = '';
+			if (addedCount && removedCount) {
+				statusText = msg('status-added-removed', addedCount, removedCount);
+			} else if (addedCount) {
+				statusText = msg('status-added', addedCount);
+			} else if (removedCount) {
+				statusText = msg('status-removed', removedCount);
+			}
 			$status.text('  ' + statusText);
 		});
 	}
@@ -392,7 +476,7 @@ export abstract class TagMode {
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(this.result);
 		this.action().then(() => {
-			Morebits.status.actionCompleted(`Tagging complete, reloading ${this.name} in a few seconds`);
+			Morebits.status.actionCompleted(msg('tag-complete-reloading', this.name));
 			setTimeout(() => {
 				window.location.href = mw.util.getUrl(Morebits.pageNameNorm, {redirect: 'no'});
 			}, 1e9);
@@ -408,7 +492,7 @@ export abstract class TagMode {
 	checkInputs(): string | void {
 		// Check if any tag is selected or if any already present tag is deselected
 		if (this.params.tags.length === 0 && (!this.canRemove() || this.params.tagsToRemove.length === 0)) {
-			return 'You must select at least one tag!';
+			return msg('select-one');
 		}
 		return this.validateInput();
 	}
@@ -521,7 +605,7 @@ export abstract class TagMode {
 			return $.Deferred().resolve(this.params.groupableExistingTagsText);
 		}
 
-		let api = new Morebits.wiki.api('Getting template redirects', this.getRedirectsQuery(tagsToShiftAsync));
+		let api = new Api(msg('getting-redirects'), this.getRedirectsQuery(tagsToShiftAsync));
 		return api.post().then((apiobj) => {
 			var pages = apiobj.getResponse().query.pages.filter(function(p) {
 				return !p.missing && !!p.linkshere;
@@ -535,8 +619,7 @@ export abstract class TagMode {
 					});
 				}
 				if (!shifted) { // unnecessary message?
-					new Morebits.status('Note', 'Failed to find {{' +
-						stripNs(page.title) + '}} on the page... skip repositioning');
+					new Morebits.status('Note', msg('cant-reposition', stripNs(page.title)));
 				}
 			});
 			return this.params.groupableExistingTagsText;
@@ -578,7 +661,7 @@ export abstract class TagMode {
 		if (!params.tagsToRemove.length) {
 			return $.Deferred().resolve();
 		}
-		Morebits.status.info('Untagging', 'Already present tags: removing de-selected tags');
+		Morebits.status.info(msg('untagging'), msg('removing-deselected'));
 
 		let tagsToRemoveAsync = params.tagsToRemove.filter(tag => {
 			return !this.removeTemplate(tag);
@@ -590,14 +673,14 @@ export abstract class TagMode {
 
 		// Remove tags which appear in page text as redirects
 		let statusMessage = `Getting redirects for ${mw.language.listToText(tagsToRemoveAsync.map(t => '{{' + t + '}}'))}`;
-		let api = new Morebits.wiki.api(statusMessage, this.getRedirectsQuery(tagsToRemoveAsync));
+		let api = new Api(statusMessage, this.getRedirectsQuery(tagsToRemoveAsync));
 		return api.post().then((apiobj) => {
 			let pages = apiobj.getResponse().query.pages.filter(p => {
-				return (!p.missing && !!p.linkshere) || Morebits.status.warn('Info', 'Failed to find {{' +
-					stripNs(p.title) + '}} on the page... excluding');
+				return (!p.missing && !!p.linkshere) ||
+					Morebits.status.warn(msg('info'), msg('cant-remove', stripNs(p.title)));
 			});
 			(apiobj.getResponse().query.redirects || []).forEach(({ from, to }) => {
-				new Morebits.status('Note', `Resolved template redirect {{${stripNs(from)}}} to {{${stripNs(to)}}}`);
+				new Morebits.status('Note', msg('resolved-redirect', stripNs(from), stripNs(to)));
 			});
 			pages.forEach(page => {
 				let removed: boolean = this.removeTemplate(stripNs(page.title));
@@ -608,8 +691,7 @@ export abstract class TagMode {
 					});
 				}
 				if (!removed) {
-					Morebits.status.warn('Note', 'Failed to find {{' +
-						stripNs(page.title) + '}} on the page... cannot remove');
+					Morebits.status.warn(msg('note'), msg('cant-remove', stripNs(page.title)));
 				}
 			});
 		});
@@ -687,7 +769,7 @@ export abstract class TagMode {
 	}
 
 	action() {
-		this.pageobj = new Twinkle.page(Morebits.pageNameNorm, 'Tagging ' + this.name);
+		this.pageobj = new Page(Morebits.pageNameNorm, msg('tagging-status', this.name));
 		return this.pageobj.load().then((pageobj) => {
 			this.pageText = pageobj.getPageText();
 			this.initialCleanup();
