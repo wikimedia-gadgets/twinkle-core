@@ -1,15 +1,17 @@
 # twinkle-core
 
-This is intended to be the "core" repository for Twinkle using which Twninkle installations for different wikis can be created.
+This is intended to be the "core" repository for Twinkle using which Twinkle installations for different wikis can be created.
 
 The twinkle-starter repository (yet to be created) will provide a template using which a new Twinkle installation can be started off easily. Each twinkle installation relies on twinkle-core as an npm dependency. 
 
 [![Download stats](https://nodei.co/npm/twinkle-core.png?downloads=true&downloadRank=true)](https://nodei.co/npm/twinkle-core/)
 
-Documentation for twinkle-core is hosted on Toolforge. Check it out at https://tools-static.wmflabs.org/twinkle/core-docs/.
+Documentation for twinkle-core is hosted on Toolforge. Check it out at https://tools-static.wmflabs.org/twinkle/core-docs ([alternative link](https://twinkle.toolforge.org/core-docs)).
+
+As is the custom with TypeScript libraries, the GitHub repo only contains the TS  source files, and the NPM package only contains the built JS and .d.ts files.
 
 ## Contributing
-- Set up an IDE or code editor configuration to work with JS/TS. Popular choices include JetBrains IDEs (WebStrom/PhpStorm/IntelliJ IDEA Ultimate) if you have a licence (JetBrains offers free licenses to MediaWiki contributors and students) or Visual Studio Code. 
+- Set up an IDE or code editor configuration to work with JS/TS. Popular choices include Visual Studio Code or one of the JetBrains IDEs if you have a licence (JetBrains offers free licenses to [MediaWiki contributors](https://www.mediawiki.org/wiki/JetBrains_IDEs) and [students](https://www.jetbrains.com/community/education/#students)). 
 - See [the integrated development workflow](https://github.com/wikimedia/wvui#integrated-development-workflow) to work on twinkle-core while developing or testing a localised twinkle installation. The linked resource is from another repo – replace "WVUI" with "twinkle-core".
 
 ## TODO

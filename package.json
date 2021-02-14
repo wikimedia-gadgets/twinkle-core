@@ -1,20 +1,25 @@
 {
 	"title": "Twinkle core",
 	"name": "twinkle-core",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/wikimedia-gadgets/twinkle-core"
 	},
-	"main": "./src/index.ts",
+	"main": "./build/index.js",
+	"types": "./build/index.d.ts",
 	"type": "module",
 	"scripts": {
 		"morebits:lint": "eslint morebits/",
 		"morebits:lint:fix": "eslint morebits --fix",
 		"morebits:test": "qunit --require ./morebits/tests/mocking/mb_repl.js ./morebits/tests/*",
 		"test": "npx jest",
+		"build": "tsc || echo",
 		"docs": "npx typedoc src/index.ts --out docs"
 	},
+	"files": [
+		"build/"
+	],
 	"dependencies": {
 		"eslint-plugin-es5": "^1.5.0",
 		"orange-i18n": "^1.1.0",
