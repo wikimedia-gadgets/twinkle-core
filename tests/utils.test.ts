@@ -1,9 +1,8 @@
-import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
+import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src';
 
 describe('utils', function() {
 
 	test('makeArray', function() {
-		expect(makeArray()).toEqual([]);
 		expect(makeArray(undefined)).toEqual([]);
 		expect(makeArray(null)).toEqual([]);
 		expect(makeArray(4)).toEqual([4]);
@@ -32,7 +31,12 @@ describe('utils', function() {
 		'undef_field': undefined,
 		'true_field': true,
 		'false_field': false,
-		'arr_field': [4, 6]
+		'arr_field': [4, 6],
+		'object_field': {
+			param1: [4, 5],
+			param2: null,
+			param3: 'lorem ipsum'
+		}
 	};
 
 	test('obj_values', () => {
