@@ -4,7 +4,7 @@ import { Api } from './Api';
 import { msg } from './messenger';
 import { Config, configPreference } from "./Config";
 
-export class Xfd extends TwinkleModule {
+export class XfdCore extends TwinkleModule {
 	static moduleName = 'XFD';
 
 	mode: XfdMode
@@ -16,7 +16,7 @@ export class Xfd extends TwinkleModule {
 
 	constructor() {
 		super();
-		for (let mode of Xfd.modeList) {
+		for (let mode of XfdCore.modeList) {
 			if (mode.isDefaultChoice()) {
 				// @ts-ignore
 				this.mode = new mode();
@@ -146,7 +146,7 @@ export class Xfd extends TwinkleModule {
 			label: 'Deletion discussion venue:',
 			tooltip: 'When activated, a default choice is made, based on what namespace you are in. This default should be the most appropriate.',
 			event: this.onCategoryChange.bind(this),
-			list: Xfd.modeList.map((mode) => ({
+			list: XfdCore.modeList.map((mode) => ({
 				type: 'option',
 				label: mode.venueLabel,
 				selected: this.mode instanceof mode,
@@ -208,7 +208,7 @@ export class Xfd extends TwinkleModule {
 		var venueCode = evt.target.value;
 		var form = evt.target.form;
 
-		let mode = Xfd.modeList.filter((mode) => {
+		let mode = XfdCore.modeList.filter((mode) => {
 			return mode.venueCode === venueCode;
 		})[0];
 		if (!mode) {
@@ -406,7 +406,7 @@ export abstract class XfdMode {
 		}
 		pageobj.getStatusElement().warn('Page protected, requesting edit');
 
-		var editRequest = '{{subst:Xfd edit protected|page=' + pageobj.getPageName() +
+		var editRequest = '{{subst:XfdCore edit protected|page=' + pageobj.getPageName() +
 			'|discussion=' + params.discussionpage + '|tag=<nowiki>' + params.tagText + '</nowiki>}}';
 
 		var talk_page = new Page(talkName, 'Automatically posting edit request on talk page');

@@ -1,7 +1,7 @@
 import { Twinkle, TwinkleModule } from './twinkle';
 import { Api } from "./Api";
 
-export class Diff extends TwinkleModule {
+export class DiffCore extends TwinkleModule {
 	static moduleName = 'Diff';
 
 	constructor() {

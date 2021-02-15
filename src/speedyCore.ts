@@ -32,7 +32,7 @@ export interface criteriaSubgroup extends quickFormElementData {
 	log?: string | null
 }
 
-export abstract class Speedy extends TwinkleModule {
+export abstract class SpeedyCore extends TwinkleModule {
 	static moduleName = 'CSD';
 
 	dialog: Morebits.simpleWindow;
@@ -44,7 +44,7 @@ export abstract class Speedy extends TwinkleModule {
 	namespace: number;
 	mode: {isSysop: boolean, isMultiple: boolean, isRadioClick: boolean}
 	isRedirect: boolean
-	abstract criteriaLists: Array<{label: string, visible: ((self: Speedy) => boolean), list: Array<criterion>}>;
+	abstract criteriaLists: Array<{label: string, visible: ((self: SpeedyCore) => boolean), list: Array<criterion>}>;
 
 	portletName = 'CSD';
 	portletId = 'twinkle-csd';

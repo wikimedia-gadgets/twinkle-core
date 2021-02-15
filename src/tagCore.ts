@@ -31,14 +31,14 @@ export interface tagSubgroup extends quickFormElementData {
 
 export type tagListType = tagData[] | Record<string, (tagData[] | Record<string, tagData[]>)>
 
-export class Tag extends TwinkleModule {
+export class TagCore extends TwinkleModule {
 	static moduleName = 'Tag';
 	mode: TagMode
 	static modeList: (typeof TagMode)[]
 
 	constructor() {
 		super();
-		for (let mode of Tag.modeList) {
+		for (let mode of TagCore.modeList) {
 			if (mode.isActive()) {
 				// @ts-ignore
 				this.mode = new mode();
@@ -432,8 +432,8 @@ export abstract class TagMode {
 
 	postRender() {
 		QuickFilter.init(this.result);
-		Morebits.quickForm.getElements(this.result, 'tags').forEach(Tag.makeArrowLinks);
-		Morebits.quickForm.getElements(this.result, 'existingTags').forEach(Tag.makeArrowLinks);
+		Morebits.quickForm.getElements(this.result, 'tags').forEach(TagCore.makeArrowLinks);
+		Morebits.quickForm.getElements(this.result, 'existingTags').forEach(TagCore.makeArrowLinks);
 
 		// style adjustments
 		$(this.scrollbox).find('h5').css({ 'font-size': '110%' });
@@ -789,7 +789,7 @@ export abstract class TagMode {
 
 	savePage() {
 		this.pageobj.setPageText(this.pageText);
-		this.pageobj.setEditSummary(Tag.makeEditSummary(this.params.tags,
+		this.pageobj.setEditSummary(TagCore.makeEditSummary(this.params.tags,
 			this.params.tagsToRemove, this.params.reason));
 		this.pageobj.setWatchlist(Twinkle.getPref('watchTaggedPages'));
 		this.pageobj.setMinorEdit(Twinkle.getPref('markTaggedPagesAsMinor'));

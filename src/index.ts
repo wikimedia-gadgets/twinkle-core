@@ -15,7 +15,7 @@ export * from './Page'
 
 
 // Twinkle modules
-export * from './diff'
-export * from './speedy'
-export * from './tag'
-export * from './xfd'
+export * from './diffCore'
+export * from './speedyCore'
+export * from './tagCore'
+export * from './xfdCore'
