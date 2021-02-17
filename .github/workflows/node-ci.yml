@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm run morebits:lint && npm run morebits:test && npm run test
+      - run: npm run test

@@ -12,7 +12,7 @@ As is the custom with TypeScript libraries, the GitHub repo only contains the TS
 
 ## Contributing
 
-- Set up an IDE or code editor to work with JS/TS. Popular choices include Visual Studio Code or one of the JetBrains IDEs if you have a licence (JetBrains offers free licenses to [MediaWiki contributors](https://www.mediawiki.org/wiki/JetBrains_IDEs) and [students](https://www.jetbrains.com/community/education/#students)).
+- Set up an IDE or code editor to work with JS/TS. Popular choices include Visual Studio Code or one of the JetBrains IDEs if you have a licence (JetBrains offers free licenses to [MediaWiki contributors](https://www.mediawiki.org/wiki/JetBrains_IDEs) and [students](https://www.jetbrains.com/community/education/#students)). If you are a command line veteran, check out [TypeScript for Vim](https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript/) or [emacs](https://wikemacs.org/wiki/TypeScript)!
 - See [the integrated development workflow](https://github.com/wikimedia/wvui#integrated-development-workflow) to work on twinkle-core while developing or testing a localised twinkle installation. The linked resource is from another repo – replace "WVUI" with "twinkle-core".
 
 ## TODO
