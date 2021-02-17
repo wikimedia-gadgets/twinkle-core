@@ -4,8 +4,8 @@ export default {
 	globals: {
 		'ts-jest': {
 			diagnostics: {
-				warnOnly: true
-			}
-		}
-	}
+				warnOnly: true,
+			},
+		},
+	},
 };

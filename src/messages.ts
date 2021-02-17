@@ -1,7 +1,6 @@
-
 export const messages = {
-	'info': 'Info',
-	'note': 'Note',
+	info: 'Info',
+	note: 'Note',
 
 	// Tag
 	'status-added': 'Added $1 {{plural:$1|tag|tags}}',
@@ -15,15 +14,12 @@ export const messages = {
 	'getting-redirects': 'Getting template redirects',
 	'cant-reposition': 'Failed to find {{$1}} on the page... skip repositioning',
 	'cant-remove': 'Failed to find {{$1}} on the page... cannot remove',
-	'untagging': 'Untagging',
-	'removing': 'Already present tags: removing de-selected tags',
+	untagging: 'Untagging',
+	removing: 'Already present tags: removing de-selected tags',
 	'resolved-redirect': 'Resolved template redirect {{$1}} to {{$2}}',
 	'tagging-status': 'Tagging $1',
 
 	// Speedy
 
-
 	// XFD
-
-
-}
+};

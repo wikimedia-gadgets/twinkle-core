@@ -12,7 +12,7 @@ export class Dialog extends Morebits.simpleWindow {
 		this.setScriptName(Twinkle.scriptName);
 	}
 	setFooterLinks(links: Record<string, string>) {
-		obj_entries(links).forEach(link => {
+		obj_entries(links).forEach((link) => {
 			this.addFooterLink(link[0], link[1]);
 		});
 	}

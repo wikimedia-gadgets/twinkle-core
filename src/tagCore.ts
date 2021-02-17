@@ -3,38 +3,38 @@ import { makeArray, obj_entries, obj_values, stripNs } from './utils';
 import { msg } from './messenger';
 import { Api } from './Api';
 import { Page } from './Page';
-import { Config } from "./Config";
+import { Config } from './Config';
 
 export interface tagData {
 	// name of the tag template, without namespace prefix (required)
-	tag: string
+	tag: string;
 
 	// brief description
-	description?: string
+	description?: string;
 
 	// list of quickForm inputs to query from the user if tag is added
-	subgroup?: tagSubgroup | tagSubgroup[]
+	subgroup?: tagSubgroup | tagSubgroup[];
 
 	// should the tag not be included in grouping template (default: false)
-	excludeInGroup?: boolean
+	excludeInGroup?: boolean;
 
 	// should the tag be substed instead of transcluded (default: false)
-	subst?: boolean
+	subst?: boolean;
 
 	// should the tag be allowed to be added a second time (default: false)
-	dupeAllowed?: boolean
+	dupeAllowed?: boolean;
 }
 
 export interface tagSubgroup extends quickFormElementData {
-	parameter?: string
+	parameter?: string;
 }
 
-export type tagListType = tagData[] | Record<string, (tagData[] | Record<string, tagData[]>)>
+export type tagListType = tagData[] | Record<string, tagData[] | Record<string, tagData[]>>;
 
 export class TagCore extends TwinkleModule {
 	static moduleName = 'Tag';
-	mode: TagMode
-	static modeList: (typeof TagMode)[]
+	mode: TagMode;
+	static modeList: typeof TagMode[];
 
 	constructor() {
 		super();
@@ -45,7 +45,8 @@ export class TagCore extends TwinkleModule {
 				break;
 			}
 		}
-		if (!this.mode) { // no mode is active
+		if (!this.mode) {
+			// no mode is active
 			return;
 		}
 		this.portletName = 'Tag';
@@ -62,48 +63,49 @@ export class TagCore extends TwinkleModule {
 					name: 'watchTaggedVenues',
 					label: 'Add page to watchlist when tagging these type of pages',
 					type: 'set',
-					setValues: {articles: 'Articles', drafts: 'Drafts', redirects: 'Redirects', files: 'Files'},
-					default: ['articles', 'drafts', 'redirects', 'files']
+					setValues: { articles: 'Articles', drafts: 'Drafts', redirects: 'Redirects', files: 'Files' },
+					default: ['articles', 'drafts', 'redirects', 'files'],
 				},
 				{
 					name: 'watchTaggedPages',
 					label: 'When tagging a page, how long to watch it for',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'yes'
+					default: 'yes',
 				},
 				{
 					name: 'watchMergeDiscussions',
 					label: 'Add talk pages to watchlist when starting merge discussions',
 					type: 'enum',
-					enumValues: Config.watchlistEnums
+					enumValues: Config.watchlistEnums,
 				},
 				{
 					name: 'markTaggedPagesAsMinor',
 					label: 'Mark addition of tags as a minor edit',
 					type: 'boolean',
-					default: false
+					default: false,
 				},
 				{
 					name: 'markTaggedPagesAsPatrolled',
 					label: 'Check the "mark page as patrolled/reviewed" box by default',
 					type: 'boolean',
-					default: true
+					default: true,
 				},
 				{
 					name: 'groupByDefault',
 					label: 'Check the "group into {{multiple issues}}" box by default',
 					type: 'boolean',
-					default: true
+					default: true,
 				},
 				{
 					name: 'customTagList',
 					label: 'Custom article/draft maintenance tags to display',
-					helptip: "These appear as additional options at the bottom of the list of tags. For example, you could add new maintenance tags which have not yet been added to Twinkle's defaults.",
+					helptip:
+						"These appear as additional options at the bottom of the list of tags. For example, you could add new maintenance tags which have not yet been added to Twinkle's defaults.",
 					type: 'customList',
 					customListValueTitle: 'Template name (no curly brackets)',
 					customListLabelTitle: 'Text to show in Tag dialog',
-					default: []
+					default: [],
 				},
 				{
 					name: 'customFileTagList',
@@ -112,7 +114,7 @@ export class TagCore extends TwinkleModule {
 					type: 'customList',
 					customListValueTitle: 'Template name (no curly brackets)',
 					customListLabelTitle: 'Text to show in Tag dialog',
-					default: []
+					default: [],
 				},
 				{
 					name: 'customRedirectTagList',
@@ -121,15 +123,15 @@ export class TagCore extends TwinkleModule {
 					type: 'customList',
 					customListValueTitle: 'Template name (no curly brackets)',
 					customListLabelTitle: 'Text to show in Tag dialog',
-					default: []
-				}
-			]
-		}
+					default: [],
+				},
+			],
+		};
 	}
 
 	makeWindow() {
 		var Window = new Morebits.simpleWindow(630, 500);
-		Window.setScriptName(Twinkle.scriptName)
+		Window.setScriptName(Twinkle.scriptName);
 		// anyone got a good policy/guideline/info page/instructional page link??
 		Window.addFooterLink('Twinkle help', 'WP:TW/DOC#tag');
 		this.mode.makeForm(Window);
@@ -146,16 +148,19 @@ export class TagCore extends TwinkleModule {
 		link.setAttribute('class', 'tag-template-link');
 		// @ts-ignore
 		var tagname = checkbox.values;
-		link.setAttribute('href', mw.util.getUrl(
-			(tagname.indexOf(':') === -1 ? 'Template:' : '') +
-			(tagname.indexOf('|') === -1 ? tagname : tagname.slice(0, tagname.indexOf('|')))
-		));
+		link.setAttribute(
+			'href',
+			mw.util.getUrl(
+				(tagname.indexOf(':') === -1 ? 'Template:' : '') +
+					(tagname.indexOf('|') === -1 ? tagname : tagname.slice(0, tagname.indexOf('|')))
+			)
+		);
 		link.setAttribute('target', '_blank');
 		$(checkbox).parent().append('\u00A0', link);
 	}
 
 	static makeEditSummary(addedTags: string[], removedTags?: string[], reason?: string): string {
-		let makeTemplateLink = function(tag: string) {
+		let makeTemplateLink = function (tag: string) {
 			let text = '{{[[';
 			// if it is a custom tag with a parameter
 			if (tag.indexOf('|') !== -1) {
@@ -169,8 +174,9 @@ export class TagCore extends TwinkleModule {
 		// XXX: how to i18n this?
 		if (addedTags.length) {
 			summaryText = 'Added ' + mw.language.listToText(addedTags.map(makeTemplateLink));
-			summaryText += removedTags?.length ? '; and removed ' +
-				mw.language.listToText(removedTags.map(makeTemplateLink)) : '';
+			summaryText += removedTags?.length
+				? '; and removed ' + mw.language.listToText(removedTags.map(makeTemplateLink))
+				: '';
 		} else if (removedTags?.length) {
 			summaryText = 'Removed ' + mw.language.listToText(removedTags.map(makeTemplateLink));
 		}
@@ -189,22 +195,23 @@ export class TagCore extends TwinkleModule {
 }
 
 export abstract class TagMode {
-	abstract name: string
-	abstract tagList: tagListType
+	abstract name: string;
+	abstract tagList: tagListType;
 	static tagList: tagListType; //
-	flatObject: Record<string, tagData>
-	existingTags: string[] = []
+	flatObject: Record<string, tagData>;
+	existingTags: string[] = [];
 
-	Window: Morebits.simpleWindow
-	form: Morebits.quickForm
-	result: HTMLFormElement
-	scrollbox: Morebits.quickForm.element
-	params: Record<string, any>
+	Window: Morebits.simpleWindow;
+	form: Morebits.quickForm;
+	result: HTMLFormElement;
+	scrollbox: Morebits.quickForm.element;
+	params: Record<string, any>;
 	templateParams: Record<string, Record<string, string>>;
 	pageText: string;
 	pageobj: Page;
 
-	static isActive() { // must be overridden
+	static isActive() {
+		// must be overridden
 		return false;
 	}
 
@@ -267,12 +274,14 @@ export abstract class TagMode {
 	 * of the latest version.
 	 */
 	canRemove() {
-		return this.removalSupported &&
+		return (
+			this.removalSupported &&
 			// Only on latest version of pages
-			(mw.config.get('wgCurRevisionId') === mw.config.get('wgRevisionId')) &&
+			mw.config.get('wgCurRevisionId') === mw.config.get('wgRevisionId') &&
 			// Disabled on latest diff because the diff slider could be used to slide
 			// away from the latest diff without causing the script to reload
-			!mw.config.get('wgDiffNewId');
+			!mw.config.get('wgDiffNewId')
+		);
 	}
 
 	getMenuTooltip() {
@@ -295,14 +304,14 @@ export abstract class TagMode {
 			label: 'Filter tag list: ',
 			name: 'quickfilter',
 			size: '30px',
-			event: QuickFilter.onInputChange
+			event: QuickFilter.onInputChange,
 		});
 
 		if (this.removalSupported && !this.canRemove()) {
 			this.form.append({
 				type: 'div',
 				name: 'untagnotice',
-				label: Morebits.htmlNode('div',  msg('untag-from-read'))
+				label: Morebits.htmlNode('div', msg('untag-from-read')),
 			});
 		}
 
@@ -310,7 +319,7 @@ export abstract class TagMode {
 			type: 'div',
 			id: 'tagWorkArea',
 			className: 'morebits-scrollbox',
-			style: 'max-height: 28em'
+			style: 'max-height: 28em',
 		});
 
 		this.parseExistingTags();
@@ -324,9 +333,11 @@ export abstract class TagMode {
 		} else {
 			$.each(this.tagList, (groupName, group) => {
 				container.append({ type: 'header', label: groupName });
-				if (Array.isArray(group)) { // if group is a list of tags
+				if (Array.isArray(group)) {
+					// if group is a list of tags
 					this.makeTagListGroup(group, container);
-				} else { // if group is a list of subgroups
+				} else {
+					// if group is a list of subgroups
 					let subdiv = container.append({ type: 'div' });
 					$.each(group, (subgroupName: string, subgroup: any[]) => {
 						subdiv.append({ type: 'div', label: [Morebits.htmlNode('b', subgroupName)] });
@@ -339,16 +350,17 @@ export abstract class TagMode {
 
 	// helper function for makeTagList()
 	makeTagListGroup(list: tagData[], container?: Morebits.quickForm.element | Morebits.quickForm) {
-
-		let excludeTags = new Set(this.existingTags.filter(t => !this.flatObject[t]?.dupeAllowed));
+		let excludeTags = new Set(this.existingTags.filter((t) => !this.flatObject[t]?.dupeAllowed));
 		container.append({
 			type: 'checkbox',
 			name: 'tags',
-			list: list.filter(item => !excludeTags.has(item.tag)).map((item) => ({
-				label: '{{' + item.tag + '}}' + (item.description ? ': ' + item.description : ''),
-				value: item.tag,
-				subgroup: item.subgroup
-			}))
+			list: list
+				.filter((item) => !excludeTags.has(item.tag))
+				.map((item) => ({
+					label: '{{' + item.tag + '}}' + (item.description ? ': ' + item.description : ''),
+					value: item.tag,
+					subgroup: item.subgroup,
+				})),
 		});
 	}
 
@@ -368,8 +380,8 @@ export abstract class TagMode {
 				label: '{{' + item.tag + '}}' + (item.description ? ': ' + item.description : ''),
 				value: item.tag,
 				checked: true,
-				style: 'font-style: italic'
-			}))
+				style: 'font-style: italic',
+			})),
 		});
 	}
 
@@ -411,19 +423,21 @@ export abstract class TagMode {
 		}
 		this.form.append({
 			type: 'checkbox',
-			list: [{
-				label: msg('mark-patrolled'),
-				value: 'patrol',
-				name: 'patrol',
-				checked: Twinkle.getPref('markTaggedPagesAsPatrolled')
-			}]
+			list: [
+				{
+					label: msg('mark-patrolled'),
+					value: 'patrol',
+					name: 'patrol',
+					checked: Twinkle.getPref('markTaggedPagesAsPatrolled'),
+				},
+			],
 		});
 	}
 
 	formRender() {
 		this.form.append({
 			type: 'submit',
-			className: 'tw-tag-submit'
+			className: 'tw-tag-submit',
 		});
 		this.result = this.form.render();
 		this.Window.setContent(this.result);
@@ -443,7 +457,8 @@ export abstract class TagMode {
 		// Add status text node after Submit button
 		let $status = $('<small>').attr('id', 'tw-tag-status');
 		$status.insertAfter($('button.tw-tag-submit'));
-		let addedCount = 0, removedCount = 0;
+		let addedCount = 0,
+			removedCount = 0;
 
 		// tally tags added/removed, update statusNode text
 		$('[name=tags], [name=existingTags]').on('click', (e) => {
@@ -478,7 +493,7 @@ export abstract class TagMode {
 		this.action().then(() => {
 			Morebits.status.actionCompleted(msg('tag-complete-reloading', this.name));
 			setTimeout(() => {
-				window.location.href = mw.util.getUrl(Morebits.pageNameNorm, {redirect: 'no'});
+				window.location.href = mw.util.getUrl(Morebits.pageNameNorm, { redirect: 'no' });
 			}, 1e9);
 		});
 	}
@@ -509,7 +524,7 @@ export abstract class TagMode {
 
 	getTemplateParameters() {
 		this.templateParams = {};
-		this.params.tags.forEach(tag => {
+		this.params.tags.forEach((tag) => {
 			this.templateParams[tag] = {};
 			let subgroupObj = this.flatObject[tag] && this.flatObject[tag].subgroup;
 			makeArray(subgroupObj).forEach((gr) => {
@@ -557,9 +572,11 @@ export abstract class TagMode {
 			mw.log.warn('this.templateParams[tag] undefined');
 			return '';
 		}
-		return obj_entries(this.templateParams[tag]).map(([key, value]) => {
-			return `|${key}=${value}`;
-		}).join('');
+		return obj_entries(this.templateParams[tag])
+			.map(([key, value]) => {
+				return `|${key}=${value}`;
+			})
+			.join('');
 	}
 
 	getTagText(tag: string) {
@@ -568,7 +585,7 @@ export abstract class TagMode {
 	}
 
 	makeTagSetText(tags: string[]) {
-		return tags.map(tag => this.getTagText(tag) + '\n').join('');
+		return tags.map((tag) => this.getTagText(tag) + '\n').join('');
 	}
 
 	addTagsOutsideGroup(tags) {
@@ -581,7 +598,8 @@ export abstract class TagMode {
 	 * params.groupableExistingTagsText.
 	 * @param tag
 	 */
-	shiftTag(tag): boolean { // LIFT with spliceGroupableExistingTags
+	shiftTag(tag): boolean {
+		// LIFT with spliceGroupableExistingTags
 		let isShifted = false; // Avoid a .test() before the .replace() causing 2 regex searches
 		this.pageText = this.pageText.replace(this.getTagRegex(tag), (tagText) => {
 			isShifted = true;
@@ -596,9 +614,10 @@ export abstract class TagMode {
 	 * page text and adds them to params.groupableExistingTagsText, which
 	 * the returned promise resolves to.
 	 */
-	spliceGroupableExistingTags(): JQuery.Promise<string> { // LIFT
+	spliceGroupableExistingTags(): JQuery.Promise<string> {
+		// LIFT
 		this.params.groupableExistingTagsText = '';
-		let tagsToShiftAsync = this.params.groupableExistingTags.filter(tag => {
+		let tagsToShiftAsync = this.params.groupableExistingTags.filter((tag) => {
 			return !this.shiftTag(tag);
 		});
 		if (tagsToShiftAsync.length === 0) {
@@ -607,18 +626,19 @@ export abstract class TagMode {
 
 		let api = new Api(msg('getting-redirects'), this.getRedirectsQuery(tagsToShiftAsync));
 		return api.post().then((apiobj) => {
-			var pages = apiobj.getResponse().query.pages.filter(function(p) {
+			var pages = apiobj.getResponse().query.pages.filter(function (p) {
 				return !p.missing && !!p.linkshere;
 			});
-			pages.forEach(page => {
+			pages.forEach((page) => {
 				let shifted: boolean = this.shiftTag(stripNs(page.title));
 				if (!shifted) {
-					shifted = page.linkshere.some(template => {
+					shifted = page.linkshere.some((template) => {
 						let tag = stripNs(template.title);
 						return this.shiftTag(tag);
 					});
 				}
-				if (!shifted) { // unnecessary message?
+				if (!shifted) {
+					// unnecessary message?
 					new Morebits.status('Note', msg('cant-reposition', stripNs(page.title)));
 				}
 			});
@@ -631,7 +651,8 @@ export abstract class TagMode {
 	 * @param tag
 	 * @returns true if tag was removed, false otherwise
 	 */
-	removeTemplate(tag): boolean { // LIFT with removeTags
+	removeTemplate(tag): boolean {
+		// LIFT with removeTags
 		let isRemoved = false; // Avoid a .test() before the .replace() causing 2 regex searches
 		this.pageText = this.pageText.replace(this.getTagRegex(tag), () => {
 			isRemoved = true;
@@ -640,30 +661,32 @@ export abstract class TagMode {
 		return isRemoved;
 	}
 
-	getRedirectsQuery(tags: string[]) { // LIFT
+	getRedirectsQuery(tags: string[]) {
+		// LIFT
 		return {
-			'action': 'query',
-			'prop': 'linkshere',
-			'titles': tags.map(pg => 'Template:' + pg),
-			'redirects': 1,  // follow redirect if the class name turns out to be a redirect page
-			'lhnamespace': '10',  // template namespace only
-			'lhshow': 'redirect',
-			'lhlimit': 'max', // 500 is max for normal users, 5000 for bots and sysops
-			'format': 'json',
+			action: 'query',
+			prop: 'linkshere',
+			titles: tags.map((pg) => 'Template:' + pg),
+			redirects: 1, // follow redirect if the class name turns out to be a redirect page
+			lhnamespace: '10', // template namespace only
+			lhshow: 'redirect',
+			lhlimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+			format: 'json',
 		};
 	}
 
 	/**
 	 * Remove tags from pageText
 	 */
-	removeTags(): JQuery.Promise<void> { // LIFT
+	removeTags(): JQuery.Promise<void> {
+		// LIFT
 		let params = this.params;
 		if (!params.tagsToRemove.length) {
 			return $.Deferred().resolve();
 		}
 		Morebits.status.info(msg('untagging'), msg('removing-deselected'));
 
-		let tagsToRemoveAsync = params.tagsToRemove.filter(tag => {
+		let tagsToRemoveAsync = params.tagsToRemove.filter((tag) => {
 			return !this.removeTemplate(tag);
 		});
 
@@ -672,20 +695,21 @@ export abstract class TagMode {
 		}
 
 		// Remove tags which appear in page text as redirects
-		let statusMessage = `Getting redirects for ${mw.language.listToText(tagsToRemoveAsync.map(t => '{{' + t + '}}'))}`;
+		let statusMessage = `Getting redirects for ${mw.language.listToText(
+			tagsToRemoveAsync.map((t) => '{{' + t + '}}')
+		)}`;
 		let api = new Api(statusMessage, this.getRedirectsQuery(tagsToRemoveAsync));
 		return api.post().then((apiobj) => {
-			let pages = apiobj.getResponse().query.pages.filter(p => {
-				return (!p.missing && !!p.linkshere) ||
-					Morebits.status.warn(msg('info'), msg('cant-remove', stripNs(p.title)));
+			let pages = apiobj.getResponse().query.pages.filter((p) => {
+				return (!p.missing && !!p.linkshere) || Morebits.status.warn(msg('info'), msg('cant-remove', stripNs(p.title)));
 			});
 			(apiobj.getResponse().query.redirects || []).forEach(({ from, to }) => {
 				new Morebits.status('Note', msg('resolved-redirect', stripNs(from), stripNs(to)));
 			});
-			pages.forEach(page => {
+			pages.forEach((page) => {
 				let removed: boolean = this.removeTemplate(stripNs(page.title));
 				if (!removed) {
-					removed = page.linkshere.some(template => {
+					removed = page.linkshere.some((template) => {
 						let tag = stripNs(template.title);
 						return this.removeTemplate(tag);
 					});
@@ -701,8 +725,11 @@ export abstract class TagMode {
 
 	shouldAddGroup() {
 		let params = this.params;
-		return this.groupTemplateName && !params.disableGrouping &&
-			(params.groupableExistingTags.length + params.groupableNewTags.length) >= this.groupMinSize;
+		return (
+			this.groupTemplateName &&
+			!params.disableGrouping &&
+			params.groupableExistingTags.length + params.groupableNewTags.length >= this.groupMinSize
+		);
 	}
 
 	/**
@@ -719,14 +746,14 @@ export abstract class TagMode {
 		// Add new tags into group, and put the updated group wikitext into this.pageText
 		let miRegex = new RegExp(
 			'(\\{\\{\\s*' + // Opening braces
-			groupRgxExec[1] + // template name
-			// XXX: unnecessarily overspecific from this point onwards
-			'\\s*(?:\\|(?:\\{\\{[^{}]*\\}\\}|[^{}])*)?)' + // ??? Copied from friendlytag
-			'\\}\\}\\s*' // Closing braces, followed by spaces/newlines
-			, 'im');
+				groupRgxExec[1] + // template name
+				// XXX: unnecessarily overspecific from this point onwards
+				'\\s*(?:\\|(?:\\{\\{[^{}]*\\}\\}|[^{}])*)?)' + // ??? Copied from friendlytag
+				'\\}\\}\\s*', // Closing braces, followed by spaces/newlines
+			'im'
+		);
 		this.pageText = this.pageText.replace(miRegex, '$1' + tagText + '}}\n');
 	}
-
 
 	/**
 	 * Controls how the final text of new tags is inserted into the page.
@@ -789,8 +816,9 @@ export abstract class TagMode {
 
 	savePage() {
 		this.pageobj.setPageText(this.pageText);
-		this.pageobj.setEditSummary(TagCore.makeEditSummary(this.params.tags,
-			this.params.tagsToRemove, this.params.reason));
+		this.pageobj.setEditSummary(
+			TagCore.makeEditSummary(this.params.tags, this.params.tagsToRemove, this.params.reason)
+		);
 		this.pageobj.setWatchlist(Twinkle.getPref('watchTaggedPages'));
 		this.pageobj.setMinorEdit(Twinkle.getPref('markTaggedPagesAsMinor'));
 		this.pageobj.setCreateOption('nocreate');
@@ -800,12 +828,11 @@ export abstract class TagMode {
 		}
 		return this.pageobj.save();
 	}
-
 }
 
 export class QuickFilter {
-	static $allCheckboxDivs: JQuery
-	static $allHeaders: JQuery
+	static $allCheckboxDivs: JQuery;
+	static $allHeaders: JQuery;
 
 	static init(result: HTMLFormElement) {
 		QuickFilter.$allCheckboxDivs = $(result).find('[name=tags], [name=existingTags]').parent();
@@ -813,7 +840,8 @@ export class QuickFilter {
 		result.quickfilter.focus(); // place cursor in the quick filter field as soon as window is opened
 		result.quickfilter.autocomplete = 'off'; // disable browser suggestions
 		result.quickfilter.addEventListener('keypress', function (e) {
-			if (e.keyCode === 13) { // prevent enter key from accidentally submitting the form
+			if (e.keyCode === 13) {
+				// prevent enter key from accidentally submitting the form
 				e.preventDefault();
 				return false;
 			}

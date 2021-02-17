@@ -1,4 +1,4 @@
-import Banana, {Messages} from 'orange-i18n';
+import Banana, { Messages } from 'orange-i18n';
 
 let banana = new Banana(mw.config.get('wgContentLanguage'));
 

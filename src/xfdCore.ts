@@ -2,13 +2,13 @@ import { Twinkle, TwinkleModule } from './twinkle';
 import { Page } from './Page';
 import { Api } from './Api';
 import { msg } from './messenger';
-import { Config, configPreference } from "./Config";
+import { Config, configPreference } from './Config';
 
 export class XfdCore extends TwinkleModule {
 	static moduleName = 'XFD';
 
-	mode: XfdMode
-	static modeList: (typeof XfdMode)[]
+	mode: XfdMode;
+	static modeList: typeof XfdMode[];
 
 	Window: Morebits.simpleWindow;
 	fieldset: Morebits.quickForm.element;
@@ -32,27 +32,37 @@ export class XfdCore extends TwinkleModule {
 	userPreferences(): { title: string; preferences: configPreference[] } | void {
 		return {
 			title: 'XfD (deletion discussions)',
-			preferences:  [
+			preferences: [
 				{
 					name: 'logXfdNominations',
 					label: 'Keep a log in userspace of all pages you nominate for a deletion discussion (XfD)',
 					helptip: 'The userspace log offers a good way to keep track of all pages you nominate for XfD using Twinkle.',
 					type: 'boolean',
-					default: false
+					default: false,
 				},
 				{
 					name: 'xfdLogPageName',
 					label: 'Keep the deletion discussion userspace log at this user subpage',
-					helptip: 'Enter a subpage name in this box. You will find your XfD log at User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the XfD userspace log.',
+					helptip:
+						'Enter a subpage name in this box. You will find your XfD log at User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the XfD userspace log.',
 					type: 'string',
-					default: 'XfD log'
+					default: 'XfD log',
 				},
 				{
 					name: 'noLogOnXfdNomination',
 					label: 'Do not create a userspace log entry when nominating at this venue',
 					type: 'set',
-					setValues: { afd: 'AfD', tfd: 'TfD', ffd: 'FfD', cfd: 'CfD', cfds: 'CfD/S', mfd: 'MfD', rfd: 'RfD', rm: 'RM' },
-					default: []
+					setValues: {
+						afd: 'AfD',
+						tfd: 'TfD',
+						ffd: 'FfD',
+						cfd: 'CfD',
+						cfds: 'CfD/S',
+						mfd: 'MfD',
+						rfd: 'RfD',
+						rm: 'RM',
+					},
+					default: [],
 				},
 
 				// TwinkleConfig.xfdWatchPage (string)
@@ -62,7 +72,7 @@ export class XfdCore extends TwinkleModule {
 					label: 'Add the nominated page to watchlist',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'default'
+					default: 'default',
 				},
 
 				// TwinkleConfig.xfdWatchDiscussion (string)
@@ -71,10 +81,11 @@ export class XfdCore extends TwinkleModule {
 				{
 					name: 'xfdWatchDiscussion',
 					label: 'Add the deletion discussion page to watchlist',
-					helptip: 'This refers to the discussion subpage (for AfD and MfD) or the daily log page (for TfD, CfD, RfD and FfD)',
+					helptip:
+						'This refers to the discussion subpage (for AfD and MfD) or the daily log page (for TfD, CfD, RfD and FfD)',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'default'
+					default: 'default',
 				},
 
 				// TwinkleConfig.xfdWatchList (string)
@@ -82,10 +93,11 @@ export class XfdCore extends TwinkleModule {
 				{
 					name: 'xfdWatchList',
 					label: 'Add the daily log/list page to the watchlist (AfD and MfD)',
-					helptip: 'This only applies for AfD and MfD, where the discussions are transcluded onto a daily log page (for AfD) or the main MfD page (for MfD).',
+					helptip:
+						'This only applies for AfD and MfD, where the discussions are transcluded onto a daily log page (for AfD) or the main MfD page (for MfD).',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'no'
+					default: 'no',
 				},
 
 				// TwinkleConfig.xfdWatchUser (string)
@@ -95,7 +107,7 @@ export class XfdCore extends TwinkleModule {
 					label: 'Add user talk page of initial contributor to watchlist (when notifying)',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'default'
+					default: 'default',
 				},
 
 				// TwinkleConfig.xfdWatchRelated (string)
@@ -103,20 +115,21 @@ export class XfdCore extends TwinkleModule {
 				{
 					name: 'xfdWatchRelated',
 					label: "Add the redirect's target page to watchlist (when notifying)",
-					helptip: 'This only applies for RfD, when leaving a notification on the talk page of the target of the redirect',
+					helptip:
+						'This only applies for RfD, when leaving a notification on the talk page of the target of the redirect',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'default'
+					default: 'default',
 				},
 
 				{
 					name: 'markXfdPagesAsPatrolled',
 					label: 'Mark page as patrolled/reviewed when nominating for AFD (if possible)',
 					type: 'boolean',
-					default: true
-				}
-			]
-		}
+					default: true,
+				},
+			],
+		};
 	}
 
 	getMenuTooltip() {
@@ -138,26 +151,29 @@ export class XfdCore extends TwinkleModule {
 	// invoked only once
 	makeForm(Window) {
 		this.Window = Window;
-		let form = new Morebits.quickForm(() => { this.mode.evaluate(); });
+		let form = new Morebits.quickForm(() => {
+			this.mode.evaluate();
+		});
 
 		form.append({
 			type: 'select',
 			name: 'venue',
 			label: 'Deletion discussion venue:',
-			tooltip: 'When activated, a default choice is made, based on what namespace you are in. This default should be the most appropriate.',
+			tooltip:
+				'When activated, a default choice is made, based on what namespace you are in. This default should be the most appropriate.',
 			event: this.onCategoryChange.bind(this),
 			list: XfdCore.modeList.map((mode) => ({
 				type: 'option',
 				label: mode.venueLabel,
 				selected: this.mode instanceof mode,
-				value: mode.venueCode
-			}))
+				value: mode.venueCode,
+			})),
 		});
 
 		form.append({
 			type: 'div',
 			id: 'wrong-venue-warn',
-			style: 'color: red; font-style: italic'
+			style: 'color: red; font-style: italic',
 		});
 
 		form.append({
@@ -168,24 +184,24 @@ export class XfdCore extends TwinkleModule {
 					value: 'notify',
 					name: 'notifycreator',
 					tooltip: "A notification template will be placed on the creator's talk page if this is true.",
-					checked: true
-				}
-			]
+					checked: true,
+				},
+			],
 		});
 
 		this.fieldset = form.append({
 			type: 'field',
 			label: 'Work area',
-			name: 'work_area'
+			name: 'work_area',
 		});
 
 		var previewlink = document.createElement('a');
 		$(previewlink).click(() => {
-			this.mode.preview(this.result);  // |result| is defined below
+			this.mode.preview(this.result); // |result| is defined below
 		});
 		previewlink.style.cursor = 'pointer';
 		previewlink.textContent = 'Preview';
-		form.append({ type: 'div', id: 'xfdpreview', label: [ previewlink ] });
+		form.append({ type: 'div', id: 'xfdpreview', label: [previewlink] });
 		form.append({ type: 'div', id: 'twinklexfd-previewbox', style: 'display: none' });
 
 		form.append({ type: 'submit' });
@@ -212,7 +228,7 @@ export class XfdCore extends TwinkleModule {
 			return mode.venueCode === venueCode;
 		})[0];
 		if (!mode) {
-			throw new Error('Unrecognised venue: ' +  venueCode); // should never happen
+			throw new Error('Unrecognised venue: ' + venueCode); // should never happen
 		}
 		// @ts-ignore
 		this.mode = new mode();
@@ -223,27 +239,25 @@ export class XfdCore extends TwinkleModule {
 		form.previewer.closePreview();
 
 		let renderedFieldset = this.mode.generateFieldset().render();
-		$(this.result).find('fieldset[name=work_area]')
-			.replaceWith(renderedFieldset);
+		$(this.result).find('fieldset[name=work_area]').replaceWith(renderedFieldset);
 		this.mode.postRender(renderedFieldset as HTMLFieldSetElement);
 	}
 }
 
-
 export abstract class XfdMode {
-	static venueCode: string
-	static venueLabel: string
+	static venueCode: string;
+	static venueLabel: string;
 
 	// must be overridden, unless the venue is never the default choice
 	static isDefaultChoice(): boolean {
 		return false;
 	}
 
-	Window: Morebits.simpleWindow
-	fieldset: Morebits.quickForm.element
-	result: HTMLFormElement
-	params: Record<string, any>
-	tm: Morebits.taskManager
+	Window: Morebits.simpleWindow;
+	fieldset: Morebits.quickForm.element;
+	result: HTMLFormElement;
+	params: Record<string, any>;
+	tm: Morebits.taskManager;
 
 	/**
 	 * Used in determineDiscussionPage(), applicable only if in the XfD process, each page is
@@ -259,7 +273,7 @@ export abstract class XfdMode {
 		this.fieldset = new Morebits.quickForm.element({
 			type: 'field',
 			label: this.getFieldsetLabel(),
-			name: 'work_area'
+			name: 'work_area',
 		});
 		return this.fieldset;
 	}
@@ -268,13 +282,13 @@ export abstract class XfdMode {
 			type: 'textarea',
 			name: 'reason',
 			label: 'Reason: ',
-			value: $(this.result).find('textarea').val() as string || '',
-			tooltip: msg('reason-tooltip')
+			value: ($(this.result).find('textarea').val() as string) || '',
+			tooltip: msg('reason-tooltip'),
 		});
 	}
 
 	// Used as the label for the fieldset in the UI, and in the default notification edit summary
-	abstract getFieldsetLabel()
+	abstract getFieldsetLabel();
 
 	postRender(renderedFieldset: HTMLFieldSetElement) {}
 
@@ -299,7 +313,7 @@ export abstract class XfdMode {
 		form.previewer.beginRender(templatetext, 'WP:TW'); // Force wikitext
 	}
 
-	abstract getDiscussionWikitext(): string
+	abstract getDiscussionWikitext(): string;
 
 	evaluate(): void {
 		this.params = Morebits.quickForm.getInputData(this.result);
@@ -348,13 +362,13 @@ export abstract class XfdMode {
 	determineDiscussionPage() {
 		let params = this.params;
 		let wikipedia_api = new Api(msg('looking-old-nominations'), {
-			'action': 'query',
-			'list': 'allpages',
-			'apprefix': new mw.Title(this.discussionPagePrefix).getMain() + '/' + Morebits.pageNameNorm,
-			'apnamespace': 4,
-			'apfilterredir': 'nonredirects',
-			'aplimit': 'max', // 500 is max for normal users, 5000 for bots and sysops
-			'format': 'json'
+			action: 'query',
+			list: 'allpages',
+			apprefix: new mw.Title(this.discussionPagePrefix).getMain() + '/' + Morebits.pageNameNorm,
+			apnamespace: 4,
+			apfilterredir: 'nonredirects',
+			aplimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+			format: 'json',
 		});
 		return wikipedia_api.post().then((apiobj) => {
 			var response = apiobj.getResponse();
@@ -365,9 +379,11 @@ export abstract class XfdMode {
 				params.numbering = params.number = '';
 			} else {
 				var number = 0;
-				var order_re = new RegExp('^' +
-					Morebits.string.escapeRegExp(this.discussionPagePrefix + '/' + Morebits.pageNameNorm) +
-					'\\s*\\(\\s*(\\d+)(?:(?:th|nd|rd|st) nom(?:ination)?)?\\s*\\)\\s*$');
+				var order_re = new RegExp(
+					'^' +
+						Morebits.string.escapeRegExp(this.discussionPagePrefix + '/' + Morebits.pageNameNorm) +
+						'\\s*\\(\\s*(\\d+)(?:(?:th|nd|rd|st) nom(?:ination)?)?\\s*\\)\\s*$'
+				);
 				for (var i = 0; i < titles.length; ++i) {
 					var title = titles[i].title;
 
@@ -406,32 +422,35 @@ export abstract class XfdMode {
 		}
 		pageobj.getStatusElement().warn('Page protected, requesting edit');
 
-		var editRequest = '{{subst:XfdCore edit protected|page=' + pageobj.getPageName() +
-			'|discussion=' + params.discussionpage + '|tag=<nowiki>' + params.tagText + '</nowiki>}}';
+		var editRequest =
+			'{{subst:XfdCore edit protected|page=' +
+			pageobj.getPageName() +
+			'|discussion=' +
+			params.discussionpage +
+			'|tag=<nowiki>' +
+			params.tagText +
+			'</nowiki>}}';
 
 		var talk_page = new Page(talkName, 'Automatically posting edit request on talk page');
 		talk_page.setNewSectionTitle('Edit request to complete ' + toTLACase(params.venue) + ' nomination');
 		talk_page.setNewSectionText(editRequest);
 		talk_page.setCreateOption('recreate');
 		talk_page.setWatchlist(Twinkle.getPref('xfdWatchPage'));
-		talk_page.setFollowRedirect(true);  // should never be needed, but if the article is moved, we would want to follow the redirect
+		talk_page.setFollowRedirect(true); // should never be needed, but if the article is moved, we would want to follow the redirect
 
-		return talk_page.newSection().catch(function() {
+		return talk_page.newSection().catch(function () {
 			talk_page.getStatusElement().warn('Unable to add edit request, the talk page may be protected');
 			return $.Deferred().reject();
 		});
-
 	}
 
 	fetchCreatorInfo() {
-
 		let thispage = new Page(Morebits.pageNameNorm, 'Finding page creator');
 		thispage.setLookupNonRedirectCreator(this.params.lookupNonRedirectCreator);
 		return thispage.lookupCreation().then((pageobj) => {
 			this.params.initialContrib = pageobj.getCreator();
 			pageobj.getStatusElement().info('Found ' + pageobj.getCreator());
 		});
-
 	}
 
 	notifyTalkPage(notifyTarget: string, statusElement?: Morebits.status): JQuery.Promise<void> {
@@ -471,7 +490,6 @@ export abstract class XfdMode {
 			// but don't reject the promise
 			params.initialContrib = null;
 		});
-
 	}
 
 	// Overridden for all venues except FFD and RFD
@@ -481,8 +499,15 @@ export abstract class XfdMode {
 
 	// Not overridden for any venue
 	getNotifyEditSummary(): string {
-		return 'Notification: [[' + this.params.discussionpage + '|listing]] of [[:' +
-			Morebits.pageNameNorm + ']] at [[WP:' + this.getFieldsetLabel() + ']].';
+		return (
+			'Notification: [[' +
+			this.params.discussionpage +
+			'|listing]] of [[:' +
+			Morebits.pageNameNorm +
+			']] at [[WP:' +
+			this.getFieldsetLabel() +
+			']].'
+		);
 	}
 
 	notifyCreator(): JQuery.Promise<void> {
@@ -497,12 +522,11 @@ export abstract class XfdMode {
 	addToLog() {
 		let params = this.params;
 
-		if (!Twinkle.getPref('logXfdNominations') ||
-			Twinkle.getPref('noLogOnXfdNomination').indexOf(params.venue) !== -1) {
+		if (!Twinkle.getPref('logXfdNominations') || Twinkle.getPref('noLogOnXfdNomination').indexOf(params.venue) !== -1) {
 			return $.Deferred().resolve();
 		}
 
-		var usl = new Morebits.userspaceLogger(Twinkle.getPref('xfdLogPageName'));// , 'Adding entry to userspace log');
+		var usl = new Morebits.userspaceLogger(Twinkle.getPref('xfdLogPageName')); // , 'Adding entry to userspace log');
 
 		usl.initialText =
 			"This is a log of all [[WP:XFD|deletion discussion]] nominations made by this user using [[WP:TW|Twinkle]]'s XfD module.\n\n" +
@@ -522,11 +546,25 @@ export abstract class XfdMode {
 		let params = this.params;
 
 		// If a logged file is deleted but exists on commons, the wikilink will be blue, so provide a link to the log
-		var fileLogLink = mw.config.get('wgNamespaceNumber') === 6 ? ' ([{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} log])' : '';
+		var fileLogLink =
+			mw.config.get('wgNamespaceNumber') === 6
+				? ' ([{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} log])'
+				: '';
 		// CFD/S and RM don't have canonical links
 		var nominatedLink = params.discussionpage ? '[[' + params.discussionpage + '|nominated]]' : 'nominated';
 
-		var appendText = '# [[:' + Morebits.pageNameNorm + ']]:' + fileLogLink + ' ' + nominatedLink + ' at [[WP:' + params.venue.toUpperCase() + '|' + toTLACase(params.venue) + ']]';
+		var appendText =
+			'# [[:' +
+			Morebits.pageNameNorm +
+			']]:' +
+			fileLogLink +
+			' ' +
+			nominatedLink +
+			' at [[WP:' +
+			params.venue.toUpperCase() +
+			'|' +
+			toTLACase(params.venue) +
+			']]';
 
 		appendText += this.getUserspaceLoggingExtraInfo();
 
@@ -543,16 +581,19 @@ export abstract class XfdMode {
 	getUserspaceLoggingExtraInfo() {
 		return '';
 	}
-
 }
 
 /** Get ordinal number figure */
 export function num2order(num: number): string {
 	switch (num) {
-		case 1: return '';
-		case 2: return '2nd';
-		case 3: return '3rd';
-		default: return num + 'th';
+		case 1:
+			return '';
+		case 2:
+			return '2nd';
+		case 3:
+			return '3rd';
+		default:
+			return num + 'th';
 	}
 }
 
@@ -562,11 +603,12 @@ export function num2order(num: number): string {
  * @returns {string}
  */
 export function toTLACase(venue: string): string {
-	return venue
-		.toString()
-		// Everybody up, including rm and the terminal s in cfds
-		.toUpperCase()
-		// Lowercase the central f in a given TLA and normalize sfd-t and sfr-t
-		.replace(/(.)F(.)(?:-.)?/, '$1f$2');
+	return (
+		venue
+			.toString()
+			// Everybody up, including rm and the terminal s in cfds
+			.toUpperCase()
+			// Lowercase the central f in a given TLA and normalize sfd-t and sfr-t
+			.replace(/(.)F(.)(?:-.)?/, '$1f$2')
+	);
 }
-

@@ -1,5 +1,5 @@
 import { Twinkle, TwinkleModule } from './twinkle';
-import { Api } from "./Api";
+import { Api } from './Api';
 
 export class DiffCore extends TwinkleModule {
 	static moduleName = 'Diff';
@@ -13,7 +13,7 @@ export class DiffCore extends TwinkleModule {
 		Twinkle.addPortletLink(
 			mw.util.getUrl(mw.config.get('wgPageName'), {
 				diff: 'cur',
-				oldid: 'prev'
+				oldid: 'prev',
 			}),
 			'Last',
 			'tw-lastdiff',
@@ -42,7 +42,7 @@ export class DiffCore extends TwinkleModule {
 		Twinkle.addPortletLink(
 			mw.util.getUrl(mw.config.get('wgPageName'), {
 				diff: 'cur',
-				oldid: /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr('href'))[1]
+				oldid: /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr('href'))[1],
 			}),
 			'Current',
 			'tw-curdiff',
@@ -68,25 +68,26 @@ export class DiffCore extends TwinkleModule {
 			action: 'query',
 			titles: mw.config.get('wgPageName'),
 			rvlimit: 1,
-			rvprop: [ 'ids', 'user' ],
+			rvprop: ['ids', 'user'],
 			rvstartid: mw.config.get('wgCurRevisionId') - 1, // i.e. not the current one
 			rvuser: user,
-			format: 'json'
+			format: 'json',
 		});
-		wikipedia_api.post().then(apiobj => {
+		wikipedia_api.post().then((apiobj) => {
 			var rev = apiobj.getResponse().query.pages[0].revisions;
 			var revid = rev && rev[0].revid;
 
 			if (!revid) {
-				apiobj.getStatusElement().error('no suitable earlier revision found, or ' + user + ' is the only contributor. Aborting.');
+				apiobj
+					.getStatusElement()
+					.error('no suitable earlier revision found, or ' + user + ' is the only contributor. Aborting.');
 				return;
 			}
 			window.location.href = mw.util.getUrl(mw.config.get('wgPageName'), {
 				diff: mw.config.get('wgCurRevisionId'),
-				oldid: revid
+				oldid: revid,
 			});
 		});
 		wikipedia_api.post();
 	}
 }
-

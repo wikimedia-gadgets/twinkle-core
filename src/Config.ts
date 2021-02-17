@@ -1,23 +1,23 @@
-import {Twinkle} from "./twinkle";
+import { Twinkle } from './twinkle';
 
 export type configPreference = {
-	name: string
-	type: 'boolean' | 'string' | 'enum' | 'integer' | 'set' | 'customList'
-	label?: string
-	helptip?: string
-	enumValues?: Record<string, string>
-	setValues?: Record<string, string>
-	adminOnly?: boolean
-	default: any
-}
+	name: string;
+	type: 'boolean' | 'string' | 'enum' | 'integer' | 'set' | 'customList';
+	label?: string;
+	helptip?: string;
+	enumValues?: Record<string, string>;
+	setValues?: Record<string, string>;
+	adminOnly?: boolean;
+	default: any;
+};
 
 export type configSection = {
-	title: string
-	module?: string
-	preferences: configPreference[]
-	adminOnly?: boolean
-	hidden?: boolean
-}
+	title: string;
+	module?: string;
+	preferences: configPreference[];
+	adminOnly?: boolean;
+	hidden?: boolean;
+};
 
 export class Config {
 	static sections: Record<string, configSection> = {
@@ -33,14 +33,18 @@ export class Config {
 					name: 'userTalkPageMode',
 					label: 'When opening a user talk page, open it',
 					type: 'enum',
-					enumValues: { window: 'In a window, replacing other user talks', tab: 'In a new tab', blank: 'In a totally new window' }
+					enumValues: {
+						window: 'In a window, replacing other user talks',
+						tab: 'In a new tab',
+						blank: 'In a totally new window',
+					},
 				},
 
 				// TwinkleConfig.dialogLargeFont (boolean)
 				{
 					name: 'dialogLargeFont',
 					label: 'Use larger text in Twinkle dialogs',
-					type: 'boolean'
+					type: 'boolean',
 				},
 
 				// Config.disabledModules (array)
@@ -49,7 +53,22 @@ export class Config {
 					label: 'Turn off the selected Twinkle modules',
 					helptip: 'Anything you select here will NOT be available for use, so act with care. Uncheck to reactivate.',
 					type: 'set',
-					setValues: { arv: 'ARV', warn: 'Warn', welcome: 'Welcome', shared: 'Shared IP', talkback: 'Talkback', speedy: 'CSD', prod: 'PROD', xfd: 'XfD', image: 'Image (DI)', protect: 'Protect (RPP)', tag: 'Tag', diff: 'Diff', unlink: 'Unlink', fluff: 'Revert and rollback' }
+					setValues: {
+						arv: 'ARV',
+						warn: 'Warn',
+						welcome: 'Welcome',
+						shared: 'Shared IP',
+						talkback: 'Talkback',
+						speedy: 'CSD',
+						prod: 'PROD',
+						xfd: 'XfD',
+						image: 'Image (DI)',
+						protect: 'Protect (RPP)',
+						tag: 'Tag',
+						diff: 'Diff',
+						unlink: 'Unlink',
+						fluff: 'Revert and rollback',
+					},
 				},
 
 				// Config.disabledSysopModules (array)
@@ -59,9 +78,15 @@ export class Config {
 					helptip: 'Anything you select here will NOT be available for use, so act with care. Uncheck to reactivate.',
 					adminOnly: true,
 					type: 'set',
-					setValues: { block: 'Block', deprod: 'DePROD', batchdelete: 'D-batch', batchprotect: 'P-batch', batchundelete: 'Und-batch' }
-				}
-			]
+					setValues: {
+						block: 'Block',
+						deprod: 'DePROD',
+						batchdelete: 'D-batch',
+						batchprotect: 'P-batch',
+						batchundelete: 'Und-batch',
+					},
+				},
+			],
 		},
 
 		hidden: {
@@ -71,51 +96,51 @@ export class Config {
 				// twinkle.js: portlet setup
 				{
 					name: 'portletArea',
-					type: 'string'
+					type: 'string',
 				},
 				{
 					name: 'portletId',
-					type: 'string'
+					type: 'string',
 				},
 				{
 					name: 'portletName',
-					type: 'string'
+					type: 'string',
 				},
 				{
 					name: 'portletType',
-					type: 'string'
+					type: 'string',
 				},
 				{
 					name: 'portletNext',
-					type: 'string'
+					type: 'string',
 				},
 				// twinklefluff.js: defines how many revision to query maximum, maximum possible is 50, default is 50
 				{
 					name: 'revertMaxRevisions',
-					type: 'integer'
+					type: 'integer',
 				},
 				// twinklewarn.js: When using the autolevel select option, how many days makes a prior warning stale
 				// Huggle is three days ([[Special:Diff/918980316]] and [[Special:Diff/919417999]]) while ClueBotNG is two:
 				// https://github.com/DamianZaremba/cluebotng/blob/4958e25d6874cba01c75f11debd2e511fd5a2ce5/bot/action_functions.php#L62
 				{
 					name: 'autolevelStaleDays',
-					type: 'integer'
+					type: 'integer',
 				},
 				// How many pages should be queried by deprod and batchdelete/protect/undelete
 				{
 					name: 'batchMax',
 					type: 'integer',
-					adminOnly: true
+					adminOnly: true,
 				},
 				// How many pages should be processed at a time by deprod and batchdelete/protect/undelete
 				{
 					name: 'batchChunks',
 					type: 'integer',
-					adminOnly: true
-				}
-			]
-		}
-	}
+					adminOnly: true,
+				},
+			],
+		},
+	};
 
 	static addSection(module: string, section: configSection) {
 		Config.sections[module] = section;
@@ -127,29 +152,37 @@ export class Config {
 
 	static init() {
 		// create the config page at Wikipedia:Twinkle/Preferences
-		if ((mw.config.get('wgNamespaceNumber') === mw.config.get('wgNamespaceIds').project && mw.config.get('wgTitle') === 'Twinkle/Preferences') &&
-			mw.config.get('wgAction') === 'view') {
-
+		if (
+			mw.config.get('wgNamespaceNumber') === mw.config.get('wgNamespaceIds').project &&
+			mw.config.get('wgTitle') === 'Twinkle/Preferences' &&
+			mw.config.get('wgAction') === 'view'
+		) {
 			if (!document.getElementById('twinkle-config')) {
-				return;  // maybe the page is misconfigured, or something - but any attempt to modify it will be pointless
+				return; // maybe the page is misconfigured, or something - but any attempt to modify it will be pointless
 			}
 
 			// set style (the url() CSS function doesn't seem to work from wikicode - ?!)
-			document.getElementById('twinkle-config-titlebar').style.backgroundImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAkCAMAAAB%2FqqA%2BAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEhQTFRFr73ZobTPusjdsMHZp7nVwtDhzNbnwM3fu8jdq7vUt8nbxtDkw9DhpbfSvMrfssPZqLvVztbno7bRrr7W1d%2Fs1N7qydXk0NjpkW7Q%2BgAAADVJREFUeNoMwgESQCAAAMGLkEIi%2FP%2BnbnbpdB59app5Vdg0sXAoMZCpGoFbK6ciuy6FX4ABAEyoAef0BXOXAAAAAElFTkSuQmCC)';
+			document.getElementById('twinkle-config-titlebar').style.backgroundImage =
+				'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAkCAMAAAB%2FqqA%2BAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEhQTFRFr73ZobTPusjdsMHZp7nVwtDhzNbnwM3fu8jdq7vUt8nbxtDkw9DhpbfSvMrfssPZqLvVztbno7bRrr7W1d%2Fs1N7qydXk0NjpkW7Q%2BgAAADVJREFUeNoMwgESQCAAAMGLkEIi%2FP%2BnbnbpdB59app5Vdg0sXAoMZCpGoFbK6ciuy6FX4ABAEyoAef0BXOXAAAAAElFTkSuQmCC)';
 
 			var contentdiv = document.getElementById('twinkle-config-content');
-			contentdiv.textContent = '';  // clear children
+			contentdiv.textContent = ''; // clear children
 
 			// let user know about possible conflict with skin js/common.js file
 			// (settings in that file will still work, but they will be overwritten by twinkleoptions.js settings)
 			if (window.TwinkleConfig || window.FriendlyConfig) {
 				var contentnotice = document.createElement('p');
-				contentnotice.innerHTML = '<table class="plainlinks ombox ombox-content"><tr><td class="mbox-image">' +
+				contentnotice.innerHTML =
+					'<table class="plainlinks ombox ombox-content"><tr><td class="mbox-image">' +
 					'<img alt="" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Imbox_content.png" /></td>' +
 					'<td class="mbox-text"><p><big><b>Before modifying your settings here,</b> you must remove your old Twinkle and Friendly settings from your personal skin JavaScript.</big></p>' +
-					'<p>To do this, you can <a href="' + mw.util.getUrl('User:' + mw.config.get('wgUserName') + '/' + mw.config.get('skin') +
-						'.js', { action: 'edit' }) + '" target="_blank"><b>edit your personal skin javascript file</b></a> or <a href="' +
-					mw.util.getUrl('User:' + mw.config.get('wgUserName') + '/common.js', { action: 'edit'}) + '" target="_blank"><b>your common.js file</b></a>, removing all lines of code that refer to <code>TwinkleConfig</code> and <code>FriendlyConfig</code>.</p>' +
+					'<p>To do this, you can <a href="' +
+					mw.util.getUrl('User:' + mw.config.get('wgUserName') + '/' + mw.config.get('skin') + '.js', {
+						action: 'edit',
+					}) +
+					'" target="_blank"><b>edit your personal skin javascript file</b></a> or <a href="' +
+					mw.util.getUrl('User:' + mw.config.get('wgUserName') + '/common.js', { action: 'edit' }) +
+					'" target="_blank"><b>your common.js file</b></a>, removing all lines of code that refer to <code>TwinkleConfig</code> and <code>FriendlyConfig</code>.</p>' +
 					'</td></tr></table>';
 				contentdiv.appendChild(contentnotice);
 			}
@@ -178,20 +211,24 @@ export class Config {
 			toctable.appendChild(toctitle);
 			// create item container: this is what we add stuff to
 			var tocul = document.createElement('ul');
-			toctogglelink.addEventListener('click', function twinkleconfigTocToggle() {
-				var $tocul = $(tocul);
-				$tocul.toggle();
-				if ($tocul.find(':visible').length) {
-					toctogglelink.textContent = 'hide';
-				} else {
-					toctogglelink.textContent = 'show';
-				}
-			}, false);
+			toctogglelink.addEventListener(
+				'click',
+				function twinkleconfigTocToggle() {
+					var $tocul = $(tocul);
+					$tocul.toggle();
+					if ($tocul.find(':visible').length) {
+						toctogglelink.textContent = 'hide';
+					} else {
+						toctogglelink.textContent = 'show';
+					}
+				},
+				false
+			);
 			toctable.appendChild(tocul);
 			contentdiv.appendChild(toctable);
 
 			var contentform = document.createElement('form');
-			contentform.setAttribute('action', 'javascript:void(0)');  // was #tw-save - changed to void(0) to work around Chrome issue
+			contentform.setAttribute('action', 'javascript:void(0)'); // was #tw-save - changed to void(0) to work around Chrome issue
 			contentform.addEventListener('submit', Config.save, true);
 			contentdiv.appendChild(contentform);
 
@@ -199,9 +236,9 @@ export class Config {
 			container.style.width = '100%';
 			contentform.appendChild(container);
 
-			Config.sections.forEach(section => {
+			Config.sections.forEach((section) => {
 				if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
-					return true;  // i.e. "continue" in this context
+					return true; // i.e. "continue" in this context
 				}
 
 				// add to TOC
@@ -225,12 +262,12 @@ export class Config {
 				row.appendChild(cell);
 				container.appendChild(row);
 
-				var rowcount = 1;  // for row banding
+				var rowcount = 1; // for row banding
 
 				// add each of the preferences to the form
-				section.preferences.forEach(pref => {
+				section.preferences.forEach((pref) => {
 					if (pref.adminOnly && !Morebits.userIsSysop) {
-						return true;  // i.e. "continue" in this context
+						return true; // i.e. "continue" in this context
 					}
 
 					row = document.createElement('tr');
@@ -241,10 +278,11 @@ export class Config {
 					}
 					cell = document.createElement('td');
 
-					var label, input, gotPref = Twinkle.getPref(pref.name);
+					var label,
+						input,
+						gotPref = Twinkle.getPref(pref.name);
 					switch (pref.type) {
-
-						case 'boolean':  // create a checkbox
+						case 'boolean': // create a checkbox
 							cell.setAttribute('colspan', '2');
 
 							label = document.createElement('label');
@@ -260,7 +298,7 @@ export class Config {
 							cell.appendChild(label);
 							break;
 
-						case 'string':  // create an input box
+						case 'string': // create an input box
 						case 'integer':
 							// add label to first column
 							cell.style.textAlign = 'right';
@@ -281,7 +319,7 @@ export class Config {
 							if (pref.type === 'integer') {
 								input.setAttribute('size', 6);
 								input.setAttribute('type', 'number');
-								input.setAttribute('step', '1');  // integers only
+								input.setAttribute('step', '1'); // integers only
 							}
 							if (gotPref) {
 								input.setAttribute('value', gotPref);
@@ -289,7 +327,7 @@ export class Config {
 							cell.appendChild(input);
 							break;
 
-						case 'enum':  // create a combo box
+						case 'enum': // create a combo box
 							// add label to first column
 							// note: duplicates the code above, under string/integer
 							cell.style.textAlign = 'right';
@@ -306,15 +344,16 @@ export class Config {
 							input = document.createElement('select');
 							input.setAttribute('id', pref.name);
 							input.setAttribute('name', pref.name);
-							$.each(pref.enumValues, function(enumvalue, enumdisplay) {
+							$.each(pref.enumValues, function (enumvalue, enumdisplay) {
 								var option = document.createElement('option');
 								option.setAttribute('value', enumvalue);
-								if ((gotPref === enumvalue) ||
+								if (
+									gotPref === enumvalue ||
 									// Hack to convert old boolean watchlist prefs
 									// to corresponding enums (added in v2.1)
 									(typeof gotPref === 'boolean' &&
-										((gotPref && enumvalue === 'yes') ||
-											(!gotPref && enumvalue === 'no')))) {
+										((gotPref && enumvalue === 'yes') || (!gotPref && enumvalue === 'no')))
+								) {
 									option.setAttribute('selected', 'selected');
 								}
 								option.appendChild(document.createTextNode(enumdisplay));
@@ -323,16 +362,16 @@ export class Config {
 							cell.appendChild(input);
 							break;
 
-						case 'set':  // create a set of check boxes
+						case 'set': // create a set of check boxes
 							// add label first of all
 							cell.setAttribute('colspan', '2');
-							label = document.createElement('label');  // not really necessary to use a label element here, but we do it for consistency of styling
+							label = document.createElement('label'); // not really necessary to use a label element here, but we do it for consistency of styling
 							label.appendChild(document.createTextNode(pref.label + ':'));
 							cell.appendChild(label);
 
 							var checkdiv = document.createElement('div');
 							checkdiv.style.paddingLeft = '1em';
-							var worker = function(itemkey, itemvalue) {
+							var worker = function (itemkey, itemvalue) {
 								var checklabel = document.createElement('label');
 								checklabel.style.marginRight = '0.7em';
 								checklabel.style.display = 'inline-block';
@@ -355,7 +394,7 @@ export class Config {
 							};
 							if (pref.setDisplayOrder) {
 								// add check boxes according to the given display order
-								$.each(pref.setDisplayOrder, function(itemkey, item) {
+								$.each(pref.setDisplayOrder, function (itemkey, item) {
 									worker(item, pref.setValues[item]);
 								});
 							} else {
@@ -386,7 +425,7 @@ export class Config {
 							// use jQuery data on the button to store the current config value
 							$(button).data({
 								value: gotPref,
-								pref: pref
+								pref: pref,
 							});
 							button.appendChild(document.createTextNode('Edit items'));
 							cell.appendChild(button);
@@ -405,8 +444,10 @@ export class Config {
 					cell.style.color = 'gray';
 					if (pref.helptip) {
 						// convert mentions of templates in the helptip to clickable links
-						cell.innerHTML = pref.helptip.replace(/{{(.+?)}}/g,
-							'{{<a href="' + mw.util.getUrl('Template:') + '$1" target="_blank">$1</a>}}');
+						cell.innerHTML = pref.helptip.replace(
+							/{{(.+?)}}/g,
+							'{{<a href="' + mw.util.getUrl('Template:') + '$1" target="_blank">$1</a>}}'
+						);
 					}
 					// add reset link (custom lists don't need this, as their config value isn't displayed on the form)
 					if (pref.type !== 'customList') {
@@ -455,42 +496,58 @@ export class Config {
 				window.location.hash = '';
 				window.location.hash = loc;
 			}
-
-		} else if (mw.config.get('wgNamespaceNumber') === mw.config.get('wgNamespaceIds').user &&
+		} else if (
+			mw.config.get('wgNamespaceNumber') === mw.config.get('wgNamespaceIds').user &&
 			mw.config.get('wgTitle').indexOf(mw.config.get('wgUserName')) === 0 &&
-			mw.config.get('wgPageName').slice(-3) === '.js') {
-
+			mw.config.get('wgPageName').slice(-3) === '.js'
+		) {
 			var box = document.createElement('div');
 			// Styled in twinkle.css
 			box.setAttribute('id', 'twinkle-config-headerbox');
 
 			var link,
-				scriptPageName = mw.config.get('wgPageName').slice(mw.config.get('wgPageName').lastIndexOf('/') + 1,
-					mw.config.get('wgPageName').lastIndexOf('.js'));
+				scriptPageName = mw.config
+					.get('wgPageName')
+					.slice(mw.config.get('wgPageName').lastIndexOf('/') + 1, mw.config.get('wgPageName').lastIndexOf('.js'));
 
 			if (scriptPageName === 'twinkleoptions') {
 				// place "why not try the preference panel" notice
 				box.setAttribute('class', 'config-twopt-box');
 
-				if (mw.config.get('wgArticleId') > 0) {  // page exists
-					box.appendChild(document.createTextNode('This page contains your Twinkle preferences. You can change them using the '));
-				} else {  // page does not exist
+				if (mw.config.get('wgArticleId') > 0) {
+					// page exists
+					box.appendChild(
+						document.createTextNode('This page contains your Twinkle preferences. You can change them using the ')
+					);
+				} else {
+					// page does not exist
 					box.appendChild(document.createTextNode('You can customize Twinkle to suit your preferences by using the '));
 				}
 				link = document.createElement('a');
-				link.setAttribute('href', mw.util.getUrl(mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').project] + ':Twinkle/Preferences'));
+				link.setAttribute(
+					'href',
+					mw.util.getUrl(
+						mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').project] + ':Twinkle/Preferences'
+					)
+				);
 				link.appendChild(document.createTextNode('Twinkle preferences panel'));
 				box.appendChild(link);
 				box.appendChild(document.createTextNode(', or by editing this page.'));
 				$(box).insertAfter($('#contentSub'));
-
-			} else if (['monobook', 'vector', 'cologneblue', 'modern', 'timeless', 'minerva', 'common'].indexOf(scriptPageName) !== -1) {
+			} else if (
+				['monobook', 'vector', 'cologneblue', 'modern', 'timeless', 'minerva', 'common'].indexOf(scriptPageName) !== -1
+			) {
 				// place "Looking for Twinkle options?" notice
 				box.setAttribute('class', 'config-userskin-box');
 
 				box.appendChild(document.createTextNode('If you want to set Twinkle preferences, you can use the '));
 				link = document.createElement('a');
-				link.setAttribute('href', mw.util.getUrl(mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').project] + ':Twinkle/Preferences'));
+				link.setAttribute(
+					'href',
+					mw.util.getUrl(
+						mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').project] + ':Twinkle/Preferences'
+					)
+				);
 				link.appendChild(document.createTextNode('Twinkle preferences panel'));
 				box.appendChild(link);
 				box.appendChild(document.createTextNode('.'));
@@ -503,32 +560,31 @@ export class Config {
 		var wantedpref = e.target.id.substring(21); // "twinkle-config-reset-" prefix is stripped
 
 		// search tactics
-		$(Config.sections).each(function(sectionkey, section) {
+		$(Config.sections).each(function (sectionkey, section) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
-				return true;  // continue: skip impossibilities
+				return true; // continue: skip impossibilities
 			}
 
 			var foundit = false;
 
 			$(section.preferences).each((prefkey, pref) => {
 				if (pref.name !== wantedpref) {
-					return true;  // continue
+					return true; // continue
 				}
 				Config.resetPref(pref);
 				foundit = true;
-				return false;  // break
+				return false; // break
 			});
 
 			if (foundit) {
-				return false;  // break
+				return false; // break
 			}
 		});
-		return false;  // stop link from scrolling page
+		return false; // stop link from scrolling page
 	}
 
 	static resetPref(pref: configPreference) {
 		switch (pref.type) {
-
 			case 'boolean':
 				document.getElementById(pref.name).checked = Twinkle.defaultConfig[pref.name];
 				break;
@@ -540,9 +596,10 @@ export class Config {
 				break;
 
 			case 'set':
-				$.each(pref.setValues, function(itemkey) {
+				$.each(pref.setValues, function (itemkey) {
 					if (document.getElementById(pref.name + '_' + itemkey)) {
-						document.getElementById(pref.name + '_' + itemkey).checked = Twinkle.defaultConfig[pref.name].indexOf(itemkey) !== -1;
+						document.getElementById(pref.name + '_' + itemkey).checked =
+							Twinkle.defaultConfig[pref.name].indexOf(itemkey) !== -1;
 					}
 				});
 				break;
@@ -559,24 +616,28 @@ export class Config {
 
 	static resetAllPrefs() {
 		// no confirmation message - the user can just refresh/close the page to abort
-		$(Config.sections).each(function(sectionkey, section: configSection) {
+		$(Config.sections).each(function (sectionkey, section: configSection) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
-				return true;  // continue: skip impossibilities
+				return true; // continue: skip impossibilities
 			}
-			$(section.preferences).each(function(prefkey, pref: configPreference) {
+			$(section.preferences).each(function (prefkey, pref: configPreference) {
 				if (!pref.adminOnly || Morebits.userIsSysop) {
 					Config.resetPref(pref);
 				}
 			});
 			return true;
 		});
-		return false;  // stop link from scrolling page
+		return false; // stop link from scrolling page
 	}
 
 	static save(e) {
 		Morebits.status.init(document.getElementById('twinkle-config-content'));
 
-		var userjs = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user] + ':' + mw.config.get('wgUserName') + '/twinkleoptions.js';
+		var userjs =
+			mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user] +
+			':' +
+			mw.config.get('wgUserName') +
+			'/twinkleoptions.js';
 		var wikipedia_page = new Morebits.wiki.page(userjs, 'Saving preferences to ' + userjs);
 		wikipedia_page.setCallbackParameters(e.target);
 		wikipedia_page.load(Config.writePrefs);
@@ -589,23 +650,26 @@ export class Config {
 
 		// this is the object which gets serialized into JSON; only
 		// preferences that this script knows about are kept
-		var newConfig = {optionsVersion: 2.1};
+		var newConfig = { optionsVersion: 2.1 };
 
 		// a comparison function is needed later on
 		// it is just enough for our purposes (i.e. comparing strings, numbers, booleans,
 		// arrays of strings, and arrays of { value, label })
 		// and it is not very robust: e.g. compare([2], ["2"]) === true, and
 		// compare({}, {}) === false, but it's good enough for our purposes here
-		var compare = function(a, b) {
+		var compare = function (a, b) {
 			if (Array.isArray(a)) {
 				if (a.length !== b.length) {
 					return false;
 				}
-				var asort = a.sort(), bsort = b.sort();
+				var asort = a.sort(),
+					bsort = b.sort();
 				for (var i = 0; asort[i]; ++i) {
 					// comparison of the two properties of custom lists
-					if ((typeof asort[i] === 'object') && (asort[i].label !== bsort[i].label ||
-						asort[i].value !== bsort[i].value)) {
+					if (
+						typeof asort[i] === 'object' &&
+						(asort[i].label !== bsort[i].label || asort[i].value !== bsort[i].value)
+					) {
 						return false;
 					} else if (asort[i].toString() !== bsort[i].toString()) {
 						return false;
@@ -614,51 +678,57 @@ export class Config {
 				return true;
 			}
 			return a === b;
-
 		};
 
-		$(Config.sections).each(function(sectionkey, section: configSection) {
+		$(Config.sections).each(function (sectionkey, section: configSection) {
 			if (section.adminOnly && !Morebits.userIsSysop) {
-				return;  // i.e. "continue" in this context
+				return; // i.e. "continue" in this context
 			}
 
 			// reach each of the preferences from the form
-			$(section.preferences).each(function(prefkey, pref: configPreference) {
-				var userValue;  // = undefined
+			$(section.preferences).each(function (prefkey, pref: configPreference) {
+				var userValue; // = undefined
 
 				// only read form values for those prefs that have them
 				if (!pref.adminOnly || Morebits.userIsSysop) {
 					if (!section.hidden) {
 						switch (pref.type) {
-							case 'boolean':  // read from the checkbox
+							case 'boolean': // read from the checkbox
 								userValue = form[pref.name].checked;
 								break;
 
-							case 'string':  // read from the input box or combo box
+							case 'string': // read from the input box or combo box
 							case 'enum':
 								userValue = form[pref.name].value;
 								break;
 
-							case 'integer':  // read from the input box
+							case 'integer': // read from the input box
 								userValue = parseInt(form[pref.name].value, 10);
 								if (isNaN(userValue)) {
-									Morebits.status.warn('Saving', 'The value you specified for ' + pref.name + ' (' + pref.value + ') was invalid.  The save will continue, but the invalid data value will be skipped.');
+									Morebits.status.warn(
+										'Saving',
+										'The value you specified for ' +
+											pref.name +
+											' (' +
+											pref.value +
+											') was invalid.  The save will continue, but the invalid data value will be skipped.'
+									);
 									userValue = null;
 								}
 								break;
 
-							case 'set':  // read from the set of check boxes
+							case 'set': // read from the set of check boxes
 								userValue = [];
 								if (pref.setDisplayOrder) {
 									// read only those keys specified in the display order
-									$.each(pref.setDisplayOrder, function(itemkey, item) {
+									$.each(pref.setDisplayOrder, function (itemkey, item) {
 										if (form[pref.name + '_' + item].checked) {
 											userValue.push(item);
 										}
 									});
 								} else {
 									// read all the keys in the list of values
-									$.each(pref.setValues, function(itemkey) {
+									$.each(pref.setValues, function (itemkey) {
 										if (form[pref.name + '_' + itemkey].checked) {
 											userValue.push(itemkey);
 										}
@@ -666,7 +736,7 @@ export class Config {
 								}
 								break;
 
-							case 'customList':  // read from the jQuery data stored on the button object
+							case 'customList': // read from the jQuery data stored on the button object
 								userValue = $(form[pref.name]).data('value');
 								break;
 
@@ -692,21 +762,20 @@ export class Config {
 			'// twinkleoptions.js: personal Twinkle preferences file\n' +
 			'//\n' +
 			'// NOTE: The easiest way to change your Twinkle preferences is by using the\n' +
-			'// Twinkle preferences panel, at [[' + Morebits.pageNameNorm + ']].\n' +
+			'// Twinkle preferences panel, at [[' +
+			Morebits.pageNameNorm +
+			']].\n' +
 			'//\n' +
 			'// This file is AUTOMATICALLY GENERATED.  Any changes you make (aside from\n' +
 			'// changing the configuration parameters in a valid-JavaScript way) will be\n' +
 			'// overwritten the next time you click "save" in the Twinkle preferences\n' +
 			'// panel.  If modifying this file, make sure to use correct JavaScript.\n' +
-			'// <no' + 'wiki>\n' +
+			'// <no' +
+			'wiki>\n' +
 			'\n' +
 			'window.Twinkle.prefs = ';
 		text += JSON.stringify(newConfig, null, 2);
-		text +=
-			';\n' +
-			'\n' +
-			'// </no' + 'wiki>\n' +
-			'// End of twinkleoptions.js\n';
+		text += ';\n' + '\n' + '// </no' + 'wiki>\n' + '// End of twinkleoptions.js\n';
 
 		pageobj.setPageText(text);
 		pageobj.setEditSummary('Saving Twinkle preferences: automatic edit from [[:' + Morebits.pageNameNorm + ']]');
@@ -722,85 +791,268 @@ export class Config {
 		noticebox.className = 'successbox';
 		noticebox.style.fontSize = '100%';
 		noticebox.style.marginTop = '2em';
-		noticebox.innerHTML = '<p><b>Your Twinkle preferences have been saved.</b></p><p>To see the changes, you will need to <b>clear your browser cache entirely</b> (see <a href="' + mw.util.getUrl('WP:BYPASS') + '" title="WP:BYPASS">WP:BYPASS</a> for instructions).</p>';
+		noticebox.innerHTML =
+			'<p><b>Your Twinkle preferences have been saved.</b></p><p>To see the changes, you will need to <b>clear your browser cache entirely</b> (see <a href="' +
+			mw.util.getUrl('WP:BYPASS') +
+			'" title="WP:BYPASS">WP:BYPASS</a> for instructions).</p>';
 		Morebits.status.root.appendChild(noticebox);
 		var noticeclear = document.createElement('br');
 		noticeclear.style.clear = 'both';
 		Morebits.status.root.appendChild(noticeclear);
 	}
 
-
 	static watchlistEnums = {
-		'yes': 'Add to watchlist (indefinitely)',
-		'no': "Don't add to watchlist",
-		'default': 'Follow your site preferences',
+		yes: 'Add to watchlist (indefinitely)',
+		no: "Don't add to watchlist",
+		default: 'Follow your site preferences',
 		'1 week': 'Watch for 1 week',
 		'1 month': 'Watch for 1 month',
 		'3 months': 'Watch for 3 months',
-		'6 months': 'Watch for 6 months'
+		'6 months': 'Watch for 6 months',
 	};
 
 	static commonSets = {
 		csdCriteria: {
 			db: 'Custom rationale ({{db}})',
-			g1: 'G1', g2: 'G2', g3: 'G3', g4: 'G4', g5: 'G5', g6: 'G6', g7: 'G7', g8: 'G8', g10: 'G10', g11: 'G11', g12: 'G12', g13: 'G13', g14: 'G14',
-			a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a7: 'A7', a9: 'A9', a10: 'A10', a11: 'A11',
-			u1: 'U1', u2: 'U2', u3: 'U3', u5: 'U5',
-			f1: 'F1', f2: 'F2', f3: 'F3', f7: 'F7', f8: 'F8', f9: 'F9', f10: 'F10',
+			g1: 'G1',
+			g2: 'G2',
+			g3: 'G3',
+			g4: 'G4',
+			g5: 'G5',
+			g6: 'G6',
+			g7: 'G7',
+			g8: 'G8',
+			g10: 'G10',
+			g11: 'G11',
+			g12: 'G12',
+			g13: 'G13',
+			g14: 'G14',
+			a1: 'A1',
+			a2: 'A2',
+			a3: 'A3',
+			a5: 'A5',
+			a7: 'A7',
+			a9: 'A9',
+			a10: 'A10',
+			a11: 'A11',
+			u1: 'U1',
+			u2: 'U2',
+			u3: 'U3',
+			u5: 'U5',
+			f1: 'F1',
+			f2: 'F2',
+			f3: 'F3',
+			f7: 'F7',
+			f8: 'F8',
+			f9: 'F9',
+			f10: 'F10',
 			c1: 'C1',
-			r2: 'R2', r3: 'R3', r4: 'R4',
-			p1: 'P1', p2: 'P2'
+			r2: 'R2',
+			r3: 'R3',
+			r4: 'R4',
+			p1: 'P1',
+			p2: 'P2',
 		},
 		csdCriteriaDisplayOrder: [
 			'db',
-			'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g10', 'g11', 'g12', 'g13', 'g14',
-			'a1', 'a2', 'a3', 'a5', 'a7', 'a9', 'a10', 'a11',
-			'u1', 'u2', 'u3', 'u5',
-			'f1', 'f2', 'f3', 'f7', 'f8', 'f9', 'f10',
+			'g1',
+			'g2',
+			'g3',
+			'g4',
+			'g5',
+			'g6',
+			'g7',
+			'g8',
+			'g10',
+			'g11',
+			'g12',
+			'g13',
+			'g14',
+			'a1',
+			'a2',
+			'a3',
+			'a5',
+			'a7',
+			'a9',
+			'a10',
+			'a11',
+			'u1',
+			'u2',
+			'u3',
+			'u5',
+			'f1',
+			'f2',
+			'f3',
+			'f7',
+			'f8',
+			'f9',
+			'f10',
 			'c1',
-			'r2', 'r3', 'r4',
-			'p1', 'p2'
+			'r2',
+			'r3',
+			'r4',
+			'p1',
+			'p2',
 		],
 		csdCriteriaNotification: {
 			db: 'Custom rationale ({{db}})',
-			g1: 'G1', g2: 'G2', g3: 'G3', g4: 'G4', g6: 'G6 ("copy-paste move" only)',
-			g10: 'G10', g11: 'G11', g12: 'G12', g13: 'G13', g14: 'G14',
-			a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a7: 'A7', a9: 'A9', a10: 'A10', a11: 'A11',
-			u3: 'U3', u5: 'U5',
-			f1: 'F1', f2: 'F2', f3: 'F3', f7: 'F7', f9: 'F9', f10: 'F10',
+			g1: 'G1',
+			g2: 'G2',
+			g3: 'G3',
+			g4: 'G4',
+			g6: 'G6 ("copy-paste move" only)',
+			g10: 'G10',
+			g11: 'G11',
+			g12: 'G12',
+			g13: 'G13',
+			g14: 'G14',
+			a1: 'A1',
+			a2: 'A2',
+			a3: 'A3',
+			a5: 'A5',
+			a7: 'A7',
+			a9: 'A9',
+			a10: 'A10',
+			a11: 'A11',
+			u3: 'U3',
+			u5: 'U5',
+			f1: 'F1',
+			f2: 'F2',
+			f3: 'F3',
+			f7: 'F7',
+			f9: 'F9',
+			f10: 'F10',
 			c1: 'C1',
-			r2: 'R2', r3: 'R3', r4: 'R4',
-			p1: 'P1', p2: 'P2'
+			r2: 'R2',
+			r3: 'R3',
+			r4: 'R4',
+			p1: 'P1',
+			p2: 'P2',
 		},
 		csdCriteriaNotificationDisplayOrder: [
 			'db',
-			'g1', 'g2', 'g3', 'g4', 'g6', 'g10', 'g11', 'g12', 'g13', 'g14',
-			'a1', 'a2', 'a3', 'a5', 'a7', 'a9', 'a10', 'a11',
-			'u3', 'u5',
-			'f1', 'f2', 'f3', 'f7', 'f9', 'f10',
+			'g1',
+			'g2',
+			'g3',
+			'g4',
+			'g6',
+			'g10',
+			'g11',
+			'g12',
+			'g13',
+			'g14',
+			'a1',
+			'a2',
+			'a3',
+			'a5',
+			'a7',
+			'a9',
+			'a10',
+			'a11',
+			'u3',
+			'u5',
+			'f1',
+			'f2',
+			'f3',
+			'f7',
+			'f9',
+			'f10',
 			'c1',
-			'r2', 'r3', 'r4',
-			'p1', 'p2'
+			'r2',
+			'r3',
+			'r4',
+			'p1',
+			'p2',
 		],
 		csdAndDICriteria: {
 			db: 'Custom rationale ({{db}})',
-			g1: 'G1', g2: 'G2', g3: 'G3', g4: 'G4', g5: 'G5', g6: 'G6', g7: 'G7', g8: 'G8', g10: 'G10', g11: 'G11', g12: 'G12', g13: 'G13', g14: 'G14',
-			a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a7: 'A7', a9: 'A9', a10: 'A10', a11: 'A11',
-			u1: 'U1', u2: 'U2', u3: 'U3', u5: 'U5',
-			f1: 'F1', f2: 'F2', f3: 'F3', f4: 'F4', f5: 'F5', f6: 'F6', f7: 'F7', f8: 'F8', f9: 'F9', f10: 'F10', f11: 'F11',
+			g1: 'G1',
+			g2: 'G2',
+			g3: 'G3',
+			g4: 'G4',
+			g5: 'G5',
+			g6: 'G6',
+			g7: 'G7',
+			g8: 'G8',
+			g10: 'G10',
+			g11: 'G11',
+			g12: 'G12',
+			g13: 'G13',
+			g14: 'G14',
+			a1: 'A1',
+			a2: 'A2',
+			a3: 'A3',
+			a5: 'A5',
+			a7: 'A7',
+			a9: 'A9',
+			a10: 'A10',
+			a11: 'A11',
+			u1: 'U1',
+			u2: 'U2',
+			u3: 'U3',
+			u5: 'U5',
+			f1: 'F1',
+			f2: 'F2',
+			f3: 'F3',
+			f4: 'F4',
+			f5: 'F5',
+			f6: 'F6',
+			f7: 'F7',
+			f8: 'F8',
+			f9: 'F9',
+			f10: 'F10',
+			f11: 'F11',
 			c1: 'C1',
-			r2: 'R2', r3: 'R3', r4: 'R4',
-			p1: 'P1', p2: 'P2'
+			r2: 'R2',
+			r3: 'R3',
+			r4: 'R4',
+			p1: 'P1',
+			p2: 'P2',
 		},
 		csdAndDICriteriaDisplayOrder: [
 			'db',
-			'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g10', 'g11', 'g12', 'g13', 'g14',
-			'a1', 'a2', 'a3', 'a5', 'a7', 'a9', 'a10', 'a11',
-			'u1', 'u2', 'u3', 'u5',
-			'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11',
+			'g1',
+			'g2',
+			'g3',
+			'g4',
+			'g5',
+			'g6',
+			'g7',
+			'g8',
+			'g10',
+			'g11',
+			'g12',
+			'g13',
+			'g14',
+			'a1',
+			'a2',
+			'a3',
+			'a5',
+			'a7',
+			'a9',
+			'a10',
+			'a11',
+			'u1',
+			'u2',
+			'u3',
+			'u5',
+			'f1',
+			'f2',
+			'f3',
+			'f4',
+			'f5',
+			'f6',
+			'f7',
+			'f8',
+			'f9',
+			'f10',
+			'f11',
 			'c1',
-			'r2', 'r3', 'r4',
-			'p1', 'p2'
+			'r2',
+			'r3',
+			'r4',
+			'p1',
+			'p2',
 		],
 		namespacesNoSpecial: {
 			0: 'Article',
@@ -828,10 +1080,9 @@ export class Config {
 			710: 'TimedText',
 			711: 'TimedText talk',
 			828: 'Module',
-			829: 'Module talk'
-		}
+			829: 'Module talk',
+		},
 	};
-
 }
 
 class ListDialog {
@@ -841,9 +1092,13 @@ class ListDialog {
 		var contenttd = document.createElement('td');
 		var removeButton = document.createElement('button');
 		removeButton.setAttribute('type', 'button');
-		removeButton.addEventListener('click', function() {
-			$(contenttr).remove();
-		}, false);
+		removeButton.addEventListener(
+			'click',
+			function () {
+				$(contenttr).remove();
+			},
+			false
+		);
 		removeButton.textContent = 'Remove';
 		contenttd.appendChild(removeButton);
 		contenttr.appendChild(contenttd);
@@ -912,7 +1167,7 @@ class ListDialog {
 
 		// content rows
 		var gotRow = false;
-		$.each(curvalue, function(k, v) {
+		$.each(curvalue, function (k, v) {
 			gotRow = true;
 			ListDialog.addRow(dlgtbody, v.value, v.label);
 		});
@@ -929,9 +1184,13 @@ class ListDialog {
 		var addButton = document.createElement('button');
 		addButton.style.minWidth = '8em';
 		addButton.setAttribute('type', 'button');
-		addButton.addEventListener('click', function() {
-			ListDialog.addRow(dlgtbody);
-		}, false);
+		addButton.addEventListener(
+			'click',
+			function () {
+				ListDialog.addRow(dlgtbody);
+			},
+			false
+		);
 		addButton.textContent = 'Add';
 		dlgtd.appendChild(addButton);
 		dlgtr.appendChild(dlgtd);
@@ -943,25 +1202,37 @@ class ListDialog {
 
 		// buttonpane buttons: [Save changes] [Reset] [Cancel]
 		var button = document.createElement('button');
-		button.setAttribute('type', 'submit');  // so Morebits.simpleWindow puts the button in the button pane
-		button.addEventListener('click', function() {
-			ListDialog.save($prefbutton, dlgtbody);
-			dialog.close();
-		}, false);
+		button.setAttribute('type', 'submit'); // so Morebits.simpleWindow puts the button in the button pane
+		button.addEventListener(
+			'click',
+			function () {
+				ListDialog.save($prefbutton, dlgtbody);
+				dialog.close();
+			},
+			false
+		);
 		button.textContent = 'Save changes';
 		dialogcontent.appendChild(button);
 		button = document.createElement('button');
-		button.setAttribute('type', 'submit');  // so Morebits.simpleWindow puts the button in the button pane
-		button.addEventListener('click', function() {
-			ListDialog.reset($prefbutton, dlgtbody);
-		}, false);
+		button.setAttribute('type', 'submit'); // so Morebits.simpleWindow puts the button in the button pane
+		button.addEventListener(
+			'click',
+			function () {
+				ListDialog.reset($prefbutton, dlgtbody);
+			},
+			false
+		);
 		button.textContent = 'Reset';
 		dialogcontent.appendChild(button);
 		button = document.createElement('button');
-		button.setAttribute('type', 'submit');  // so Morebits.simpleWindow puts the button in the button pane
-		button.addEventListener('click', function() {
-			dialog.close();  // the event parameter on this function seems to be broken
-		}, false);
+		button.setAttribute('type', 'submit'); // so Morebits.simpleWindow puts the button in the button pane
+		button.addEventListener(
+			'click',
+			function () {
+				dialog.close(); // the event parameter on this function seems to be broken
+			},
+			false
+		);
 		button.textContent = 'Cancel';
 		dialogcontent.appendChild(button);
 
@@ -980,10 +1251,10 @@ class ListDialog {
 
 		// reset form
 		var $tbody = $(tbody);
-		$tbody.find('tr').slice(1).remove();  // all rows except the first (header) row
+		$tbody.find('tr').slice(1).remove(); // all rows except the first (header) row
 		// add the new values
 		var curvalue = $button.data('value');
-		$.each(curvalue, function(k, v) {
+		$.each(curvalue, function (k, v) {
 			ListDialog.addRow(tbody, v.value, v.label);
 		});
 
@@ -994,18 +1265,19 @@ class ListDialog {
 	static save(button, tbody) {
 		var result = [];
 		var current = {};
-		$(tbody).find('input[type="text"]').each(function(inputkey, input: HTMLInputElement) {
-			if ($(input).hasClass('twinkle-config-customlist-value')) {
-				current = { value: input.value };
-			} else {
-				current.label = input.value;
-				// exclude totally empty rows
-				if (current.value || current.label) {
-					result.push(current);
+		$(tbody)
+			.find('input[type="text"]')
+			.each(function (inputkey, input: HTMLInputElement) {
+				if ($(input).hasClass('twinkle-config-customlist-value')) {
+					current = { value: input.value };
+				} else {
+					current.label = input.value;
+					// exclude totally empty rows
+					if (current.value || current.label) {
+						result.push(current);
+					}
 				}
-			}
-		});
+			});
 		$(button).data('value', result);
 	}
 }
-

@@ -6,30 +6,30 @@ import { Api } from './Api';
 // TODO: still quite a bit of enwiki specific logic here
 
 export interface criterion extends quickFormElementData {
-	value: string // made compulsory
-	code: string
-	subgroup?: criteriaSubgroup | criteriaSubgroup[]
+	value: string; // made compulsory
+	code: string;
+	subgroup?: criteriaSubgroup | criteriaSubgroup[];
 
-	showInNamespaces?: number[]
-	hideInNamespaces?: number[]
+	showInNamespaces?: number[];
+	hideInNamespaces?: number[];
 
 	// These are booleans, but `true` is used instead of `boolean` because
 	// when the value should be false, the prop should be omitted.
-	redactContents?: true // used for attack pages
-	hideWhenMultiple?: true
-	hideWhenSingle?: true
-	hideWhenUser?: true
-	hideWhenSysop?: true
-	hideSubgroupWhenUser?: true
-	hideSubgroupWhenSingle?: true
-	hideSubgroupWhenMultiple?: true
-	hideSubgroupWhenSysop?: true
-	hideWhenRedirect?: true
+	redactContents?: true; // used for attack pages
+	hideWhenMultiple?: true;
+	hideWhenSingle?: true;
+	hideWhenUser?: true;
+	hideWhenSysop?: true;
+	hideSubgroupWhenUser?: true;
+	hideSubgroupWhenSingle?: true;
+	hideSubgroupWhenMultiple?: true;
+	hideSubgroupWhenSysop?: true;
+	hideWhenRedirect?: true;
 }
 export interface criteriaSubgroup extends quickFormElementData {
-	parameter?: string
-	utparam?: string
-	log?: string | null
+	parameter?: string;
+	utparam?: string;
+	log?: string | null;
 }
 
 export abstract class SpeedyCore extends TwinkleModule {
@@ -42,13 +42,15 @@ export abstract class SpeedyCore extends TwinkleModule {
 	flatObject: Record<string, criterion>;
 	params: Record<string, any>;
 	namespace: number;
-	mode: {isSysop: boolean, isMultiple: boolean, isRadioClick: boolean}
-	isRedirect: boolean
-	abstract criteriaLists: Array<{label: string, visible: ((self: SpeedyCore) => boolean), list: Array<criterion>}>;
+	mode: { isSysop: boolean; isMultiple: boolean; isRadioClick: boolean };
+	isRedirect: boolean;
+	abstract criteriaLists: Array<{ label: string; visible: (self: SpeedyCore) => boolean; list: Array<criterion> }>;
 
 	portletName = 'CSD';
 	portletId = 'twinkle-csd';
-	portletTooltip = Morebits.userIsSysop ? 'Delete page according to WP:CSD' : 'Request speedy deletion according to WP:CSD';
+	portletTooltip = Morebits.userIsSysop
+		? 'Delete page according to WP:CSD'
+		: 'Request speedy deletion according to WP:CSD';
 
 	constructor() {
 		super();
@@ -56,9 +58,12 @@ export abstract class SpeedyCore extends TwinkleModule {
 	}
 
 	makeWindow() {
-		this.dialog = new Morebits.simpleWindow(Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight'));
+		this.dialog = new Morebits.simpleWindow(
+			Twinkle.getPref('speedyWindowWidth'),
+			Twinkle.getPref('speedyWindowHeight')
+		);
 		this.dialog.setTitle('Choose criteria for speedy deletion');
-		this.dialog.setScriptName(Twinkle.scriptName)
+		this.dialog.setScriptName(Twinkle.scriptName);
 		this.dialog.addFooterLink('Speedy deletion policy', 'WP:CSD');
 		this.dialog.addFooterLink('CSD prefs', 'WP:TW/PREF#speedy');
 		this.dialog.addFooterLink('Twinkle help', 'WP:TW/DOC#speedy');
@@ -66,7 +71,10 @@ export abstract class SpeedyCore extends TwinkleModule {
 		this.hasCSD = !!$('#delete-reason').length;
 		this.makeFlatObject();
 
-		let form = new Morebits.quickForm((e) => this.evaluate(e), Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null);
+		let form = new Morebits.quickForm(
+			(e) => this.evaluate(e),
+			Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null
+		);
 		this.form = form;
 
 		if (Morebits.userIsSysop) {
@@ -74,7 +82,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 				type: 'checkbox',
 				list: [
 					{
-						label: 'Tag page only, don\'t delete',
+						label: "Tag page only, don't delete",
 						value: 'tag_only',
 						name: 'tag_only',
 						tooltip: 'If you just want to tag the page, instead of deleting it now',
@@ -102,22 +110,24 @@ export abstract class SpeedyCore extends TwinkleModule {
 							this.modeChanged(cForm);
 
 							event.stopPropagation();
-						}
-					}
-				]
+						},
+					},
+				],
 			});
-
-
 
 			let deleteOptions = form.append({
 				type: 'div',
-				name: 'delete_options'
+				name: 'delete_options',
 			});
 			deleteOptions.append({
 				type: 'header',
-				label: 'Delete-related options'
+				label: 'Delete-related options',
 			});
-			if (mw.config.get('wgNamespaceNumber') % 2 === 0 && (mw.config.get('wgNamespaceNumber') !== 2 || (/\//).test(mw.config.get('wgTitle')))) {  // hide option for user pages, to avoid accidentally deleting user talk page
+			if (
+				mw.config.get('wgNamespaceNumber') % 2 === 0 &&
+				(mw.config.get('wgNamespaceNumber') !== 2 || /\//.test(mw.config.get('wgTitle')))
+			) {
+				// hide option for user pages, to avoid accidentally deleting user talk page
 				deleteOptions.append({
 					type: 'checkbox',
 					list: [
@@ -125,11 +135,12 @@ export abstract class SpeedyCore extends TwinkleModule {
 							label: 'Also delete talk page',
 							value: 'deleteTalkPage',
 							name: 'deleteTalkPage',
-							tooltip: "This option deletes the page's talk page in addition. If you choose the F8 (moved to Commons) criterion, this option is ignored and the talk page is *not* deleted.",
+							tooltip:
+								"This option deletes the page's talk page in addition. If you choose the F8 (moved to Commons) criterion, this option is ignored and the talk page is *not* deleted.",
 							checked: Twinkle.getPref('deleteTalkPageOnDelete'),
-							event: (event) => event.stopPropagation()
-						}
-					]
+							event: (event) => event.stopPropagation(),
+						},
+					],
 				});
 			}
 			deleteOptions.append({
@@ -139,44 +150,45 @@ export abstract class SpeedyCore extends TwinkleModule {
 						label: 'Also delete all redirects',
 						value: 'deleteRedirects',
 						name: 'deleteRedirects',
-						tooltip: 'This option deletes all incoming redirects in addition. Avoid this option for procedural (e.g. move/merge) deletions.',
+						tooltip:
+							'This option deletes all incoming redirects in addition. Avoid this option for procedural (e.g. move/merge) deletions.',
 						checked: Twinkle.getPref('deleteRedirectsOnDelete'),
-						event: (event) => event.stopPropagation()
+						event: (event) => event.stopPropagation(),
 					},
 					{
 						label: 'Delete under multiple criteria',
 						value: 'delmultiple',
 						name: 'delmultiple',
-						tooltip: 'When selected, you can select several criteria that apply to the page. For example, G11 and A7 are a common combination for articles.',
+						tooltip:
+							'When selected, you can select several criteria that apply to the page. For example, G11 and A7 are a common combination for articles.',
 						event: (event) => {
 							this.modeChanged(event.target.form);
 							event.stopPropagation();
-						}
+						},
 					},
 					{
 						label: 'Notify page creator of page deletion',
 						value: 'warnusertalk',
 						name: 'warnusertalk',
-						tooltip: 'A notification template will be placed on the talk page of the creator, IF you have a notification enabled in your Twinkle preferences ' +
+						tooltip:
+							'A notification template will be placed on the talk page of the creator, IF you have a notification enabled in your Twinkle preferences ' +
 							'for the criterion you choose AND this box is checked. The creator may be welcomed as well.',
 						checked: !this.hasCSD,
-						event: (event) => event.stopPropagation()
-					}
-				]
+						event: (event) => event.stopPropagation(),
+					},
+				],
 			});
 		}
 
-
-
 		let tagOptions = form.append({
 			type: 'div',
-			name: 'tag_options'
+			name: 'tag_options',
 		});
 
 		if (Morebits.userIsSysop) {
 			tagOptions.append({
 				type: 'header',
-				label: 'Tag-related options'
+				label: 'Tag-related options',
 			});
 		}
 
@@ -187,44 +199,44 @@ export abstract class SpeedyCore extends TwinkleModule {
 					label: 'Notify page creator if possible',
 					value: 'notify',
 					name: 'notify',
-					tooltip: 'A notification template will be placed on the talk page of the creator, IF you have a notification enabled in your Twinkle preferences ' +
+					tooltip:
+						'A notification template will be placed on the talk page of the creator, IF you have a notification enabled in your Twinkle preferences ' +
 						'for the criterion you choose AND this box is checked. The creator may be welcomed as well.',
 					checked: !Morebits.userIsSysop || !(this.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
-					event: (event) => event.stopPropagation()
+					event: (event) => event.stopPropagation(),
 				},
 				{
 					label: 'Tag for creation protection (salting) as well',
 					value: 'requestsalt',
 					name: 'requestsalt',
-					tooltip: 'When selected, the speedy deletion tag will be accompanied by a {{salt}} tag requesting that the deleting administrator apply creation protection. Only select if this page has been repeatedly recreated.',
-					event: (event) => event.stopPropagation()
+					tooltip:
+						'When selected, the speedy deletion tag will be accompanied by a {{salt}} tag requesting that the deleting administrator apply creation protection. Only select if this page has been repeatedly recreated.',
+					event: (event) => event.stopPropagation(),
 				},
 				{
 					label: 'Tag with multiple criteria',
 					value: 'multiple',
 					name: 'multiple',
-					tooltip: 'When selected, you can select several criteria that apply to the page. For example, G11 and A7 are a common combination for articles.',
+					tooltip:
+						'When selected, you can select several criteria that apply to the page. For example, G11 and A7 are a common combination for articles.',
 					event: (event) => {
 						this.modeChanged(event.target.form);
 						event.stopPropagation();
-					}
-				}
-			]
+					},
+				},
+			],
 		});
-
-
-
 
 		form.append({
 			type: 'div',
 			id: 'prior-deletion-count',
-			style: 'font-style: italic'
+			style: 'font-style: italic',
 		});
 
 		form.append({
 			type: 'div',
 			name: 'work_area',
-			label: 'Failed to initialize the CSD module. Please try again, or tell the Twinkle developers about the issue.'
+			label: 'Failed to initialize the CSD module. Please try again, or tell the Twinkle developers about the issue.',
 		});
 
 		if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
@@ -239,7 +251,6 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 		// Check for prior deletions.  Just once, upon init
 		this.priorDeletionCount();
-
 	}
 
 	priorDeletionCount() {
@@ -251,10 +262,10 @@ export abstract class SpeedyCore extends TwinkleModule {
 			leaction: 'delete/delete', // Just pure page deletion, no redirect overwrites or revdel
 			letitle: mw.config.get('wgPageName'),
 			leprop: '', // We're just counting we don't actually care about the entries
-			lelimit: 5  // A little bit goes a long way
+			lelimit: 5, // A little bit goes a long way
 		};
 
-		new Api('Checking for past deletions', query).post().then(apiobj => {
+		new Api('Checking for past deletions', query).post().then((apiobj) => {
 			let response = apiobj.getResponse();
 			let delCount = response.query.logevents.length;
 			if (delCount) {
@@ -273,7 +284,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 				// Provide a link to page logs (CSD templates have one for sysops)
 				let link = Morebits.htmlNode('a', '(logs)');
-				link.setAttribute('href', mw.util.getUrl('Special:Log', {page: mw.config.get('wgPageName')}));
+				link.setAttribute('href', mw.util.getUrl('Special:Log', { page: mw.config.get('wgPageName') }));
 				link.setAttribute('target', '_blank');
 
 				$('#prior-deletion-count').text(message + ' '); // Space before log link
@@ -284,11 +295,11 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 	getMode() {
 		let form = this.result;
-		return this.mode = {
+		return (this.mode = {
 			isSysop: !!form.tag_only && !form.tag_only.checked,
 			isMultiple: form.tag_only && !form.tag_only.checked ? form.delmultiple.checked : form.multiple.checked,
-			isRadioClick: Twinkle.getPref('speedySelectionStyle') === 'radioClick'
-		};
+			isRadioClick: Twinkle.getPref('speedySelectionStyle') === 'radioClick',
+		});
 	}
 
 	modeChanged(form: HTMLFormElement) {
@@ -301,13 +312,13 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 		let work_area = new Morebits.quickForm.element({
 			type: 'div',
-			name: 'work_area'
+			name: 'work_area',
 		});
 
 		if (this.mode.isMultiple && this.mode.isRadioClick) {
 			work_area.append({
 				type: 'div',
-				label: 'When finished choosing criteria, click:'
+				label: 'When finished choosing criteria, click:',
 			});
 			work_area.append({
 				type: 'button',
@@ -316,7 +327,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 				event: (event) => {
 					this.evaluate(event);
 					event.stopPropagation();
-				}
+				},
 			});
 		}
 
@@ -339,7 +350,6 @@ export abstract class SpeedyCore extends TwinkleModule {
 	}
 
 	appendCriteriaLists(work_area: Morebits.quickForm.element) {
-
 		this.namespace = mw.config.get('wgNamespaceNumber');
 		this.isRedirect = Morebits.isPageRedirect();
 
@@ -352,7 +362,6 @@ export abstract class SpeedyCore extends TwinkleModule {
 			}
 		});
 	}
-
 
 	generateCsdList(list: Array<criterion>) {
 		let mode = this.mode;
@@ -369,65 +378,67 @@ export abstract class SpeedyCore extends TwinkleModule {
 			e.stopPropagation();
 		};
 
-		return list.map((critElement) => {
-			let criterion = $.extend({}, critElement);
+		return list
+			.map((critElement) => {
+				let criterion = $.extend({}, critElement);
 
-			if (mode.isMultiple) {
-				if (criterion.hideWhenMultiple) {
+				if (mode.isMultiple) {
+					if (criterion.hideWhenMultiple) {
+						return null;
+					}
+					if (criterion.hideSubgroupWhenMultiple) {
+						criterion.subgroup = null;
+					}
+				} else {
+					if (criterion.hideWhenSingle) {
+						return null;
+					}
+					if (criterion.hideSubgroupWhenSingle) {
+						criterion.subgroup = null;
+					}
+				}
+
+				if (mode.isSysop) {
+					if (criterion.hideWhenSysop) {
+						return null;
+					}
+					if (criterion.hideSubgroupWhenSysop) {
+						criterion.subgroup = null;
+					}
+				} else {
+					if (criterion.hideWhenUser) {
+						return null;
+					}
+					if (criterion.hideSubgroupWhenUser) {
+						criterion.subgroup = null;
+					}
+				}
+
+				if (Morebits.isPageRedirect() && criterion.hideWhenRedirect) {
 					return null;
 				}
-				if (criterion.hideSubgroupWhenMultiple) {
-					criterion.subgroup = null;
-				}
-			} else {
-				if (criterion.hideWhenSingle) {
+
+				if (criterion.showInNamespaces && criterion.showInNamespaces.indexOf(this.namespace) < 0) {
 					return null;
 				}
-				if (criterion.hideSubgroupWhenSingle) {
-					criterion.subgroup = null;
-				}
-			}
-
-			if (mode.isSysop) {
-				if (criterion.hideWhenSysop) {
+				if (criterion.hideInNamespaces && criterion.hideInNamespaces.indexOf(this.namespace) > -1) {
 					return null;
 				}
-				if (criterion.hideSubgroupWhenSysop) {
-					criterion.subgroup = null;
+
+				if (criterion.subgroup && !mode.isMultiple && mode.isRadioClick) {
+					criterion.subgroup = makeArray(criterion.subgroup).concat({
+						type: 'button',
+						name: 'submit', // ends up being called "csd.submit" so this is OK
+						label: mode.isSysop ? 'Delete page' : 'Tag page',
+						event: submitSubgroupHandler,
+					});
+					// FIXME: does this do anything?
+					criterion.event = openSubgroupHandler;
 				}
-			} else {
-				if (criterion.hideWhenUser) {
-					return null;
-				}
-				if (criterion.hideSubgroupWhenUser) {
-					criterion.subgroup = null;
-				}
-			}
 
-			if (Morebits.isPageRedirect() && criterion.hideWhenRedirect) {
-				return null;
-			}
-
-			if (criterion.showInNamespaces && criterion.showInNamespaces.indexOf(this.namespace) < 0) {
-				return null;
-			}
-			if (criterion.hideInNamespaces && criterion.hideInNamespaces.indexOf(this.namespace) > -1) {
-				return null;
-			}
-
-			if (criterion.subgroup && !mode.isMultiple && mode.isRadioClick) {
-				criterion.subgroup = makeArray(criterion.subgroup).concat({
-					type: 'button',
-					name: 'submit',  // ends up being called "csd.submit" so this is OK
-					label: mode.isSysop ? 'Delete page' : 'Tag page',
-					event: submitSubgroupHandler
-				});
-				// FIXME: does this do anything?
-				criterion.event = openSubgroupHandler;
-			}
-
-			return criterion;
-		}).filter(e => e); // don't include items that have been made null
+				return criterion;
+			})
+			.filter((e) => e); // don't include items that have been made null
 	}
 
 	makeFlatObject() {
@@ -439,12 +450,10 @@ export abstract class SpeedyCore extends TwinkleModule {
 		});
 	}
 
-
 	// UI creation ends here!
 
 	evaluate(e: QuickFormEvent | FormSubmitEvent) {
-		if (e.target.type === 'checkbox' || e.target.type === 'text' ||
-			e.target.type === 'select') {
+		if (e.target.type === 'checkbox' || e.target.type === 'text' || e.target.type === 'select') {
 			return;
 		}
 		this.params = Morebits.quickForm.getInputData(this.result);
@@ -469,7 +478,6 @@ export abstract class SpeedyCore extends TwinkleModule {
 			tm.add(this.deleteTalk, [this.deletePage]);
 			tm.add(this.deleteRedirects, [this.deletePage]);
 			tm.add(this.noteToCreator, [this.deletePage, this.fetchCreatorInfo]);
-
 		} else {
 			// Tagging
 			tm.add(this.checkPage, []);
@@ -500,25 +508,35 @@ export abstract class SpeedyCore extends TwinkleModule {
 			params.promptForSummary = params.normalizeds.some((norm) => {
 				return Twinkle.getPref('promptForSpeedyDeletionSummary').indexOf(norm) !== -1;
 			});
-			params.warnUser = params.warnusertalk && params.normalizeds.some((norm, index) => {
-				return Twinkle.getPref('warnUserOnSpeedyDelete').indexOf(norm) !== -1 &&
-					!(norm === 'g6' && params.values[index] !== 'copypaste');
-			});
+			params.warnUser =
+				params.warnusertalk &&
+				params.normalizeds.some((norm, index) => {
+					return (
+						Twinkle.getPref('warnUserOnSpeedyDelete').indexOf(norm) !== -1 &&
+						!(norm === 'g6' && params.values[index] !== 'copypaste')
+					);
+				});
 		} else {
-			params.notifyUser = params.notify && params.normalizeds.some(function(norm, index) {
-				return Twinkle.getPref('notifyUserOnSpeedyDeletionNomination').indexOf(norm) !== -1 &&
-					!(norm === 'g6' && params.csd[index] !== 'copypaste');
-			});
+			params.notifyUser =
+				params.notify &&
+				params.normalizeds.some(function (norm, index) {
+					return (
+						Twinkle.getPref('notifyUserOnSpeedyDeletionNomination').indexOf(norm) !== -1 &&
+						!(norm === 'g6' && params.csd[index] !== 'copypaste')
+					);
+				});
 			params.redactContents = params.csd.some((csd) => {
 				return this.flatObject[csd].redactContents;
 			});
 		}
-		params.watch = params.normalizeds.some(function(norm) {
+		params.watch = params.normalizeds.some(function (norm) {
 			return Twinkle.getPref('watchSpeedyPages').indexOf(norm) !== -1 && Twinkle.getPref('watchSpeedyExpiry');
 		});
-		params.welcomeuser = (params.notifyUser || params.warnUser) && params.normalizeds.some((norm) => {
-			return Twinkle.getPref('welcomeUserOnSpeedyDeletionNotification').indexOf(norm) !== -1;
-		});
+		params.welcomeuser =
+			(params.notifyUser || params.warnUser) &&
+			params.normalizeds.some((norm) => {
+				return Twinkle.getPref('welcomeUserOnSpeedyDeletionNotification').indexOf(norm) !== -1;
+			});
 
 		this.preprocessParamInputs();
 	}
@@ -564,7 +582,6 @@ export abstract class SpeedyCore extends TwinkleModule {
 				});
 			});
 			code += '}}';
-
 		} else {
 			code = '{{db-' + params.csd[0];
 			obj_entries(params.templateParams[0]).forEach(([param, value]) => {
@@ -606,13 +623,11 @@ export abstract class SpeedyCore extends TwinkleModule {
 		// special cases: "db" and "db-multiple"
 		if (params.normalizeds.length > 1) {
 			notifytext = '\n{{subst:db-' + (params.warnUser ? 'deleted' : 'notice') + '-multiple|1=' + Morebits.pageNameNorm;
-			params.normalizeds.forEach(function(norm, idx) {
+			params.normalizeds.forEach(function (norm, idx) {
 				notifytext += '|' + (idx + 2) + '=' + norm.toUpperCase();
 			});
-
 		} else if (params.normalizeds[0] === 'db') {
 			notifytext = '\n{{subst:db-reason-' + (params.warnUser ? 'deleted' : 'notice') + '|1=' + Morebits.pageNameNorm;
-
 		} else {
 			notifytext = '\n{{subst:db-csd-' + (params.warnUser ? 'deleted' : 'notice') + '-custom|1=';
 			// Get rid of this by tweaking the template!
@@ -669,13 +684,30 @@ export abstract class SpeedyCore extends TwinkleModule {
 			// check for existing speedy deletion tags
 			let tag = /(?:\{\{\s*(db|delete|db-.*?|speedy deletion-.*?)(?:\s*\||\s*\}\}))/.exec(text);
 			// This won't make use of the db-multiple template but it probably should
-			if (tag && !confirm('The page already has the CSD-related template {{' + tag[1] + '}} on it.  Do you want to add another CSD template?')) {
+			if (
+				tag &&
+				!confirm(
+					'The page already has the CSD-related template {{' +
+						tag[1] +
+						'}} on it.  Do you want to add another CSD template?'
+				)
+			) {
 				return $.Deferred().reject();
 			}
 
 			// check for existing XFD tags
-			let xfd = /\{\{((?:article for deletion|proposed deletion|prod blp|template for discussion)\/dated|[cfm]fd\b)/i.exec(text) || /#invoke:(RfD)/.exec(text);
-			if (xfd && !confirm('The deletion-related template {{' + xfd[1] + '}} was found on the page. Do you still want to add a CSD template?')) {
+			let xfd =
+				/\{\{((?:article for deletion|proposed deletion|prod blp|template for discussion)\/dated|[cfm]fd\b)/i.exec(
+					text
+				) || /#invoke:(RfD)/.exec(text);
+			if (
+				xfd &&
+				!confirm(
+					'The deletion-related template {{' +
+						xfd[1] +
+						'}} was found on the page. Do you still want to add a CSD template?'
+				)
+			) {
 				return $.Deferred().reject();
 			}
 
@@ -697,7 +729,11 @@ export abstract class SpeedyCore extends TwinkleModule {
 		}
 
 		// Post on talk if it is not possible to tag
-		if (!pageobj.canEdit() || ['wikitext', 'Scribunto', 'javascript', 'css', 'sanitized-css'].indexOf(pageobj.getContentModel()) === -1) { // Attempt to place on talk page
+		if (
+			!pageobj.canEdit() ||
+			['wikitext', 'Scribunto', 'javascript', 'css', 'sanitized-css'].indexOf(pageobj.getContentModel()) === -1
+		) {
+			// Attempt to place on talk page
 			let talkName = new mw.Title(pageobj.getPageName()).getTalkPage().toText();
 
 			if (talkName === pageobj.getPageName()) {
@@ -709,7 +745,9 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 			let talk_page = new Page(talkName, 'Automatically placing tag on talk page');
 			talk_page.setNewSectionTitle(pageobj.getPageName() + ' nominated for CSD, request deletion');
-			talk_page.setNewSectionText(code + '\n\nI was unable to tag ' + pageobj.getPageName() + ' so please delete it. ~~~~');
+			talk_page.setNewSectionText(
+				code + '\n\nI was unable to tag ' + pageobj.getPageName() + ' so please delete it. ~~~~'
+			);
 			talk_page.setCreateOption('recreate');
 			talk_page.setFollowRedirect(true);
 			talk_page.setWatchlist(params.watch);
@@ -721,12 +759,16 @@ export abstract class SpeedyCore extends TwinkleModule {
 		text = text.replace(/\{\{\s*([Uu]serspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/g, '');
 		if (mw.config.get('wgNamespaceNumber') === 6) {
 			// remove "move to Commons" tag - deletion-tagged files cannot be moved to Commons
-			text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
+			text = text.replace(
+				/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi,
+				''
+			);
 		}
 
 		// Wrap SD template in noinclude tags if we are in template space.
 		// Won't work with userboxes in userspace, or any other transcluded page outside template space
-		if (mw.config.get('wgNamespaceNumber') === 10) {  // Template:
+		if (mw.config.get('wgNamespaceNumber') === 10) {
+			// Template:
 			code = '<noinclude>' + code + '</noinclude>';
 		}
 
@@ -746,11 +788,12 @@ export abstract class SpeedyCore extends TwinkleModule {
 		let editsummary;
 		if (params.normalizeds[0] === 'db') {
 			editsummary = 'Requesting [[WP:CSD|speedy deletion]] with rationale "' + params.templateParams[0]['1'] + '".';
-
 		} else {
-			let criteriaText = params.normalizeds.map((norm) => {
-				return '[[WP:CSD#' + norm.toUpperCase() + '|CSD ' + norm.toUpperCase() + ']]';
-			}).join(', ');
+			let criteriaText = params.normalizeds
+				.map((norm) => {
+					return '[[WP:CSD#' + norm.toUpperCase() + '|CSD ' + norm.toUpperCase() + ']]';
+				})
+				.join(', ');
 			editsummary = 'Requesting speedy deletion (' + criteriaText + ').';
 		}
 
@@ -788,21 +831,33 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 			// disallow notifying yourself
 		} else if (initialContrib === mw.config.get('wgUserName')) {
-			Morebits.status.warn('Note','You (' + initialContrib + ') created this page; skipping user notification');
+			Morebits.status.warn('Note', 'You (' + initialContrib + ') created this page; skipping user notification');
 			initialContrib = null;
 
 			// don't notify users when their user talk page is nominated/deleted
 		} else if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
-			Morebits.status.warn('Note','Notifying initial contributor: this user created their own user talk page; skipping notification');
+			Morebits.status.warn(
+				'Note',
+				'Notifying initial contributor: this user created their own user talk page; skipping notification'
+			);
 			initialContrib = null;
 
 			// quick hack to prevent excessive unwanted notifications, per request. Should actually be configurable on recipient page...
 		} else if ((initialContrib === 'Cyberbot I' || initialContrib === 'SoxBot') && params.normalizeds[0] === 'f2') {
-			Morebits.status.warn('Note', 'Notifying initial contributor: page created procedurally by bot; skipping notification');
+			Morebits.status.warn(
+				'Note',
+				'Notifying initial contributor: page created procedurally by bot; skipping notification'
+			);
 			initialContrib = null;
 
 			// Check for already existing tags
-		} else if (this.hasCSD && params.warnUser && !confirm('The page is has a deletion-related tag, and thus the creator has likely been notified.  Do you want to notify them for this deletion as well?')) {
+		} else if (
+			this.hasCSD &&
+			params.warnUser &&
+			!confirm(
+				'The page is has a deletion-related tag, and thus the creator has likely been notified.  Do you want to notify them for this deletion as well?'
+			)
+		) {
 			Morebits.status.info('Notifying initial contributor', 'canceled by user; skipping notification.');
 			initialContrib = null;
 		}
@@ -812,10 +867,14 @@ export abstract class SpeedyCore extends TwinkleModule {
 			return $.Deferred().resolve();
 		}
 
-		let usertalkpage = new Page('User talk:' + initialContrib, 'Notifying initial contributor (' + initialContrib + ')');
+		let usertalkpage = new Page(
+			'User talk:' + initialContrib,
+			'Notifying initial contributor (' + initialContrib + ')'
+		);
 
 		let editsummary = 'Notification: speedy deletion' + (params.warnUser ? '' : ' nomination');
-		if (!params.redactContents) {  // no article name in summary for attack page taggings
+		if (!params.redactContents) {
+			// no article name in summary for attack page taggings
 			editsummary += ' of [[:' + Morebits.pageNameNorm + ']].';
 		} else {
 			editsummary += ' of an attack page.';
@@ -839,11 +898,14 @@ export abstract class SpeedyCore extends TwinkleModule {
 			contentmodel: 'wikitext',
 			title: mw.config.get('wgPageName'),
 			disablelimitreport: true,
-			format: 'json'
+			format: 'json',
 		});
 		api.setStatusElement(statusIndicator);
-		return api.post().then( (apiobj) => {
-			let reason = decodeURIComponent($(apiobj.getResponse().parse.text).find('#delete-reason').text()).replace(/\+/g, ' ');
+		return api.post().then((apiobj) => {
+			let reason = decodeURIComponent($(apiobj.getResponse().parse.text).find('#delete-reason').text()).replace(
+				/\+/g,
+				' '
+			);
 			if (!reason) {
 				statusIndicator.warn('Unable to generate summary from deletion template');
 			} else {
@@ -856,13 +918,19 @@ export abstract class SpeedyCore extends TwinkleModule {
 	parseDeletionReason() {
 		let params = this.params;
 		if (!params.normalizeds.length && params.normalizeds[0] === 'db') {
-			params.deleteReason = prompt('Enter the deletion summary to use, which will be entered into the deletion log:', '');
+			params.deleteReason = prompt(
+				'Enter the deletion summary to use, which will be entered into the deletion log:',
+				''
+			);
 			return $.Deferred().resolve();
 		} else {
 			let code = this.getTaggingCode();
 			return this.parseWikitext(code).then((reason) => {
 				if (params.promptForSummary) {
-					reason = prompt('Enter the deletion summary to use, or press OK to accept the automatically generated one.', reason);
+					reason = prompt(
+						'Enter the deletion summary to use, or press OK to accept the automatically generated one.',
+						reason
+					);
 				}
 				params.deleteReason = reason;
 			});
@@ -878,7 +946,10 @@ export abstract class SpeedyCore extends TwinkleModule {
 			Morebits.status.error('Asking for reason', 'User cancelled');
 			return $.Deferred().reject();
 		} else if (!params.deleteReason || !params.deleteReason.trim()) {
-			Morebits.status.error('Asking for reason', "you didn't give one.  I don't know... what with admins and their apathetic antics... I give up...");
+			Morebits.status.error(
+				'Asking for reason',
+				"you didn't give one.  I don't know... what with admins and their apathetic antics... I give up..."
+			);
 			return $.Deferred().reject();
 		}
 
@@ -892,11 +963,8 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 	deleteTalk() {
 		let params = this.params;
-		if (params.deleteTalkPage &&
-			document.getElementById('ca-talk').className !== 'new') {
-
-			let talkpage = new Page(new mw.Title(Morebits.pageNameNorm).getTalkPage().toText(),
-				'Deleting talk page');
+		if (params.deleteTalkPage && document.getElementById('ca-talk').className !== 'new') {
+			let talkpage = new Page(new mw.Title(Morebits.pageNameNorm).getTalkPage().toText(), 'Deleting talk page');
 			talkpage.setEditSummary('[[WP:CSD#G8|G8]]: Talk page of deleted page "' + Morebits.pageNameNorm + '"');
 			talkpage.setChangeTags(Twinkle.changeTags);
 			return talkpage.deletePage().then(() => {
@@ -916,7 +984,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 				titles: mw.config.get('wgPageName'),
 				prop: 'redirects',
 				rdlimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
-				format: 'json'
+				format: 'json',
 			});
 			wikipedia_api.setStatusElement(new Morebits.status('Deleting redirects'));
 			wikipedia_api.post().then((apiobj) => {
@@ -934,8 +1002,8 @@ export abstract class SpeedyCore extends TwinkleModule {
 				statusIndicator.status('0%');
 
 				let current = 0;
-				let onsuccess = function(apiobjInner: Api) {
-					let now = Math.round(100 * ++current / total) + '%';
+				let onsuccess = function (apiobjInner: Api) {
+					let now = Math.round((100 * ++current) / total) + '%';
 					statusIndicator.update(now);
 					apiobjInner.getStatusElement().unlink();
 					if (current >= total) {
@@ -947,7 +1015,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 				Morebits.wiki.addCheckpoint();
 
-				snapshot.forEach(function(value) {
+				snapshot.forEach(function (value) {
 					let title = value.title;
 					let page = new Page(title, 'Deleting redirect "' + title + '"');
 					page.setEditSummary('[[WP:CSD#G8|G8]]: Redirect to deleted page "' + Morebits.pageNameNorm + '"');
@@ -971,12 +1039,16 @@ export abstract class SpeedyCore extends TwinkleModule {
 				this.dialog.close();
 				// XXX
 				// @ts-ignore
-				Twinkle.unlink.callback(isFile ? 'Removing usages of and/or links to deleted file ' + Morebits.pageNameNorm : 'Removing links to deleted page ' + Morebits.pageNameNorm);
-			}
+				Twinkle.unlink.callback(
+					isFile
+						? 'Removing usages of and/or links to deleted file ' + Morebits.pageNameNorm
+						: 'Removing links to deleted page ' + Morebits.pageNameNorm
+				);
+			},
 		});
 		$bigtext = $('<span>', {
 			text: isFile ? 'To orphan backlinks and remove instances of file usage' : 'To orphan backlinks',
-			css: { fontSize: '130%', fontWeight: 'bold' }
+			css: { fontSize: '130%', fontWeight: 'bold' },
 		});
 		Morebits.status.info($bigtext[0], $link[0]);
 
@@ -985,9 +1057,11 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 	addToLog() {
 		let params = this.params;
-		let shouldLog = Twinkle.getPref('logSpeedyNominations') && params.normalizeds.some(function(norm) {
-			return Twinkle.getPref('noLogOnSpeedyNomination').indexOf(norm) === -1;
-		});
+		let shouldLog =
+			Twinkle.getPref('logSpeedyNominations') &&
+			params.normalizeds.some(function (norm) {
+				return Twinkle.getPref('noLogOnSpeedyNomination').indexOf(norm) === -1;
+			});
 		if (!shouldLog) {
 			return $.Deferred().resolve();
 		}
@@ -1002,14 +1076,17 @@ export abstract class SpeedyCore extends TwinkleModule {
 		let extraInfo = '';
 
 		// If a logged file is deleted but exists on commons, the wikilink will be blue, so provide a link to the log
-		let fileLogLink = mw.config.get('wgNamespaceNumber') === 6 ? ' ([{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} log])' : '';
+		let fileLogLink =
+			mw.config.get('wgNamespaceNumber') === 6
+				? ' ([{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} log])'
+				: '';
 
 		let editsummary = 'Logging speedy deletion nomination';
 
 		let appendText = '# [[:' + Morebits.pageNameNorm;
 
-
-		if (!params.redactContents) {  // no article name in log for attack page taggings
+		if (!params.redactContents) {
+			// no article name in log for attack page taggings
 			appendText += ']]' + fileLogLink + ': ';
 			editsummary += ' of [[:' + Morebits.pageNameNorm + ']].';
 		} else {
@@ -1018,14 +1095,23 @@ export abstract class SpeedyCore extends TwinkleModule {
 		}
 
 		if (params.normalizeds.length > 1) {
-			let criteriaText = params.normalizeds.map((norm) => {
-				return '[[WP:CSD#' + norm.toUpperCase() + '|' + norm.toUpperCase() + ']]';
-			}).join(', ');
+			let criteriaText = params.normalizeds
+				.map((norm) => {
+					return '[[WP:CSD#' + norm.toUpperCase() + '|' + norm.toUpperCase() + ']]';
+				})
+				.join(', ');
 			appendText += 'multiple criteria (' + criteriaText + ')';
 		} else if (params.normalizeds[0] === 'db') {
 			appendText += '{{tl|db-reason}}';
 		} else {
-			appendText += '[[WP:CSD#' + params.normalizeds[0].toUpperCase() + '|CSD ' + params.normalizeds[0].toUpperCase() + ']] ({{tl|db-' + params.csd[0] + '}})';
+			appendText +=
+				'[[WP:CSD#' +
+				params.normalizeds[0].toUpperCase() +
+				'|CSD ' +
+				params.normalizeds[0].toUpperCase() +
+				']] ({{tl|db-' +
+				params.csd[0] +
+				'}})';
 		}
 
 		// Treat custom rationale individually
@@ -1073,5 +1159,4 @@ export abstract class SpeedyCore extends TwinkleModule {
 	 * succeeds, doesn't return anything.
 	 */
 	validateInputs(): string | void {}
-
 }

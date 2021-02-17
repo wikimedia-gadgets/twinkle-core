@@ -1,7 +1,7 @@
-import {arr_includes, obj_entries} from './utils';
-import { loadMessages } from "./messenger";
-import { messages } from "./messages";
-import { Config, configPreference } from "./Config";
+import { arr_includes, obj_entries } from './utils';
+import { loadMessages } from './messenger';
+import { messages } from './messages';
+import { Config, configPreference } from './Config';
 
 /**
  * Defined as a namespace: anything that's exported from here (such as
@@ -11,7 +11,6 @@ import { Config, configPreference } from "./Config";
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Twinkle {
-
 	/**
 	 * Localised script name
 	 */
@@ -43,16 +42,9 @@ export namespace Twinkle {
 	/**
 	 * List of special pages where Twinkle is active.
 	 */
-	export let activeSpecialPages = [
-		'Block',
-		'Contributions',
-		'Recentchanges',
-		'Recentchangeslinked'
-	].concat(Morebits.userIsSysop ? [
-		'DeletedContributions',
-		'Prefixindex'
-	] : []);
-
+	export let activeSpecialPages = ['Block', 'Contributions', 'Recentchanges', 'Recentchangeslinked'].concat(
+		Morebits.userIsSysop ? ['DeletedContributions', 'Prefixindex'] : []
+	);
 
 	// TODO: config and prefs setup needs proper thought
 	/**
@@ -120,8 +112,8 @@ export namespace Twinkle {
 	 * Extends the defaultConfig
 	 * @param config
 	 */
-	export function setDefaultConfig(config: {name: string, value: any}[]) {
-		$.each(config, function(name, value) {
+	export function setDefaultConfig(config: { name: string; value: any }[]) {
+		$.each(config, function (name, value) {
 			defaultConfig[name] = value;
 		});
 	}
@@ -180,7 +172,13 @@ export namespace Twinkle {
 	 *
 	 * @returns the DOM node of the new item (a DIV element) or null
 	 */
-	export function addPortlet(navigation: string, id: string, text: string, type: string, nextnodeid: string): HTMLElement {
+	export function addPortlet(
+		navigation: string,
+		id: string,
+		text: string,
+		type: string,
+		nextnodeid: string
+	): HTMLElement {
 		// sanity checks, and get required DOM nodes
 		let root = document.getElementById(navigation) || document.querySelector(navigation);
 		if (!root) {
@@ -212,7 +210,8 @@ export namespace Twinkle {
 				if (navigation !== 'portal' && navigation !== 'left-navigation' && navigation !== 'right-navigation') {
 					navigation = 'mw-panel';
 				}
-				outerNavClass = 'vector-menu vector-menu-' + (navigation === 'mw-panel' ? 'portal' : type === 'menu' ? 'dropdown' : 'tabs');
+				outerNavClass =
+					'vector-menu vector-menu-' + (navigation === 'mw-panel' ? 'portal' : type === 'menu' ? 'dropdown' : 'tabs');
 				innerDivClass = 'vector-menu-content';
 				break;
 			case 'modern':
@@ -267,7 +266,7 @@ export namespace Twinkle {
 				let a = document.createElement('a');
 				a.href = '#';
 
-				$(a).click(function(e) {
+				$(a).click(function (e) {
 					e.preventDefault();
 				});
 
@@ -298,11 +297,28 @@ export namespace Twinkle {
 	 * @param id
 	 * @param tooltip
 	 */
-	export function addPortletLink(task: string | (() => void), text: string, id: string, tooltip: string): HTMLLIElement {
+	export function addPortletLink(
+		task: string | (() => void),
+		text: string,
+		id: string,
+		tooltip: string
+	): HTMLLIElement {
 		if (Twinkle.getPref('portletArea') !== null) {
-			Twinkle.addPortlet(Twinkle.getPref('portletArea'), Twinkle.getPref('portletId'), Twinkle.getPref('portletName'), Twinkle.getPref('portletType'), Twinkle.getPref('portletNext'));
+			Twinkle.addPortlet(
+				Twinkle.getPref('portletArea'),
+				Twinkle.getPref('portletId'),
+				Twinkle.getPref('portletName'),
+				Twinkle.getPref('portletType'),
+				Twinkle.getPref('portletNext')
+			);
 		}
-		let link = mw.util.addPortletLink(Twinkle.getPref('portletId'), typeof task === 'string' ? task : '#', text, id, tooltip);
+		let link = mw.util.addPortletLink(
+			Twinkle.getPref('portletId'),
+			typeof task === 'string' ? task : '#',
+			text,
+			id,
+			tooltip
+		);
 		$('.client-js .skin-vector #p-cactions').css('margin-right', 'initial');
 		if (typeof task === 'function') {
 			$(link).click(function (ev) {
@@ -316,7 +332,6 @@ export namespace Twinkle {
 		return link;
 	}
 
-
 	const userPrefsLoaded = $.Deferred();
 
 	/**
@@ -325,7 +340,7 @@ export namespace Twinkle {
 	 * @param [name] - name of module used to check if is disabled.
 	 * If name is not given, module is loaded unconditionally.
 	 */
-	export function addInitCallback(func: (() => void), name: string) {
+	export function addInitCallback(func: () => void, name: string) {
 		// initCallbacks.push({ func: func, name: name });
 		userPrefsLoaded.then(() => {
 			if (!name || disabledModules.indexOf(name) === -1) {
@@ -340,18 +355,18 @@ export namespace Twinkle {
 	/**
 	 * List of registered modules
 	 */
-	export let registeredModules: (typeof TwinkleModule)[] = [];
+	export let registeredModules: typeof TwinkleModule[] = [];
 
 	/**
 	 * Load user preferences from the user's /twinkleoptions.js subpage,
 	 * then initialises Twinkle
 	 */
 	export function init() {
-
 		getUserPrefs().always(function () {
-
-			if (mw.config.get('wgNamespaceNumber') === -1 &&
-				!arr_includes(activeSpecialPages, mw.config.get('wgCanonicalSpecialPageName'))) {
+			if (
+				mw.config.get('wgNamespaceNumber') === -1 &&
+				!arr_includes(activeSpecialPages, mw.config.get('wgCanonicalSpecialPageName'))
+			) {
 				return;
 			}
 
@@ -383,19 +398,22 @@ export namespace Twinkle {
 
 			// Increases text size in Twinkle dialogs, if so configured
 			if (Twinkle.getPref('dialogLargeFont')) {
-				mw.util.addCSS('.morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } ' +
-					'.morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }');
+				mw.util.addCSS(
+					'.morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } ' +
+						'.morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }'
+				);
 			}
 
 			// Hide the lingering space if the TW menu is empty
-			if (mw.config.get('skin') === 'vector' && Twinkle.getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
+			if (
+				mw.config.get('skin') === 'vector' &&
+				Twinkle.getPref('portletType') === 'menu' &&
+				$('#p-twinkle').length === 0
+			) {
 				$('#p-cactions').css('margin-right', 'initial');
 			}
-
 		});
-
 	}
-
 }
 
 function getUserPrefs(): JQuery.Promise<void> {
@@ -403,93 +421,95 @@ function getUserPrefs(): JQuery.Promise<void> {
 		scriptpathafter = '&action=raw&ctype=text/javascript&happy=yes';
 
 	return $.ajax({
-		url: scriptpathbefore + 'User:' + encodeURIComponent(mw.config.get('wgUserName')) + '/twinkleoptions.js' + scriptpathafter,
-		dataType: 'text'
-	}).then(function (optionsText) {
-
-		// Quick pass if user has no options
-		if (optionsText === '') {
-			return;
-		}
-
-		// Twinkle options are basically a JSON object with some comments. Strip those:
-		optionsText = optionsText.replace(/(?:^(?:\/\/[^\n]*\n)*\n*|(?:\/\/[^\n]*(?:\n|$))*$)/g, '');
-
-		// First version of options had some boilerplate code to make it eval-able -- strip that too. This part may become obsolete down the line.
-		if (optionsText.lastIndexOf('window.Twinkle.prefs = ', 0) === 0) {
-			optionsText = optionsText.replace(/(?:^window.Twinkle.prefs = |;\n*$)/g, '');
-		}
-
-		try {
-			let options = JSON.parse(optionsText);
-			if (options) {
-				if (options.twinkle || options.friendly) { // Old preferences format
-					Twinkle.prefs = $.extend(options.twinkle, options.friendly);
-				} else {
-					Twinkle.prefs = options;
-				}
-				// v2 established after unification of Twinkle/Friendly objects
-				Twinkle.prefs.optionsVersion = Twinkle.prefs.optionsVersion || 1;
+		url:
+			scriptpathbefore +
+			'User:' +
+			encodeURIComponent(mw.config.get('wgUserName')) +
+			'/twinkleoptions.js' +
+			scriptpathafter,
+		dataType: 'text',
+	})
+		.then(function (optionsText) {
+			// Quick pass if user has no options
+			if (optionsText === '') {
+				return;
 			}
-		} catch (e) {
-			mw.notify('Could not parse your Twinkle preferences', {type: 'error'});
-		}
-	}).catch(function () {
-		mw.notify('Could not load your Twinkle preferences', {type: 'error'});
-		// not rejected
-	});
-}
 
+			// Twinkle options are basically a JSON object with some comments. Strip those:
+			optionsText = optionsText.replace(/(?:^(?:\/\/[^\n]*\n)*\n*|(?:\/\/[^\n]*(?:\n|$))*$)/g, '');
+
+			// First version of options had some boilerplate code to make it eval-able -- strip that too. This part may become obsolete down the line.
+			if (optionsText.lastIndexOf('window.Twinkle.prefs = ', 0) === 0) {
+				optionsText = optionsText.replace(/(?:^window.Twinkle.prefs = |;\n*$)/g, '');
+			}
+
+			try {
+				let options = JSON.parse(optionsText);
+				if (options) {
+					if (options.twinkle || options.friendly) {
+						// Old preferences format
+						Twinkle.prefs = $.extend(options.twinkle, options.friendly);
+					} else {
+						Twinkle.prefs = options;
+					}
+					// v2 established after unification of Twinkle/Friendly objects
+					Twinkle.prefs.optionsVersion = Twinkle.prefs.optionsVersion || 1;
+				}
+			} catch (e) {
+				mw.notify('Could not parse your Twinkle preferences', { type: 'error' });
+			}
+		})
+		.catch(function () {
+			mw.notify('Could not load your Twinkle preferences', { type: 'error' });
+			// not rejected
+		});
+}
 
 /**
  * Base class for all Twinkle modules
  */
 export class TwinkleModule {
-
 	/**
 	 * The name of the module, used to check if the user
 	 * has the module disabled
 	 */
-	static moduleName: string
-	moduleName: string
+	static moduleName: string;
+	moduleName: string;
 
-	portletName: string
-	portletId: string
-	portletTooltip: string
+	portletName: string;
+	portletId: string;
+	portletTooltip: string;
 
 	constructor() {
 		let prefs = this.userPreferences();
 		if (prefs) {
-			Config.addSection(this.moduleName, {...prefs, module: this.moduleName});
-			Twinkle.setDefaultConfig(prefs.preferences.map(pref => {
-				return {
-					name: pref.name,
-					value: pref.default
-				}
-			}));
+			Config.addSection(this.moduleName, { ...prefs, module: this.moduleName });
+			Twinkle.setDefaultConfig(
+				prefs.preferences.map((pref) => {
+					return {
+						name: pref.name,
+						value: pref.default,
+					};
+				})
+			);
 		}
 	}
 
-	userPreferences(): { title: string, preferences: configPreference[] } | void {}
+	userPreferences(): { title: string; preferences: configPreference[] } | void {}
 
 	addPreference(pref) {
 		Config.addPreference(this.moduleName, pref);
 	}
 
 	addMenu() {
-		Twinkle.addPortletLink(
-			() => this.makeWindow(),
-			this.portletName,
-			this.portletId,
-			this.portletTooltip
-		);
+		Twinkle.addPortletLink(() => this.makeWindow(), this.portletName, this.portletId, this.portletTooltip);
 	}
 
 	/**
 	 * Set of links shown in the bottom right of the module dialog.
 	 * Object keys are labels and values are the wiki page names
 	 */
-	footerLinks: {[label: string]: string}
+	footerLinks: { [label: string]: string };
 
 	makeWindow() {}
 }
@@ -497,8 +517,7 @@ export class TwinkleModule {
 // Declare pre-existing globals. `Window` is the type of `window`.
 declare global {
 	interface Window {
-		TwinkleConfig?: Record<string, any>
-		FriendlyConfig?: Record<string, any>
+		TwinkleConfig?: Record<string, any>;
+		FriendlyConfig?: Record<string, any>;
 	}
 }
-

@@ -4,18 +4,16 @@
  * from outside the package.
  */
 
-
-export * from './twinkle'
+export * from './twinkle';
 
 // Utilities
-export * from './utils'
-export * from './messenger'
-export * from './Api'
-export * from './Page'
-
+export * from './utils';
+export * from './messenger';
+export * from './Api';
+export * from './Page';
 
 // Twinkle modules
-export * from './diffCore'
-export * from './speedyCore'
-export * from './tagCore'
-export * from './xfdCore'
+export * from './diffCore';
+export * from './speedyCore';
+export * from './tagCore';
+export * from './xfdCore';

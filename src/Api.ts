@@ -5,14 +5,16 @@ import { Twinkle } from './twinkle';
  * API parameters and sets the correct user agent
  */
 export class Api extends Morebits.wiki.api {
-
 	constructor(currentAction: string, query: Record<string, any>, statusElement?: Morebits.status) {
-		query = $.extend({
-			action: 'query',
-			format: 'json',
-			// tags isn't applicable for all API actions, it gives a warning but that's harmless
-			tags: Twinkle.changeTags
-		}, query);
+		query = $.extend(
+			{
+				action: 'query',
+				format: 'json',
+				// tags isn't applicable for all API actions, it gives a warning but that's harmless
+				tags: Twinkle.changeTags,
+			},
+			query
+		);
 		super(currentAction, query, null, statusElement, null);
 	}
 

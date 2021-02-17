@@ -5,7 +5,7 @@ export function makeArray<T>(obj: T | Array<T> | undefined | null): Array<T> {
 	if (Array.isArray(obj)) {
 		return obj;
 	}
-	return [ obj ];
+	return [obj];
 }
 
 /**
@@ -31,7 +31,7 @@ export function stripNs(title: string): string {
 export function addNs(title: string, namespaceNumber: number): string {
 	var title_obj = mw.Title.newFromUserInput(title, namespaceNumber);
 	if (!title_obj) {
-		return title;  // user entered invalid input; do nothing
+		return title; // user entered invalid input; do nothing
 	}
 	return title_obj.toText();
 }
@@ -52,24 +52,23 @@ export function makeTemplate(name: string, parameters: Record<string | number, s
 	return '{{' + name + parameterText + '}}';
 }
 
-
 // Non-polluting shims for common ES6 functions
 
 export function obj_values<T>(obj: { [s: string]: T } | ArrayLike<T>): T[] {
 	// @ts-ignore
-	return Object.values ? Object.values(obj) : Object.keys(obj).map(k => obj[k]);
+	return Object.values ? Object.values(obj) : Object.keys(obj).map((k) => obj[k]);
 }
 
 export function obj_entries<T>(obj: { [s: string]: T } | ArrayLike<T>): [string, T][] {
 	// @ts-ignore
-	return Object.entries ? Object.entries(obj) : Object.keys(obj).map(k => [k, obj[k]]);
+	return Object.entries ? Object.entries(obj) : Object.keys(obj).map((k) => [k, obj[k]]);
 }
 
 export function arr_includes<T>(arr: Array<T>, item: T): boolean {
 	return arr.indexOf(item) !== -1;
 }
 
-export function arr_find<T>(arr: Array<T>, predicate: ((item: T) => boolean)) {
+export function arr_find<T>(arr: Array<T>, predicate: (item: T) => boolean) {
 	// @ts-ignore
 	return Array.prototype.find ? arr.find(predicate) : arr.filter(predicate)[0];
 }
