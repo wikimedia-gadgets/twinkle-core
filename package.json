@@ -13,9 +13,9 @@
 		"morebits:lint": "eslint morebits/",
 		"morebits:lint:fix": "eslint morebits --fix",
 		"morebits:test": "qunit --require ./morebits/tests/mocking/mb_repl.js ./morebits/tests/*",
-		"test": "npx jest",
+		"test": "jest",
 		"build": "tsc || echo",
-		"docs": "npx typedoc src/index.ts --out docs"
+		"docs": "typedoc src/index.ts --out docs --ignoreCompilerErrors"
 	},
 	"files": [
 		"build/"
@@ -37,7 +37,7 @@
 		"prettier": "^2.2.1",
 		"qunit": "^2.13.0",
 		"ts-jest": "^26.4.4",
-		"typedoc": "^0.20.9",
+		"typedoc": "^0.19.2",
 		"typescript": "^4.1.2"
 	}
 }
