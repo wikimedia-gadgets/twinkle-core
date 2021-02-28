@@ -1,4 +1,4 @@
-import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src';
+import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
 
 describe('utils', function () {
 	test('makeArray', function () {
@@ -8,8 +8,12 @@ describe('utils', function () {
 		expect(makeArray([4, 5])).toEqual([4, 5]);
 	});
 
-	// Depends on MW mocking
-	test.skip('stripNs', function () {
+	test('MW mocking works', function() {
+		expect(mw.util.escapeRegExp('d?')).toBe('d\\?');
+	});
+
+	// Depends on MW title mocking
+	test('stripNs', function () {
 		expect(stripNs('Template:Foo')).toBe('Foo');
 	});
 
@@ -41,9 +45,11 @@ describe('utils', function () {
 	};
 
 	test('obj_values', () => {
+		// @ts-ignore
 		expect(obj_values(testObject)).toEqual(Object.values(testObject));
 	});
 	test('obj_entries', () => {
+		// @ts-ignore
 		expect(obj_entries(testObject)).toEqual(Object.entries(testObject));
 	});
 });
