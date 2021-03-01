@@ -39,7 +39,7 @@ export class Page extends Morebits.wiki.page {
 			this[func] = function (onSuccess, onFailure) {
 				let def = $.Deferred();
 				origFunc(
-					() => {
+					(arg) => {
 						if (onSuccess) {
 							onSuccess.call(
 								this, // pass context as this, mostly needed everywhere
@@ -47,13 +47,26 @@ export class Page extends Morebits.wiki.page {
 								// which takes pageobj as argument
 							);
 						}
-						def.resolve(this);
+
+						// try to resolve with the api object
+						def.resolve(arg instanceof Morebits.wiki.api
+							? arg
+							: this
+						);
 					},
-					() => {
+					(arg) => {
 						if (onFailure) {
 							onFailure.call(this, this); // same as above
 						}
-						def.reject(this);
+						if (arg instanceof Morebits.wiki.api) {
+							var err = new Error(arg.getErrorCode() + ': ' + arg.getErrorText());
+							err.code = arg.getErrorCode();
+							err.info = arg.getErrorText();
+							err.response = arg.getResponse();
+							def.reject(err);
+						} else {
+							def.reject(new Error(arg));
+						}
 					}
 				);
 				return def;
@@ -65,23 +78,23 @@ export class Page extends Morebits.wiki.page {
 	// Using ts-ignore here as there are no definitions to go along with the declarations, but TS does
 	// take note of the new declaration.
 	// @ts-ignore
-	load(): JQuery.Promise<Twinkle.page>;
+	load(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	lookupCreation(): JQuery.Promise<Twinkle.page>;
+	lookupCreation(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	save(): JQuery.Promise<Twinkle.page>;
+	save(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	append(): JQuery.Promise<Twinkle.page>;
+	append(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	prepend(): JQuery.Promise<Twinkle.page>;
+	prepend(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	newSection(): JQuery.Promise<Twinkle.page>;
+	newSection(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	deletePage(): JQuery.Promise<Twinkle.page>;
+	deletePage(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	undeletePage(): JQuery.Promise<Twinkle.page>;
+	undeletePage(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	protect(): JQuery.Promise<Twinkle.page>;
+	protect(): JQuery.Promise<Morebits.wiki.api>;
 	// @ts-ignore
-	stabilize(): JQuery.Promise<Twinkle.page>;
+	stabilize(): JQuery.Promise<Morebits.wiki.api>;
 }

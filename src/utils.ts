@@ -37,6 +37,40 @@ export function addNs(title: string, namespaceNumber: number): string {
 }
 
 /**
+ * Get URL parameter.
+ * Alias for mw.util.getParamValue
+ * @param param
+ */
+export function urlParamValue(param: string): string {
+	return mw.util.getParamValue(param);
+}
+
+// Used in batch, unlink, and deprod to sort pages by namespace, as
+// json formatversion=2 sorts by pageid instead (#1251)
+export function sortByNamespace(first, second) {
+	return first.ns - second.ns || (first.title > second.title ? 1 : -1);
+}
+
+// Used in batch listings to link to the page in question with >
+export function generateArrowLinks(checkbox: HTMLInputElement) {
+	var link = Morebits.htmlNode('a', ' >');
+	link.setAttribute('class', 'tw-arrowpage-link');
+	link.setAttribute('href', mw.util.getUrl(checkbox.value));
+	link.setAttribute('target', '_blank');
+	checkbox.nextElementSibling.append(link);
+}
+
+// Used in deprod and unlink listings to link the page title
+export function generateBatchPageLinks(checkbox: HTMLInputElement) {
+	var $checkbox = $(checkbox);
+	var link = Morebits.htmlNode('a', $checkbox.val() as string);
+	link.setAttribute('class', 'tw-batchpage-link');
+	link.setAttribute('href', mw.util.getUrl($checkbox.val() as string));
+	link.setAttribute('target', '_blank');
+	$checkbox.next().prepend([link, ' ']);
+}
+
+/**
  * Make template wikitext from the template name and parameters
  * @param {string} name - name of the template. Include "subst:" if necessary
  * @param {Object} parameters - object with keys and values being the template param names and values.
@@ -50,6 +84,14 @@ export function makeTemplate(name: string, parameters: Record<string | number, s
 		.map(([name, value]) => `|${name}=${value}`)
 		.join('');
 	return '{{' + name + parameterText + '}}';
+}
+
+export function objectFromEntries(entries: [string, any][]) {
+	let obj = {};
+	for (let [key, val] of entries) {
+		obj[key] = val;
+	}
+	return obj;
 }
 
 // Non-polluting shims for common ES6 functions
