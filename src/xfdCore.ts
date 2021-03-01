@@ -3,6 +3,7 @@ import { Page } from './Page';
 import { Api } from './Api';
 import { msg } from './messenger';
 import { Config, configPreference } from './Config';
+import { Dialog } from "./Dialog";
 
 export class XfdCore extends TwinkleModule {
 	static moduleName = 'XFD';
@@ -141,10 +142,9 @@ export class XfdCore extends TwinkleModule {
 	}
 
 	makeWindow() {
-		var Window = new Morebits.simpleWindow(700, 400);
+		var Window = new Dialog(700, 400);
 		Window.setTitle('Start a deletion discussion (XfD)');
-		Window.setScriptName(Twinkle.scriptName);
-		Window.setFooterLinks(this.footerLinks || {});
+		Window.setFooterLinks(this.footerLinks);
 		this.makeForm(Window);
 	}
 

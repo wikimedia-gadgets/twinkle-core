@@ -11,6 +11,7 @@ export * from './utils';
 export * from './messenger';
 export * from './Api';
 export * from './Page';
+export * from './Dialog';
 
 // Twinkle modules
 export * from './diffCore';
