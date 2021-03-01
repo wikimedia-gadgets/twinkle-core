@@ -11,12 +11,13 @@ declare namespace Morebits {
 	const pageNameNorm: string;
 
 	function pageNameRegex(pageName: string): string;
+	function namespaceRegex(ns: number): string;
 
 	class quickForm {
 		constructor(event: (e: FormSubmitEvent) => void, eventType?: string);
 		render(): HTMLFormElement;
 		append(data: quickFormElementData): quickForm.element;
-		static getInputData(form: HTMLFormElement): Record<string, string>;
+		static getInputData(form: HTMLFormElement): Record<string, string | string[] | boolean>;
 		static getElements(form: HTMLFormElement, fieldName: string): HTMLElement[];
 		static getCheckboxOrRadio(elementArray: HTMLInputElement[], value: string): HTMLInputElement;
 		static getElementContainer(element: HTMLElement): HTMLElement;
@@ -60,7 +61,7 @@ declare namespace Morebits {
 		function sanitizeIPv6(address: string): string | null;
 		function isRange(address: string): boolean;
 		function validCIDR(address: string): boolean;
-		function get64(address: string): string;
+		function get64(address: string): string | false;
 	}
 
 	namespace select2 {
@@ -240,7 +241,7 @@ declare namespace Morebits {
 	}
 
 	class status {
-		constructor(text: string, stat?: string, type?: 'status' | 'info' | 'warn' | 'error');
+		constructor(text: statusObject, stat?: statusObject, type?: 'status' | 'info' | 'warn' | 'error');
 		textRaw: string;
 		text: DocumentFragment;
 		type: 'status' | 'info' | 'warn' | 'error';
@@ -249,17 +250,17 @@ declare namespace Morebits {
 		static onError(handler: () => any): void;
 		link(): void;
 		unlink(): void;
-		codify(obj: (string | HTMLElement)[]): DocumentFragment;
-		update(status: string, type?: 'status' | 'info' | 'warn' | 'error'): void;
+		codify(obj: statusObject): DocumentFragment;
+		update(status: statusObject, type?: 'status' | 'info' | 'warn' | 'error'): void;
 		generate(): void;
 		render(): void;
 		status(status: string): void;
 		info(status: string): void;
 		warn(status: string): void;
 		error(status: string | (string | HTMLElement)[]): void;
-		static info(text: string, status: string): status;
-		static warn(text: string, status: string): status;
-		static error(text: string, status: string): status;
+		static info(text: string, status: statusObject): status;
+		static warn(text: string, status: statusObject): status;
+		static error(text: string, status: statusObject): status;
 		static actionCompleted(text: string): void;
 		static printUserText(comments: string, message: string): void;
 	}
@@ -268,6 +269,8 @@ declare namespace Morebits {
 	function checkboxShiftClickSupport(jQuerySelector: string | JQuery, jQueryContext: string | JQuery): void;
 
 	class batchOperation<T> {
+		constructor(status?: string);
+
 		getStatusElement(): Morebits.status;
 		setPageList(pageList: T[]): void;
 
@@ -275,9 +278,9 @@ declare namespace Morebits {
 		setOption(optionName: 'chunkSize', optionValue: number): void;
 		setOption(optionName: 'preserveIndividualStatusLines', optionValue: boolean): void;
 
-		run(worker: (item: T) => any, postFinish: () => any): void;
-		workerSuccess(arg: any): void;
-		workerFailure(arg: any): void;
+		run(worker: (item: T) => any, postFinish?: () => any): void;
+		workerSuccess(arg?: any): void;
+		workerFailure(arg?: any): void;
 	}
 
 	class taskManager {
@@ -311,23 +314,25 @@ declare namespace Morebits {
 	}
 }
 
+type QuickFormElementType =
+	| 'input'
+	| 'textarea'
+	| 'submit'
+	| 'checkbox'
+	| 'radio'
+	| 'select'
+	| 'option'
+	| 'optgroup'
+	| 'field'
+	| 'dyninput'
+	| 'hidden'
+	| 'header'
+	| 'div'
+	| 'button'
+	| 'fragment'
+
 interface quickFormElementData {
-	type?:
-		| 'input'
-		| 'textarea'
-		| 'submit'
-		| 'checkbox'
-		| 'radio'
-		| 'select'
-		| 'option'
-		| 'optgroup'
-		| 'field'
-		| 'dyninput'
-		| 'hidden'
-		| 'header'
-		| 'div'
-		| 'button'
-		| 'fragment';
+	type?: QuickFormElementType;
 	name?: string;
 	id?: string;
 	className?: string;
@@ -361,3 +366,6 @@ interface FormSubmitEvent extends Event {
 
 // for Morebits.taskManager
 type task = (...args: any[]) => PromiseLike<any>;
+
+// Used in Morebits.status
+type statusObject = string | HTMLElement | (string | HTMLElement)[]
