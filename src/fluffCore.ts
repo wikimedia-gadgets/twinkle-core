@@ -1,5 +1,5 @@
 import { Twinkle, TwinkleModule } from './twinkle';
-
+import { msg } from './messenger';
 
 class Fluff extends TwinkleModule {
 	moduleName = 'fluff';
@@ -12,12 +12,14 @@ class Fluff extends TwinkleModule {
 	// vandalism rollback; for good faith rollback, it will stop, indicating a bot
 	// has no faith, and for normal rollback, it will rollback that edit.
 	trustedBots: string[];
-	
+
 	skipTalk = null;
 	rollbackInPlace = null;
 
 	// String to insert when a username is hidden
 	hiddenName: string;
+
+	flaggedRevsEnabled = !!mw.loader.moduleRegistry['ext.flaggedRevs.basic'];
 
 	// Consolidated construction of fluff links
 	linkBuilder = {
@@ -61,8 +63,8 @@ class Fluff extends TwinkleModule {
 			var normNode = document.createElement('strong');
 			var vandNode = document.createElement('strong');
 
-			var normLink = this.linkBuilder.buildLink('SteelBlue', 'rollback');
-			var vandLink = this.linkBuilder.buildLink('Red', 'vandalism');
+			var normLink = this.linkBuilder.buildLink('SteelBlue', msg('link-rollback'));
+			var vandLink = this.linkBuilder.buildLink('Red', msg('link-vandalism'));
 
 			$(normLink).click(() => {
 				this.revert('norm', vandal, rev, page);
@@ -80,7 +82,7 @@ class Fluff extends TwinkleModule {
 
 			if (!inline) {
 				var agfNode = document.createElement('strong');
-				var agfLink = this.linkBuilder.buildLink('DarkOliveGreen', 'rollback (AGF)');
+				var agfLink = this.linkBuilder.buildLink('DarkOliveGreen', msg('link-goodfaith-rollback'));
 				$(agfLink).click(() => {
 					this.revert('agf', vandal, rev, page);
 					// this.disableLinks(revNode); // rollbackInPlace not relevant for any inline situations
@@ -107,7 +109,7 @@ class Fluff extends TwinkleModule {
 			revertToRevisionNode.setAttribute('id', 'tw-revert-to-' + revisionRef);
 			revertToRevisionNode.style.fontWeight = 'bold';
 
-			var revertToRevisionLink = this.linkBuilder.buildLink('SaddleBrown', 'restore this version');
+			var revertToRevisionLink = this.linkBuilder.buildLink('SaddleBrown', msg('restore-revision'));
 			$(revertToRevisionLink).click(() => {
 				this.revertToRevision(revisionRef);
 			});
@@ -118,7 +120,7 @@ class Fluff extends TwinkleModule {
 			revertToRevisionNode.appendChild(revertToRevisionLink);
 			return revertToRevisionNode;
 		},
-	}
+	};
 	addLinks = {
 		contributions: () => {
 			// $('sp-contributions-footer-anon-range') relies on the fmbox
@@ -135,7 +137,7 @@ class Fluff extends TwinkleModule {
 				) {
 					var $list = $('#mw-content-text').find('ul li:has(span.mw-uctop):has(.mw-changeslist-diff)');
 
-					$list.each( (key, current) => {
+					$list.each((key, current) => {
 						// revid is also available in the href of both
 						// .mw-changeslist-date or .mw-changeslist-diff
 						var page = $(current).find('.mw-contributions-title').text();
@@ -165,7 +167,7 @@ class Fluff extends TwinkleModule {
 					.not('.mw-rcfilters-ui-highlights-enhanced-toplevel')
 					.find('.mw-changeslist-line-inner, td.mw-enhanced-rc-nested');
 
-				$list.each( (key, current) => {
+				$list.each((key, current) => {
 					// The :not is possibly unnecessary, as it appears that
 					// .mw-userlink is simply not present if the username is hidden
 					var vandal = $(current).find('.mw-userlink:not(.history-deleted)').text();
@@ -252,7 +254,8 @@ class Fluff extends TwinkleModule {
 			} else if (
 				Twinkle.getPref('showRollbackLinks').indexOf('diff') !== -1 &&
 				mw.config.get('wgDiffOldId') &&
-				(mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId') || document.getElementById('differences-prevlink'))
+				(mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId') ||
+					document.getElementById('differences-prevlink'))
 			) {
 				// Normally .mw-userlink is a link, but if the
 				// username is hidden, it will be a span with
@@ -279,19 +282,18 @@ class Fluff extends TwinkleModule {
 			var title = document.getElementById('mw-revision-info').parentNode;
 			title.insertBefore(this.linkBuilder.restoreThisRevisionLink('wgRevisionId'), title.firstChild);
 		},
-	}
+	};
 
 	disableLinks(parentNode) {
 		// Array.from not available in IE11 :(
 		$(parentNode)
 			.children()
-			.each( (_ix, node) => {
+			.each((_ix, node) => {
 				node.innerHTML = node.textContent; // Feels like cheating
 				$(node).css('font-weight', 'normal').css('color', 'darkgray');
 			});
 	}
 
-	// Desperate lunacy
 	revert(type, vandal, rev, page) {
 		if (mw.util.isIPv6Address(vandal)) {
 			vandal = Morebits.ip.sanitizeIPv6(vandal);
@@ -325,7 +327,7 @@ class Fluff extends TwinkleModule {
 		// process multiple revisions as well as discover flagged status
 		var query = {
 			action: 'query',
-			prop: ['info', 'revisions', 'flagged'],
+			prop: ['info', 'revisions'].concat(this.flaggedRevsEnabled ? 'flagged' : []),
 			titles: pagename,
 			inprop: 'watched',
 			intestactions: 'edit',
@@ -336,25 +338,25 @@ class Fluff extends TwinkleModule {
 			type: 'csrf',
 			format: 'json',
 		};
-		var wikipedia_api = new Morebits.wiki.api('Grabbing data of earlier revisions', query, this.callbacks.main);
+		var wikipedia_api = new Morebits.wiki.api(msg('fetching-data'), query, this.callbacks.main);
 		wikipedia_api.params = params;
 		wikipedia_api.post();
 	}
-	
+
 	revertToRevision(oldrev) {
 		Morebits.status.init(document.getElementById('mw-content-text'));
 
 		// This is only here because we want the fancy edit summary from
 		// this.formatSummary, so we need to load the revision user
 		// before reverting.  If not for that, we could just skip loading.
-		var revertPage = new Morebits.wiki.page(mw.config.get('wgPageName'), 'Saving reverted contents');
+		var revertPage = new Morebits.wiki.page(mw.config.get('wgPageName'), msg('saving-reverted'));
 		revertPage.setOldID(oldrev);
 		revertPage.load(this.callbacks.toRevision);
 	}
-	
+
 	callbacks = {
 		toRevision: (pageobj) => {
-			var optional_summary = prompt('Please specify a reason for the revert:                                ', ''); // padded out to widen prompt in Firefox
+			var optional_summary = prompt(msg('prompt-reason-restore'), ''); // padded out to widen prompt in Firefox
 			if (optional_summary === null) {
 				pageobj.getStatusElement().error('Aborted by user.');
 				return;
@@ -383,7 +385,7 @@ class Fluff extends TwinkleModule {
 		main: (apiobj) => {
 			var page = apiobj.getResponse().query.pages[0];
 			if (!page.actions.edit) {
-				apiobj.statelem.error("Unable to edit the page, it's probably protected.");
+				apiobj.statelem.error(msg('cant-edit-protected'));
 				return;
 			}
 
@@ -393,7 +395,7 @@ class Fluff extends TwinkleModule {
 			var lastrevid = parseInt(page.lastrevid, 10);
 			var revs = page.revisions;
 			if (revs.length < 1) {
-				statelem.error('We have less than one additional revision, thus impossible to revert.');
+				statelem.error(msg('no-revisions'));
 				return;
 			}
 			var top = revs[0];
@@ -401,11 +403,7 @@ class Fluff extends TwinkleModule {
 
 			// Should be handled by the API, but nice to quit early
 			if (lastrevid < params.revid) {
-				Morebits.status.error('Error', [
-					'The most recent revision ID received from the server, ',
-					Morebits.htmlNode('strong', lastrevid),
-					', is less than the ID of the displayed revision. This could indicate that the current revision has been deleted, the server is lagging, or that bad data has been received. Stopping revert.',
-				]);
+				Morebits.status.error('Error', msg('bad-revid', lastrevid));
 				return;
 			}
 
@@ -413,41 +411,26 @@ class Fluff extends TwinkleModule {
 			var userNorm = params.user || this.hiddenName;
 			var index = 1;
 			if (params.revid !== lastrevid) {
-				Morebits.status.warn('Warning', [
-					'Latest revision ',
-					Morebits.htmlNode('strong', lastrevid),
-					" doesn't equal our revision ",
-					Morebits.htmlNode('strong', params.revid),
-				]);
+				Morebits.status.warn('Warning', msg('revid-mismatch', lastrevid, params.revid));
 				// Treat ipv6 users on same 64 block as the same
 				if (
 					lastuser === params.user ||
 					(mw.util.isIPv6Address(params.user) && Morebits.ip.get64(lastuser) === Morebits.ip.get64(params.user))
 				) {
 					switch (params.type) {
-					case 'vand':
-						var diffUser = lastuser !== params.user;
-						Morebits.status.info('Info', [
-							'Latest revision was ' + (diffUser ? '' : 'also ') + 'made by ',
-							Morebits.htmlNode('strong', userNorm),
-							diffUser ? ', which is on the same /64 subnet' : '',
-							'. As we assume vandalism, we will proceed to revert.',
-						]);
-						break;
-					case 'agf':
-						Morebits.status.warn('Warning', [
-							'Latest revision was made by ',
-							Morebits.htmlNode('strong', userNorm),
-							'. As we assume good faith, we will stop the revert, as the problem might have been fixed.',
-						]);
-						return;
-					default:
-						Morebits.status.warn('Notice', [
-							'Latest revision was made by ',
-							Morebits.htmlNode('strong', userNorm),
-							', but we will stop the revert.',
-						]);
-						return;
+						case 'vand':
+							if (lastuser !== params.user) {
+								Morebits.status.info('Info', msg('latest-rev-same-64', userNorm));
+							} else {
+								Morebits.status.info('Info', msg('latest-rev-same-user', userNorm));
+							}
+							break;
+						case 'agf':
+							Morebits.status.warn('Warning', msg('latest-rev-other-user-goodfaith', userNorm));
+							return;
+						default:
+							Morebits.status.warn('Notice', msg('latest-rev-other-user', userNorm));
+							return;
 					}
 				} else if (
 					params.type === 'vand' &&
@@ -457,18 +440,10 @@ class Fluff extends TwinkleModule {
 					revs.length > 1 &&
 					revs[1].revid === params.revid
 				) {
-					Morebits.status.info('Info', [
-						'Latest revision was made by ',
-						Morebits.htmlNode('strong', lastuser),
-						', a trusted bot, and the revision before was made by our vandal, so we will proceed with the revert.',
-					]);
+					Morebits.status.info('Info', msg('latest-rev-bot', lastuser));
 					index = 2;
 				} else {
-					Morebits.status.error('Error', [
-						'Latest revision was made by ',
-						Morebits.htmlNode('strong', lastuser),
-						', so it might have already been reverted, we will stop the revert.',
-					]);
+					Morebits.status.error('Error', msg('latest-rev-reverted', lastuser));
 					return;
 				}
 			} else {
@@ -480,49 +455,29 @@ class Fluff extends TwinkleModule {
 
 			if (this.trustedBots.indexOf(params.user) !== -1) {
 				switch (params.type) {
-				case 'vand':
-					Morebits.status.info('Info', [
-						'Vandalism revert was chosen on ',
-						Morebits.htmlNode('strong', userNorm),
-						'. As this is a trusted bot, we assume you wanted to revert vandalism made by the previous user instead.',
-					]);
-					index = 2;
-					params.user = revs[1].user;
-					params.userHidden = !!revs[1].userhidden;
-					break;
-				case 'agf':
-					Morebits.status.warn('Notice', [
-						'Good faith revert was chosen on ',
-						Morebits.htmlNode('strong', userNorm),
-						'. This is a trusted bot and thus AGF rollback will not proceed.',
-					]);
-					return;
-				case 'norm':
-					/* falls through */
-				default:
-					var cont = confirm(
-						'Normal revert was chosen, but the most recent edit was made by a trusted bot (' +
-						userNorm +
-						'). Do you want to revert the revision before instead?'
-					);
-					if (cont) {
-						Morebits.status.info('Info', [
-							'Normal revert was chosen on ',
-							Morebits.htmlNode('strong', userNorm),
-							". This is a trusted bot, and per confirmation, we'll revert the previous revision instead.",
-						]);
+					case 'vand':
+						Morebits.status.info('Info', msg('bot-revert', userNorm));
 						index = 2;
 						params.user = revs[1].user;
 						params.userHidden = !!revs[1].userhidden;
-						userNorm = params.user || this.hiddenName;
-					} else {
-						Morebits.status.warn('Notice', [
-							'Normal revert was chosen on ',
-							Morebits.htmlNode('strong', userNorm),
-							'. This is a trusted bot, but per confirmation, revert on selected revision will proceed.',
-						]);
-					}
-					break;
+						break;
+					case 'agf':
+						Morebits.status.warn('Notice', msg('bot-revert-goodfaith', userNorm));
+						return;
+					case 'norm':
+					/* falls through */
+					default:
+						var cont = confirm(msg('bot-revert-prompt'));
+						if (cont) {
+							Morebits.status.info('Info', msg('bot-revert-previous', userNorm));
+							index = 2;
+							params.user = revs[1].user;
+							params.userHidden = !!revs[1].userhidden;
+							userNorm = params.user || this.hiddenName;
+						} else {
+							Morebits.status.warn('Notice', msg('bot-revert-selected', userNorm));
+						}
+						break;
 				}
 			}
 			var found = false;
@@ -533,9 +488,12 @@ class Fluff extends TwinkleModule {
 				++count;
 				if (revs[i].user !== params.user) {
 					// Treat ipv6 users on same 64 block as the same
-					if (mw.util.isIPv6Address(revs[i].user) && Morebits.ip.get64(revs[i].user) === Morebits.ip.get64(params.user)) {
+					if (
+						mw.util.isIPv6Address(revs[i].user) &&
+						Morebits.ip.get64(revs[i].user) === Morebits.ip.get64(params.user)
+					) {
 						if (!seen64) {
-							new Morebits.status('Note', 'Treating consecutive IPv6 addresses in the same /64 as the same user');
+							new Morebits.status('Note', msg('ipv6-same-user'));
 							seen64 = true;
 						}
 						continue;
@@ -546,36 +504,20 @@ class Fluff extends TwinkleModule {
 			}
 
 			if (!found) {
-				statelem.error([
-					'No previous revision found. Perhaps ',
-					Morebits.htmlNode('strong', userNorm),
-					' is the only contributor, or they have made more than ' +
-					mw.language.convertNumber(Twinkle.getPref('revertMaxRevisions')) +
-					' edits in a row.',
-				]);
+				statelem.error(msg('no-previous-revision', userNorm, Twinkle.getPref('revertMaxRevisions')));
 				return;
 			}
 
 			if (!count) {
-				Morebits.status.error(
-					'Error',
-					'As it is not possible to revert zero revisions, we will stop this revert. It could be that the edit has already been reverted, but the revision ID was still the same.'
-				);
+				Morebits.status.error('Error', msg('no-edits-revert'));
 				return;
 			}
 
 			var good_revision = revs[found];
 			var userHasAlreadyConfirmedAction = false;
 			if (params.type !== 'vand' && count > 1) {
-				if (
-					!confirm(
-						userNorm +
-						' has made ' +
-						mw.language.convertNumber(count) +
-						' edits in a row. Are you sure you want to revert them all?'
-					)
-				) {
-					Morebits.status.info('Notice', 'Stopping revert.');
+				if (!confirm(msg('revert-multiple-prompt', userNorm, count))) {
+					Morebits.status.info('Notice', msg('stopping'));
 					return;
 				}
 				userHasAlreadyConfirmedAction = true;
@@ -587,61 +529,48 @@ class Fluff extends TwinkleModule {
 			params.gooduser = good_revision.user;
 			params.gooduserHidden = !!good_revision.userhidden;
 
-			statelem.status([
-				' revision ',
-				Morebits.htmlNode('strong', params.goodid),
-				' that was made ',
-				Morebits.htmlNode('strong', mw.language.convertNumber(count)),
-				' revisions ago by ',
-				Morebits.htmlNode('strong', params.gooduserHidden ? this.hiddenName : params.gooduser),
-			]);
+			statelem.status(
+				msg('revision-age', params.goodid, count, params.gooduserHidden ? this.hiddenName : params.gooduser)
+			);
 
 			var summary, extra_summary;
 			switch (params.type) {
-			case 'agf':
-				extra_summary = prompt('An optional comment for the edit summary:                              ', ''); // padded out to widen prompt in Firefox
-				if (extra_summary === null) {
-					statelem.error('Aborted by user.');
-					return;
-				}
-				userHasAlreadyConfirmedAction = true;
-
-				summary = this.formatSummary(
-					'Reverted [[WP:AGF|good faith]] edits by $USER',
-					params.userHidden ? null : params.user,
-					extra_summary
-				);
-				break;
-
-			case 'vand':
-				summary = this.formatSummary(
-					'Reverted ' +
-					params.count +
-					(params.count > 1 ? ' edits' : ' edit') +
-					' by $USER to last revision by ' +
-					(params.gooduserHidden ? this.hiddenName : params.gooduser),
-					params.userHidden ? null : params.user
-				);
-				break;
-
-			case 'norm':
-				/* falls through */
-			default:
-				if (Twinkle.getPref('offerReasonOnNormalRevert')) {
-					extra_summary = prompt('An optional comment for the edit summary:                              ', ''); // padded out to widen prompt in Firefox
+				case 'agf':
+					extra_summary = prompt(msg('summary-prompt'), ''); // padded out to widen prompt in Firefox
 					if (extra_summary === null) {
-						statelem.error('Aborted by user.');
+						statelem.error(msg('user-aborted'));
 						return;
 					}
 					userHasAlreadyConfirmedAction = true;
-				}
 
-				summary = this.formatSummary(
-					'Reverted ' + params.count + (params.count > 1 ? ' edits' : ' edit') + ' by $USER',
-					params.userHidden ? null : params.user,
-					extra_summary
-				);
-				break;
+					summary = this.formatSummary(
+						msg('goodfaith-summary'), // $USER will be replaced by username
+						params.userHidden ? null : params.user,
+						extra_summary
+					);
+					break;
+
+				case 'vand':
+					summary = this.formatSummary(
+						msg(msg('vandalism-summary'), params.count, params.gooduserHidden ? this.hiddenName : params.gooduser),
+						params.userHidden ? null : params.user
+					);
+					break;
+
+				case 'norm':
+				/* falls through */
+				default:
+					if (Twinkle.getPref('offerReasonOnNormalRevert')) {
+						extra_summary = prompt(msg('summary-prompt'), ''); // padded out to widen prompt in Firefox
+						if (extra_summary === null) {
+							statelem.error(msg('user-aborted'));
+							return;
+						}
+						userHasAlreadyConfirmedAction = true;
+					}
+
+					summary = this.formatSummary(msg('normal-summary'), params.userHidden ? null : params.user, extra_summary);
+					break;
 			}
 
 			if (
@@ -650,9 +579,9 @@ class Fluff extends TwinkleModule {
 					(Twinkle.getPref('confirmOnMobileFluff') &&
 						/Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|Opera Mini/i.test(navigator.userAgent))) &&
 				!userHasAlreadyConfirmedAction &&
-				!confirm('Reverting page: are you sure?')
+				!confirm(msg('revert-confirm'))
 			) {
-				statelem.error('Aborted by user.');
+				statelem.error(msg('user-aborted'));
 				return;
 			}
 
@@ -669,18 +598,18 @@ class Fluff extends TwinkleModule {
 			}
 
 			// figure out whether we need to/can review the edit
-			var flagged = page.flagged;
 			if (
+				this.flaggedRevsEnabled &&
 				(Morebits.userIsInGroup('reviewer') || Morebits.userIsSysop) &&
-				!!flagged &&
-				flagged.stable_revid >= params.goodid &&
-				!!flagged.pending_since
+				!!page.flagged &&
+				page.flagged.stable_revid >= params.goodid &&
+				!!page.flagged.pending_since
 			) {
 				params.reviewRevert = true;
 				params.csrftoken = apiobj.getResponse().query.tokens.csrftoken;
 			}
 
-			var revertPage = new Morebits.wiki.page(params.pagename, 'Saving reverted contents');
+			var revertPage = new Morebits.wiki.page(params.pagename, msg('saving-reverted'));
 			revertPage.setEditSummary(summary);
 			revertPage.setChangeTags(Twinkle.changeTags);
 			revertPage.setOldID(params.goodid);
@@ -695,7 +624,7 @@ class Fluff extends TwinkleModule {
 			if (!this.rollbackInPlace) {
 				Morebits.wiki.actionCompleted.redirect = params.pagename;
 			}
-			Morebits.wiki.actionCompleted.notice = 'Reversion completed';
+			Morebits.wiki.actionCompleted.notice = msg('revert-complete');
 
 			revertPage.revert(this.callbacks.complete);
 		},
@@ -705,10 +634,7 @@ class Fluff extends TwinkleModule {
 			var params = pageobj.getCallbackParameters();
 
 			if (params.notifyUser && !params.userHidden) {
-				Morebits.status.info('Info', [
-					'Opening user talk page edit form for user ',
-					Morebits.htmlNode('strong', params.user),
-				]);
+				Morebits.status.info('Info', msg('opening-talk', params.user));
 
 				var windowQuery = {
 					title: 'User talk:' + params.user,
@@ -723,25 +649,25 @@ class Fluff extends TwinkleModule {
 				};
 
 				switch (Twinkle.getPref('userTalkPageMode')) {
-				case 'tab':
-					window.open(mw.util.getUrl('', windowQuery), '_blank');
-					break;
-				case 'blank':
-					window.open(
-						mw.util.getUrl('', windowQuery),
-						'_blank',
-						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800'
-					);
-					break;
-				case 'window':
+					case 'tab':
+						window.open(mw.util.getUrl('', windowQuery), '_blank');
+						break;
+					case 'blank':
+						window.open(
+							mw.util.getUrl('', windowQuery),
+							'_blank',
+							'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800'
+						);
+						break;
+					case 'window':
 					/* falls through */
-				default:
-					window.open(
-						mw.util.getUrl('', windowQuery),
-						window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow',
-						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800'
-					);
-					break;
+					default:
+						window.open(
+							mw.util.getUrl('', windowQuery),
+							window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow',
+							'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800'
+						);
+						break;
 				}
 			}
 
@@ -751,14 +677,14 @@ class Fluff extends TwinkleModule {
 					action: 'review',
 					revid: pageobj.getSaveResponse().edit.newrevid,
 					token: params.csrftoken,
-					comment: 'Automatically reviewing reversion' + Twinkle.summaryAd, // until the below
+					comment: msg('pcreview-comment') + Twinkle.summaryAd, // until the below
 					// 'tags': Twinkle.changeTags // flaggedrevs tag support: [[phab:T247721]]
 				};
-				var wikipedia_api = new Morebits.wiki.api('Automatically accepting your changes', query);
+				var wikipedia_api = new Morebits.wiki.api(msg('pcreview-accepting'), query);
 				wikipedia_api.post();
 			}
 		},
-	}
+	};
 
 	// Format a nicer edit summary than the default Morebits revert one, mainly by
 	// including user contribs and talk links and appending a custom reason.
@@ -842,6 +768,5 @@ class Fluff extends TwinkleModule {
 		}
 	}
 }
-
 
 export { Fluff as FluffCore };

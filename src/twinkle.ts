@@ -1,6 +1,6 @@
 import { arr_includes, obj_entries } from './utils';
 import { loadMessages } from './messenger';
-import { messages } from './messages';
+import messages from './messages.json';
 import { Config, configPreference } from './Config';
 
 /**
@@ -69,6 +69,18 @@ export namespace Twinkle {
 		portletType: null,
 		portletNext: null,
 
+		// Tag
+		groupByDefault: true,
+		watchTaggedVenues: ['articles', 'drafts', 'redirects', 'files'],
+		watchTaggedPages: '1 month',
+		watchMergeDiscussions: '1 month',
+		markTaggedPagesAsMinor: false,
+		markTaggedPagesAsPatrolled: true,
+		tagArticleSortOrder: 'cat',
+		customTagList: [],
+		customFileTagList: [],
+		customRedirectTagList: [],
+
 		// XfD
 		logXfdNominations: false,
 		xfdLogPageName: 'XfD log',
@@ -79,6 +91,19 @@ export namespace Twinkle {
 		xfdWatchUser: 'default',
 		xfdWatchRelated: 'default',
 		markXfdPagesAsPatrolled: true,
+
+		// Fluff (revert and rollback)
+		autoMenuAfterRollback: false,
+		openTalkPage: [ 'agf', 'norm', 'vand' ],
+		openTalkPageOnAutoRevert: false,
+		rollbackInPlace: false,
+		markRevertedPagesAsMinor: [ 'vand' ],
+		watchRevertedPages: [ 'agf', 'norm', 'vand', 'torev' ],
+		watchRevertedExpiry: '1 month',
+		offerReasonOnNormalRevert: true,
+		confirmOnFluff: false,
+		confirmOnMobileFluff: true,
+		showRollbackLinks: [ 'diff', 'others' ],
 
 		// Hidden preferences
 		autolevelStaleDays: 3, // Huggle is 3, CBNG is 2

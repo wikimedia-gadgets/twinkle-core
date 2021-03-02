@@ -1,7 +1,7 @@
-import { Twinkle, TwinkleModule } from "./twinkle";
-import { generateArrowLinks } from "./utils";
-import { Dialog, footerLinks } from "./Dialog";
-import {msg} from "./messenger";
+import { Twinkle, TwinkleModule } from './twinkle';
+import { generateArrowLinks } from './utils';
+import { Dialog, footerLinks } from './Dialog';
+import { msg } from './messenger';
 
 class BatchDelete extends TwinkleModule {
 	constructor() {
@@ -9,14 +9,14 @@ class BatchDelete extends TwinkleModule {
 
 		if (
 			Morebits.userIsSysop &&
-			((mw.config.get("wgCurRevisionId") && mw.config.get("wgNamespaceNumber") > 0) ||
-				mw.config.get("wgCanonicalSpecialPageName") === "Prefixindex")
+			((mw.config.get('wgCurRevisionId') && mw.config.get('wgNamespaceNumber') > 0) ||
+				mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex')
 		) {
 			Twinkle.addPortletLink(
 				this.callback.bind(this),
-				"D-batch",
-				"tw-batch",
-				"Delete pages found in this category/on this page"
+				'D-batch',
+				'tw-batch',
+				'Delete pages found in this category/on this page'
 			);
 		}
 	}
@@ -33,56 +33,56 @@ class BatchDelete extends TwinkleModule {
 	callback() {
 		this.subpagesLoaded = false;
 		var Window = new Dialog(600, 400);
-		Window.setTitle("Batch deletion");
+		Window.setTitle('Batch deletion');
 		Window.setFooterLinks(this.footerLinks);
 
 		var form = new Morebits.quickForm(this.evaluate);
 		form.append({
-			type: "checkbox",
+			type: 'checkbox',
 			list: [
 				{
 					label: msg('option-delete'),
-					name: "delete_page",
-					value: "delete",
+					name: 'delete_page',
+					value: 'delete',
 					checked: true,
 					subgroup: {
-						type: "checkbox",
+						type: 'checkbox',
 						list: [
 							{
 								label: msg('option-talks'),
-								name: "delete_talk",
-								value: "delete_talk",
+								name: 'delete_talk',
+								value: 'delete_talk',
 								checked: true,
 							},
 							{
 								label: msg('option-redirects'),
-								name: "delete_redirects",
-								value: "delete_redirects",
+								name: 'delete_redirects',
+								value: 'delete_redirects',
 								checked: true,
 							},
 							{
 								label: msg('option-subpages'),
-								name: "delete_subpages",
-								value: "delete_subpages",
+								name: 'delete_subpages',
+								value: 'delete_subpages',
 								checked: false,
 								event: this.toggleSubpages.bind(this),
 								subgroup: {
-									type: "checkbox",
+									type: 'checkbox',
 									list: [
 										{
 											label: msg('option-subpage-talks'),
-											name: "delete_subpage_talks",
-											value: "delete_subpage_talks",
+											name: 'delete_subpage_talks',
+											value: 'delete_subpage_talks',
 										},
 										{
-											label:  msg('option-subpage-redirects'),
-											name: "delete_subpage_redirects",
-											value: "delete_subpage_redirects",
+											label: msg('option-subpage-redirects'),
+											name: 'delete_subpage_redirects',
+											value: 'delete_subpage_redirects',
 										},
 										{
-											label:  msg('option-subpage-unlink'),
-											name: "unlink_subpages",
-											value: "unlink_subpages",
+											label: msg('option-subpage-unlink'),
+											name: 'unlink_subpages',
+											value: 'unlink_subpages',
 										},
 									],
 								},
@@ -92,82 +92,82 @@ class BatchDelete extends TwinkleModule {
 				},
 				{
 					label: msg('option-unlink'),
-					name: "unlink_page",
-					value: "unlink",
+					name: 'unlink_page',
+					value: 'unlink',
 					checked: false,
 				},
 				{
 					label: msg('option-unlink-file'),
-					name: "unlink_file",
-					value: "unlink_file",
+					name: 'unlink_file',
+					value: 'unlink_file',
 					checked: true,
 				},
 			],
 		});
 		form.append({
-			type: "input",
-			name: "reason",
+			type: 'input',
+			name: 'reason',
 			label: msg('reason'),
 			size: 60,
 		});
 
 		var query = {
-			action: "query",
-			prop: "revisions|info|imageinfo",
-			inprop: "protection",
-			rvprop: "size|user",
-			format: "json",
+			action: 'query',
+			prop: 'revisions|info|imageinfo',
+			inprop: 'protection',
+			rvprop: 'size|user',
+			format: 'json',
 		};
 
 		// On categories
-		if (mw.config.get("wgNamespaceNumber") === 14) {
+		if (mw.config.get('wgNamespaceNumber') === 14) {
 			$.extend(query, {
-				generator: "categorymembers",
-				gcmtitle: mw.config.get("wgPageName"),
-				gcmlimit: Twinkle.getPref("batchMax"),
+				generator: 'categorymembers',
+				gcmtitle: mw.config.get('wgPageName'),
+				gcmlimit: Twinkle.getPref('batchMax'),
 			});
 
 			// On Special:PrefixIndex
-		} else if (mw.config.get("wgCanonicalSpecialPageName") === "Prefixindex") {
+		} else if (mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex') {
 			$.extend(query, {
-				generator: "allpages",
-				gaplimit: Twinkle.getPref("batchMax"),
+				generator: 'allpages',
+				gaplimit: Twinkle.getPref('batchMax'),
 			});
-			if (mw.util.getParamValue("prefix")) {
+			if (mw.util.getParamValue('prefix')) {
 				$.extend(query, {
-					gapnamespace: mw.util.getParamValue("namespace"),
-					gapprefix: mw.util.getParamValue("prefix"),
+					gapnamespace: mw.util.getParamValue('namespace'),
+					gapprefix: mw.util.getParamValue('prefix'),
 				});
 			} else {
-				var pathSplit = decodeURIComponent(location.pathname).split("/");
-				if (pathSplit.length < 3 || pathSplit[2] !== "Special:PrefixIndex") {
+				var pathSplit = decodeURIComponent(location.pathname).split('/');
+				if (pathSplit.length < 3 || pathSplit[2] !== 'Special:PrefixIndex') {
 					return;
 				}
-				var titleSplit = pathSplit[3].split(":");
-				$.extend(query, { gapnamespace: mw.config.get("wgNamespaceIds")[titleSplit[0].toLowerCase()] });
-				if (titleSplit.length < 2 || typeof query.gapnamespace === "undefined") {
+				var titleSplit = pathSplit[3].split(':');
+				$.extend(query, { gapnamespace: mw.config.get('wgNamespaceIds')[titleSplit[0].toLowerCase()] });
+				if (titleSplit.length < 2 || typeof query.gapnamespace === 'undefined') {
 					$.extend(query, {
 						gapnamespace: 0, // article namespace
-						gapprefix: pathSplit.splice(3).join("/"),
+						gapprefix: pathSplit.splice(3).join('/'),
 					});
 				} else {
 					pathSplit = pathSplit.splice(4);
-					pathSplit.splice(0, 0, titleSplit.splice(1).join(":"));
-					$.extend(query, { gapprefix: pathSplit.join("/") });
+					pathSplit.splice(0, 0, titleSplit.splice(1).join(':'));
+					$.extend(query, { gapprefix: pathSplit.join('/') });
 				}
 			}
 
 			// On normal pages
 		} else {
 			$.extend(query, {
-				generator: "links",
-				titles: mw.config.get("wgPageName"),
-				gpllimit: Twinkle.getPref("batchMax"),
+				generator: 'links',
+				titles: mw.config.get('wgPageName'),
+				gpllimit: Twinkle.getPref('batchMax'),
 			});
 		}
 
-		var statusdiv = document.createElement("div");
-		statusdiv.style.padding = "15px"; // just so it doesn't look broken
+		var statusdiv = document.createElement('div');
+		statusdiv.style.padding = '15px'; // just so it doesn't look broken
 		Window.setContent(statusdiv);
 		Morebits.status.init(statusdiv);
 		Window.display();
@@ -176,96 +176,75 @@ class BatchDelete extends TwinkleModule {
 
 		var statelem = new Morebits.status(msg('fetching-list'));
 		var wikipedia_api = new Morebits.wiki.api(
-			"loading...",
+			'loading...',
 			query,
 			(apiobj) => {
 				var response = apiobj.getResponse();
 				var pages = (response.query && response.query.pages) || [];
 				pages = pages.filter((page) => {
-					return !page.missing && page.imagerepository !== "shared";
+					return !page.missing && page.imagerepository !== 'shared';
 				});
 				// json formatversion=2 doesn't sort pages by namespace
 				pages.sort((one, two) => {
 					return one.ns - two.ns || (one.title > two.title ? 1 : -1);
 				});
 				pages.forEach((page) => {
-					var metadata = [];
-					if (page.redirect) {
-						metadata.push("redirect");
-					}
-
-					var editProt = page.protection
-						.filter((pr) => {
-							return pr.type === "edit" && pr.level === "sysop";
-						})
-						.pop();
-					if (editProt) {
-						metadata.push(
-							"fully protected" +
-								(editProt.expiry === "infinity"
-									? " indefinitely"
-									: ", expires " + new Morebits.date(editProt.expiry).calendar("utc") + " (UTC)")
-						);
-					}
-
-					if (page.ns === 6) {
-						metadata.push("uploader: " + page.imageinfo[0].user);
-						metadata.push("last edit from: " + page.revisions[0].user);
-					} else {
-						metadata.push(mw.language.convertNumber(page.revisions[0].size) + " bytes");
-					}
+					let metadata = this.getMetadata(page);
+					let isProtected = page.protection.filter((pr) => {
+						return pr.type === 'edit' && pr.level === 'sysop';
+					}).length;
 
 					var title = page.title;
 					this.pages[title] = {
-						label: title + (metadata.length ? " (" + metadata.join("; ") + ")" : ""),
+						label: title + (metadata.length ? ' (' + metadata.join('; ') + ')' : ''),
 						value: title,
 						checked: true,
-						style: editProt ? "color:red" : "",
+						style: isProtected ? 'color: red' : '',
 					};
 				});
 
 				var form = apiobj.params.form;
-				form.append({ type: "header", label: msg('pages-label') });
+				form.append({ type: 'header', label: msg('pages-label') });
 				form.append({
-					type: "button",
+					type: 'button',
 					label: msg('select-all'),
 					event: () => {
 						$(result)
-							.find("input[name=pages]:not(:checked)")
+							.find('input[name=pages]:not(:checked)')
 							.each((_, e) => {
 								e.click(); // check it, and invoke click event so that subgroup can be shown
 							});
 
 						// Check any unchecked subpages too
-						$('input[name="pages.subpages"]').prop("checked", true);
+						$('input[name="pages.subpages"]').prop('checked', true);
 					},
 				});
 				form.append({
-					type: "button",
+					type: 'button',
 					label: msg('deselect-all'),
 					event: () => {
 						$(result)
-							.find("input[name=pages]:checked")
+							.find('input[name=pages]:checked')
 							.each((_, e) => {
 								e.click(); // uncheck it, and invoke click event so that subgroup can be hidden
 							});
 					},
 				});
 				form.append({
-					type: "checkbox",
-					name: "pages",
-					id: "tw-dbatch-pages",
+					type: 'checkbox',
+					name: 'pages',
+					id: 'tw-dbatch-pages',
 					shiftClickSupport: true,
 					list: $.map(this.pages, (e) => {
 						return e;
 					}),
 				});
-				form.append({ type: "submit" });
+				form.append({ type: 'submit' });
 
 				var result = form.render();
 				apiobj.params.Window.setContent(result);
 
-				Morebits.quickForm.getElements(result, "pages").forEach(generateArrowLinks);
+				Morebits.quickForm.getElements(result, 'pages').forEach(generateArrowLinks);
 			},
 			statelem
 		);
@@ -289,9 +268,9 @@ class BatchDelete extends TwinkleModule {
 		}
 
 		return new Morebits.quickForm.element({
-			type: "checkbox",
-			name: "pages",
-			id: "tw-dbatch-pages",
+			type: 'checkbox',
+			name: 'pages',
+			id: 'tw-dbatch-pages',
 			shiftClickSupport: true,
 			list: $.map(this.pages, (e) => {
 				return e;
@@ -319,10 +298,10 @@ class BatchDelete extends TwinkleModule {
 				});
 
 				newPageList = this.generateNewPageList(form);
-				$("#tw-dbatch-pages").replaceWith(newPageList);
+				$('#tw-dbatch-pages').replaceWith(newPageList);
 
-				Morebits.quickForm.getElements(newPageList, "pages").forEach(generateArrowLinks);
-				Morebits.quickForm.getElements(newPageList, "pages.subpages").forEach(generateArrowLinks);
+				Morebits.quickForm.getElements(newPageList, 'pages').forEach(generateArrowLinks);
+				Morebits.quickForm.getElements(newPageList, 'pages.subpages').forEach(generateArrowLinks);
 
 				return;
 			}
@@ -338,7 +317,7 @@ class BatchDelete extends TwinkleModule {
 				.get();
 
 			var subpageLister = new Morebits.batchOperation();
-			subpageLister.setOption("chunkSize", Twinkle.getPref("batchChunks"));
+			subpageLister.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 			subpageLister.setPageList(pages);
 			subpageLister.run(
 				(pageName: string) => {
@@ -351,17 +330,17 @@ class BatchDelete extends TwinkleModule {
 					}
 
 					var wikipedia_api = new Morebits.wiki.api(
-						"Getting list of subpages of " + pageName,
+						'Getting list of subpages of ' + pageName,
 						{
-							action: "query",
-							prop: "revisions|info|imageinfo",
-							generator: "allpages",
-							rvprop: "size",
-							inprop: "protection",
-							gapprefix: pageTitle.title + "/",
+							action: 'query',
+							prop: 'revisions|info|imageinfo',
+							generator: 'allpages',
+							rvprop: 'size',
+							inprop: 'protection',
+							gapprefix: pageTitle.title + '/',
 							gapnamespace: pageTitle.namespace,
-							gaplimit: "max", // 500 is max for normal users, 5000 for bots and sysops
-							format: "json",
+							gaplimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+							format: 'json',
 						},
 						(apiobj) => {
 							var response = apiobj.getResponse();
@@ -372,45 +351,25 @@ class BatchDelete extends TwinkleModule {
 								return one.ns - two.ns || (one.title > two.title ? 1 : -1);
 							});
 							pages.forEach((page) => {
-								var metadata = [];
-								if (page.redirect) {
-									metadata.push("redirect");
-								}
-
-								var editProt = page.protection
-									.filter((pr) => {
-										return pr.type === "edit" && pr.level === "sysop";
-									})
-									.pop();
-								if (editProt) {
-									metadata.push(
-										"fully protected" +
-											(editProt.expiry === "infinity"
-												? " indefinitely"
-												: ", expires " + new Morebits.date(editProt.expiry).calendar("utc") + " (UTC)")
-									);
-								}
-								if (page.ns === 6) {
-									metadata.push("uploader: " + page.imageinfo[0].user);
-									metadata.push("last edit from: " + page.revisions[0].user);
-								} else {
-									metadata.push(mw.language.convertNumber(page.revisions[0].size) + " bytes");
-								}
+								let metadata = this.getMetadata(page);
+								let isProtected = page.protection.filter((pr) => {
+									return pr.type === 'edit' && pr.level === 'sysop';
+								}).length;
 
 								var title = page.title;
 								subpageList.push({
-									label: title + (metadata.length ? " (" + metadata.join("; ") + ")" : ""),
+									label: title + (metadata.length ? ' (' + metadata.join('; ') + ')' : ''),
 									value: title,
 									checked: true,
-									style: editProt ? "color:red" : "",
+									style: isProtected ? 'color: red' : '',
 								});
 							});
 							if (subpageList.length) {
 								var pageName = apiobj.params.pageNameFull;
 								this.pages[pageName].subgroup = {
-									type: "checkbox",
-									name: "subpages",
-									className: "dbatch-subpages",
+									type: 'checkbox',
+									name: 'subpages',
+									className: 'dbatch-subpages',
 									shiftClickSupport: true,
 									list: subpageList,
 								};
@@ -429,15 +388,15 @@ class BatchDelete extends TwinkleModule {
 					// List 'em on the interface
 
 					newPageList = this.generateNewPageList(form);
-					$("#tw-dbatch-pages").replaceWith(newPageList);
+					$('#tw-dbatch-pages').replaceWith(newPageList);
 
-					Morebits.quickForm.getElements(newPageList, "pages").forEach(generateArrowLinks);
-					Morebits.quickForm.getElements(newPageList, "pages.subpages").forEach(generateArrowLinks);
+					Morebits.quickForm.getElements(newPageList, 'pages').forEach(generateArrowLinks);
+					Morebits.quickForm.getElements(newPageList, 'pages.subpages').forEach(generateArrowLinks);
 
 					this.subpagesLoaded = true;
 
 					// Remove "Loading... " text
-					$("#dbatch-subpage-loading").remove();
+					$('#dbatch-subpage-loading').remove();
 				}
 			);
 		} else if (!e.target.checked) {
@@ -452,49 +411,52 @@ class BatchDelete extends TwinkleModule {
 			});
 
 			newPageList = this.generateNewPageList(form);
-			$("#tw-dbatch-pages").replaceWith(newPageList);
+			$('#tw-dbatch-pages').replaceWith(newPageList);
 
-			Morebits.quickForm.getElements(newPageList, "pages").forEach(generateArrowLinks);
+			Morebits.quickForm.getElements(newPageList, 'pages').forEach(generateArrowLinks);
 		}
 	}
 
+	/**
+	 * Returns an array with a list of strings to be included with the page name.
+	 * @param page
+	 */
+	getMetadata(page): string[] {
+		return [];
+	}
+
 	evaluate(event) {
-		Morebits.wiki.actionCompleted.notice = "Batch deletion is now complete";
+		Morebits.wiki.actionCompleted.notice = msg('complete');
 
 		var form = event.target;
 
-		var numProtected = $(Morebits.quickForm.getElements(form, "pages")).filter(function (
+		var numProtected = $(Morebits.quickForm.getElements(form, 'pages')).filter(function (
 			index,
 			element: HTMLInputElement
 		) {
-			return element.checked && element.nextElementSibling.style.color === "red";
+			return element.checked && element.nextElementSibling.style.color === 'red';
 		}).length;
-		if (
-			numProtected > 0 &&
-			!confirm(
-				"You are about to delete " + mw.language.convertNumber(numProtected) + " fully protected page(s). Are you sure?"
-			)
-		) {
+		if (numProtected > 0 && !confirm(msg('confirm-protected', numProtected))) {
 			return;
 		}
 
 		var input = Morebits.quickForm.getInputData(form);
 
 		if (!input.reason) {
-			alert("You need to give a reason, you cabal crony!");
+			alert(msg('give-reason'));
 			return;
 		}
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(form);
 		if ((input.pages as string[]).length === 0) {
-			Morebits.status.error("Error", "nothing to delete, aborting");
+			Morebits.status.error(msg('error'), msg('no-pages'));
 			return;
 		}
 
-		var pageDeleter = new Morebits.batchOperation(input.delete_page ? "Deleting pages" : "Initiating requested tasks");
-		pageDeleter.setOption("chunkSize", Twinkle.getPref("batchChunks"));
+		var pageDeleter = new Morebits.batchOperation(input.delete_page ? msg('deleting') : msg('starting'));
+		pageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		// we only need the initial status lines if we're deleting the pages in the pages array
-		pageDeleter.setOption("preserveIndividualStatusLines", input.delete_page as boolean);
+		pageDeleter.setOption('preserveIndividualStatusLines', input.delete_page as boolean);
 		pageDeleter.setPageList(input.pages as string[]);
 		pageDeleter.run(
 			(pageName: string) => {
@@ -504,12 +466,12 @@ class BatchDelete extends TwinkleModule {
 					delete_talk: input.delete_talk,
 					delete_redirects: input.delete_redirects,
 					unlink_page: input.unlink_page,
-					unlink_file: input.unlink_file && new RegExp("^" + Morebits.namespaceRegex(6) + ":", "i").test(pageName),
+					unlink_file: input.unlink_file && new RegExp('^' + Morebits.namespaceRegex(6) + ':', 'i').test(pageName),
 					reason: input.reason,
 					pageDeleter: pageDeleter,
 				};
 
-				var wikipedia_page = new Morebits.wiki.page(pageName, "Deleting page " + pageName);
+				var wikipedia_page = new Morebits.wiki.page(pageName, msg('deleting-page', pageName));
 				wikipedia_page.setCallbackParameters(params);
 				if (input.delete_page) {
 					wikipedia_page.setEditSummary(input.reason as string);
@@ -522,9 +484,9 @@ class BatchDelete extends TwinkleModule {
 			},
 			() => {
 				if (input.delete_subpages && input.subpages) {
-					var subpageDeleter = new Morebits.batchOperation("Deleting subpages");
-					subpageDeleter.setOption("chunkSize", Twinkle.getPref("batchChunks"));
-					subpageDeleter.setOption("preserveIndividualStatusLines", true);
+					var subpageDeleter = new Morebits.batchOperation(msg('deleting-subpages'));
+					subpageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+					subpageDeleter.setOption('preserveIndividualStatusLines', true);
 					subpageDeleter.setPageList(input.subpages as string[]);
 					subpageDeleter.run((pageName: string) => {
 						var params = {
@@ -538,7 +500,7 @@ class BatchDelete extends TwinkleModule {
 							pageDeleter: subpageDeleter,
 						};
 
-						var wikipedia_page = new Morebits.wiki.page(pageName, "Deleting subpage " + pageName);
+						var wikipedia_page = new Morebits.wiki.page(pageName, msg('deleting-subpage', pageName));
 						wikipedia_page.setCallbackParameters(params);
 						wikipedia_page.setEditSummary(input.reason as string);
 						wikipedia_page.setChangeTags(Twinkle.changeTags);
@@ -566,28 +528,32 @@ class BatchDelete extends TwinkleModule {
 			if (params.unlink_page) {
 				this.unlinkCache = {};
 				query = {
-					action: "query",
-					list: "backlinks",
-					blfilterredir: "nonredirects",
+					action: 'query',
+					list: 'backlinks',
+					blfilterredir: 'nonredirects',
 					blnamespace: [0, 100], // main space and portal space only
 					bltitle: params.page,
-					bllimit: "max", // 500 is max for normal users, 5000 for bots and sysops
-					format: "json",
+					bllimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+					format: 'json',
 				};
-				wikipedia_api = new Morebits.wiki.api("Grabbing backlinks", query, this.callbacks.unlinkBacklinksMain);
+				wikipedia_api = new Morebits.wiki.api(msg('fetching-backlinks'), query, this.callbacks.unlinkBacklinksMain);
 				wikipedia_api.params = params;
 				wikipedia_api.post();
 			}
 
 			if (params.unlink_file) {
 				query = {
-					action: "query",
-					list: "imageusage",
+					action: 'query',
+					list: 'imageusage',
 					iutitle: params.page,
-					iulimit: "max", // 500 is max for normal users, 5000 for bots and sysops
-					format: "json",
+					iulimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+					format: 'json',
 				};
-				wikipedia_api = new Morebits.wiki.api("Grabbing file links", query, this.callbacks.unlinkImageInstancesMain);
+				wikipedia_api = new Morebits.wiki.api(
+					msg('fetching-filelinks'),
+					query,
+					this.callbacks.unlinkImageInstancesMain
+				);
 				wikipedia_api.params = params;
 				wikipedia_api.post();
 			}
@@ -595,13 +561,13 @@ class BatchDelete extends TwinkleModule {
 			if (params.delete_page) {
 				if (params.delete_redirects) {
 					query = {
-						action: "query",
+						action: 'query',
 						titles: params.page,
-						prop: "redirects",
-						rdlimit: "max", // 500 is max for normal users, 5000 for bots and sysops
-						format: "json",
+						prop: 'redirects',
+						rdlimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+						format: 'json',
 					};
-					wikipedia_api = new Morebits.wiki.api("Grabbing redirects", query, this.callbacks.deleteRedirectsMain);
+					wikipedia_api = new Morebits.wiki.api(msg('fetching-redirects'), query, this.callbacks.deleteRedirectsMain);
 					wikipedia_api.params = params;
 					wikipedia_api.post();
 				}
@@ -610,15 +576,11 @@ class BatchDelete extends TwinkleModule {
 					if (pageTitle && pageTitle.namespace % 2 === 0 && pageTitle.namespace !== 2) {
 						pageTitle.namespace++; // now pageTitle is the talk page title!
 						query = {
-							action: "query",
+							action: 'query',
 							titles: pageTitle.toText(),
-							format: "json",
+							format: 'json',
 						};
-						wikipedia_api = new Morebits.wiki.api(
-							"Checking whether talk page exists",
-							query,
-							this.callbacks.deleteTalk
-						);
+						wikipedia_api = new Morebits.wiki.api(msg('check-talk'), query, this.callbacks.deleteTalk);
 						wikipedia_api.params = params;
 						wikipedia_api.params.talkPage = pageTitle.toText();
 						wikipedia_api.post();
@@ -636,12 +598,12 @@ class BatchDelete extends TwinkleModule {
 				return;
 			}
 
-			var redirectDeleter = new Morebits.batchOperation("Deleting redirects to " + apiobj.params.page);
-			redirectDeleter.setOption("chunkSize", Twinkle.getPref("batchChunks"));
+			var redirectDeleter = new Morebits.batchOperation(msg('deleting-redirects', apiobj.params.page));
+			redirectDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 			redirectDeleter.setPageList(pages);
 			redirectDeleter.run((pageName: string) => {
-				var wikipedia_page = new Morebits.wiki.page(pageName, "Deleting " + pageName);
-				wikipedia_page.setEditSummary('[[WP:CSD#G8|G8]]: Redirect to deleted page "' + apiobj.params.page + '"');
+				var wikipedia_page = new Morebits.wiki.page(pageName, 'Deleting ' + pageName);
+				wikipedia_page.setEditSummary(msg('delete-redirect-summary', apiobj.params.page));
 				wikipedia_page.setChangeTags(Twinkle.changeTags);
 				wikipedia_page.deletePage(redirectDeleter.workerSuccess, redirectDeleter.workerFailure);
 			});
@@ -654,10 +616,8 @@ class BatchDelete extends TwinkleModule {
 				return;
 			}
 
-			var page = new Morebits.wiki.page(apiobj.params.talkPage, "Deleting talk page of page " + apiobj.params.page);
-			page.setEditSummary(
-				'[[WP:CSD#G8|G8]]: [[Help:Talk page|Talk page]] of deleted page "' + apiobj.params.page + '"'
-			);
+			var page = new Morebits.wiki.page(apiobj.params.talkPage, msg('deleting-talk', apiobj.params.page));
+			page.setEditSummary(msg('delete-talk-summary', apiobj.params.page));
 			page.setChangeTags(Twinkle.changeTags);
 			page.deletePage();
 		},
@@ -671,11 +631,11 @@ class BatchDelete extends TwinkleModule {
 				return;
 			}
 
-			var unlinker = new Morebits.batchOperation("Unlinking backlinks to " + apiobj.params.page);
-			unlinker.setOption("chunkSize", Twinkle.getPref("batchChunks"));
+			var unlinker = new Morebits.batchOperation(msg('unlink-page', apiobj.params.page));
+			unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 			unlinker.setPageList(pages);
 			unlinker.run((pageName: string) => {
-				var wikipedia_page = new Morebits.wiki.page(pageName, "Unlinking on " + pageName);
+				var wikipedia_page = new Morebits.wiki.page(pageName, msg('unlink-on', pageName));
 				var params = $.extend({}, apiobj.params);
 				params.title = pageName;
 				params.unlinker = unlinker;
@@ -707,10 +667,10 @@ class BatchDelete extends TwinkleModule {
 				params.unlinker.workerSuccess(pageobj);
 				return;
 			}
-			pageobj.setEditSummary("Removing link(s) to deleted page " + params.page);
+			pageobj.setEditSummary(msg('unlink-summary', params.page));
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setPageText(text);
-			pageobj.setCreateOption("nocreate");
+			pageobj.setCreateOption('nocreate');
 			pageobj.setMaxConflictRetries(10);
 			pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
 		},
@@ -724,11 +684,11 @@ class BatchDelete extends TwinkleModule {
 				return;
 			}
 
-			var unlinker = new Morebits.batchOperation("Unlinking backlinks to " + apiobj.params.page);
-			unlinker.setOption("chunkSize", Twinkle.getPref("batchChunks"));
+			var unlinker = new Morebits.batchOperation(msg('unlink-page', apiobj.params.page));
+			unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 			unlinker.setPageList(pages);
 			unlinker.run((pageName: string) => {
-				var wikipedia_page = new Morebits.wiki.page(pageName, "Removing file usages on " + pageName);
+				var wikipedia_page = new Morebits.wiki.page(pageName, msg('unlink-img-on', pageName));
 				var params = $.extend({}, apiobj.params);
 				params.title = pageName;
 				params.unlinker = unlinker;
@@ -744,7 +704,7 @@ class BatchDelete extends TwinkleModule {
 				return;
 			}
 
-			var image = params.page.replace(new RegExp("^" + Morebits.namespaceRegex(6) + ":"), "");
+			var image = params.page.replace(new RegExp('^' + Morebits.namespaceRegex(6) + ':'), '');
 			var text;
 			if (params.title in this.unlinkCache) {
 				text = this.unlinkCache[params.title];
@@ -753,20 +713,18 @@ class BatchDelete extends TwinkleModule {
 			}
 			var old_text = text;
 			var wikiPage = new Morebits.wikitext.page(text);
-			text = wikiPage.commentOutImage(image, "Commented out because image was deleted").getText();
+			text = wikiPage.commentOutImage(image, msg('img-comment')).getText();
 
 			this.unlinkCache[params.title] = text;
 			if (text === old_text) {
-				pageobj.getStatusElement().error("failed to unlink image " + image + " from " + pageobj.getPageName());
+				pageobj.getStatusElement().error('failed to unlink image ' + image + ' from ' + pageobj.getPageName());
 				params.unlinker.workerFailure(pageobj);
 				return;
 			}
-			pageobj.setEditSummary(
-				"Removing instance of file " + image + ' that has been deleted because "' + params.reason + '")'
-			);
+			pageobj.setEditSummary(msg('unlink-img-summary', image, params.reason));
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setPageText(text);
-			pageobj.setCreateOption("nocreate");
+			pageobj.setCreateOption('nocreate');
 			pageobj.setMaxConflictRetries(10);
 			pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
 		},

@@ -50,7 +50,7 @@ export class TagCore extends TwinkleModule {
 			return;
 		}
 		this.portletName = 'Tag';
-		this.portletId = 'friendly-tag';
+		this.portletId = 'twinkle-tag';
 		this.portletTooltip = this.mode.getMenuTooltip();
 		this.addMenu();
 	}
