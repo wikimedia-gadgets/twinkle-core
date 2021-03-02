@@ -13,7 +13,8 @@
     "declaration": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "newLine": "lf"
+    "newLine": "lf",
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*",

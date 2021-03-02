@@ -18,3 +18,6 @@ export * from './diffCore';
 export * from './speedyCore';
 export * from './tagCore';
 export * from './xfdCore';
+export * from './warnCore';
+export * from './fluffCore';
+export * from './batchDeleteCore';
