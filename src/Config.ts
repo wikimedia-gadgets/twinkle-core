@@ -14,7 +14,7 @@ export type configPreference = {
 export type configSection = {
 	title: string;
 	module?: string;
-	preferences: configPreference[];
+	preferences: Omit<configPreference, 'default'>[];
 	adminOnly?: boolean;
 	hidden?: boolean;
 };

@@ -3,7 +3,8 @@ import { makeArray, obj_entries, obj_values, stripNs } from './utils';
 import { msg } from './messenger';
 import { Api } from './Api';
 import { Page } from './Page';
-import { Config } from './Config';
+import { Config, configPreference } from './Config';
+import { Dialog } from './Dialog';
 
 export interface tagData {
 	// name of the tag template, without namespace prefix (required)
@@ -125,15 +126,14 @@ export class TagCore extends TwinkleModule {
 					customListLabelTitle: 'Text to show in Tag dialog',
 					default: [],
 				},
-			],
+			] as configPreference[],
 		};
 	}
 
 	makeWindow() {
-		var Window = new Morebits.simpleWindow(630, 500);
-		Window.setScriptName(Twinkle.scriptName);
+		var Window = new Dialog(630, 500);
 		// anyone got a good policy/guideline/info page/instructional page link??
-		Window.addFooterLink('Twinkle help', 'WP:TW/DOC#tag');
+		Window.setFooterLinks(this.footerlinks);
 		this.mode.makeForm(Window);
 		this.mode.formRender();
 		this.mode.postRender();
@@ -171,19 +171,21 @@ export class TagCore extends TwinkleModule {
 		};
 		let summaryText;
 
-		// XXX: how to i18n this?
-		if (addedTags.length) {
-			summaryText = 'Added ' + mw.language.listToText(addedTags.map(makeTemplateLink));
-			summaryText += removedTags?.length
-				? '; and removed ' + mw.language.listToText(removedTags.map(makeTemplateLink))
-				: '';
-		} else if (removedTags?.length) {
-			summaryText = 'Removed ' + mw.language.listToText(removedTags.map(makeTemplateLink));
+		if (addedTags.length && removedTags.length) {
+			summaryText = msg(
+				'summary-added-removed',
+				addedTags.map(makeTemplateLink),
+				removedTags.map(makeTemplateLink),
+				addedTags.length + removedTags.length
+			);
+		} else if (addedTags.length) {
+			summaryText = msg('summary-added', addedTags.map(makeTemplateLink), addedTags.length);
+		} else if (removedTags.length) {
+			summaryText = msg('summary-removed', removedTags.map(makeTemplateLink), removedTags.length);
 		}
-		summaryText += ' tag' + (addedTags.length + removedTags?.length > 1 ? 's' : '');
 
 		if (reason) {
-			summaryText += ': ' + reason;
+			summaryText += msg('colon-separator') + reason;
 		}
 
 		// avoid long summaries
@@ -491,7 +493,7 @@ export abstract class TagMode {
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(this.result);
 		this.action().then(() => {
-			Morebits.status.actionCompleted(msg('tag-complete-reloading', this.name));
+			Morebits.status.actionCompleted(msg('tag-complete', this.name));
 			setTimeout(() => {
 				window.location.href = mw.util.getUrl(Morebits.pageNameNorm, { redirect: 'no' });
 			}, 1e9);
@@ -797,8 +799,8 @@ export abstract class TagMode {
 
 	action() {
 		this.pageobj = new Page(Morebits.pageNameNorm, msg('tagging-status', this.name));
-		return this.pageobj.load().then((pageobj) => {
-			this.pageText = pageobj.getPageText();
+		return this.pageobj.load().then(() => {
+			this.pageText = this.pageobj.getPageText();
 			this.initialCleanup();
 			this.sortTags();
 			return $.when(this.addAndRearrangeTags(), this.removeTags()).then(() => {
