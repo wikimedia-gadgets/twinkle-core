@@ -3,7 +3,7 @@ import { Page } from './Page';
 import { Api } from './Api';
 import { msg } from './messenger';
 import { Config, configPreference } from './Config';
-import { Dialog } from "./Dialog";
+import { Dialog } from './Dialog';
 
 export class XfdCore extends TwinkleModule {
 	static moduleName = 'XFD';
@@ -17,6 +17,17 @@ export class XfdCore extends TwinkleModule {
 
 	constructor() {
 		super();
+		// Disable on:
+		// * special pages
+		// * non-existent pages
+		// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are eligible for CSD F2, or R4 if it's a redirect)
+		if (
+			mw.config.get('wgNamespaceNumber') < 0 ||
+			!mw.config.get('wgArticleId') ||
+			(mw.config.get('wgNamespaceNumber') === 6 && document.getElementById('mw-sharedupload'))
+		) {
+			return;
+		}
 		for (let mode of XfdCore.modeList) {
 			if (mode.isDefaultChoice()) {
 				// @ts-ignore
@@ -144,7 +155,7 @@ export class XfdCore extends TwinkleModule {
 	makeWindow() {
 		var Window = new Dialog(700, 400);
 		Window.setTitle('Start a deletion discussion (XfD)');
-		Window.setFooterLinks(this.footerLinks);
+		Window.setFooterLinks(this.footerlinks);
 		this.makeForm(Window);
 	}
 
@@ -277,6 +288,7 @@ export abstract class XfdMode {
 		});
 		return this.fieldset;
 	}
+
 	appendReasonArea() {
 		this.fieldset.append({
 			type: 'textarea',
@@ -447,9 +459,9 @@ export abstract class XfdMode {
 	fetchCreatorInfo() {
 		let thispage = new Page(Morebits.pageNameNorm, 'Finding page creator');
 		thispage.setLookupNonRedirectCreator(this.params.lookupNonRedirectCreator);
-		return thispage.lookupCreation().then((pageobj) => {
-			this.params.initialContrib = pageobj.getCreator();
-			pageobj.getStatusElement().info('Found ' + pageobj.getCreator());
+		return thispage.lookupCreation().then(() => {
+			this.params.initialContrib = thispage.getCreator();
+			thispage.getStatusElement().info('Found ' + thispage.getCreator());
 		});
 	}
 
