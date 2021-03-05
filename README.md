@@ -26,7 +26,7 @@ As is the custom with TypeScript libraries, the GitHub repo only contains the TS
 - [x] localisation of config module
 - [x] set up the core Twinkle class
 - [x] Add the setup for unit testing (using jest)
-- [ ] set up mock-mediawiki for mocking MediaWiki in a node environment for unit tests.
-- [ ] set up framework for end-to-end tests
+- [x] set up mock-mediawiki for mocking MediaWiki in a node environment for unit tests.
+- [x] set up framework for end-to-end tests
 
 Originally created by @siddharthvp (SD0001) as part of [Grants:Project/Rapid/SD0001/Twinkle localisation](https://meta.wikimedia.org/wiki/Grants:Project/Rapid/SD0001/Twinkle_localisation).

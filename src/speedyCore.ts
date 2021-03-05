@@ -2,6 +2,8 @@ import { Twinkle, TwinkleModule } from './twinkle';
 import { makeArray, obj_entries } from './utils';
 import { Page } from './Page';
 import { Api } from './Api';
+import {Dialog} from "./Dialog";
+import {configPreference} from "./Config";
 
 // TODO: still quite a bit of enwiki specific logic here
 
@@ -35,7 +37,7 @@ export interface criteriaSubgroup extends quickFormElementData {
 export abstract class SpeedyCore extends TwinkleModule {
 	static moduleName = 'CSD';
 
-	dialog: Morebits.simpleWindow;
+	dialog: Dialog;
 	form: Morebits.quickForm;
 	result: HTMLFormElement;
 	hasCSD: boolean;
@@ -58,15 +60,9 @@ export abstract class SpeedyCore extends TwinkleModule {
 	}
 
 	makeWindow() {
-		this.dialog = new Morebits.simpleWindow(
-			Twinkle.getPref('speedyWindowWidth'),
-			Twinkle.getPref('speedyWindowHeight')
-		);
+		this.dialog = new Dialog(Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight'));
 		this.dialog.setTitle('Choose criteria for speedy deletion');
-		this.dialog.setScriptName(Twinkle.scriptName);
-		this.dialog.addFooterLink('Speedy deletion policy', 'WP:CSD');
-		this.dialog.addFooterLink('CSD prefs', 'WP:TW/PREF#speedy');
-		this.dialog.addFooterLink('Twinkle help', 'WP:TW/DOC#speedy');
+		this.dialog.setFooterLinks(this.footerlinks);
 
 		this.hasCSD = !!$('#delete-reason').length;
 		this.makeFlatObject();
@@ -653,9 +649,9 @@ export abstract class SpeedyCore extends TwinkleModule {
 			return $.Deferred().resolve();
 		}
 		let thispage = new Page(Morebits.pageNameNorm, 'Finding page creator');
-		return thispage.lookupCreation().then((pageobj) => {
-			this.params.initialContrib = pageobj.getCreator();
-			pageobj.getStatusElement().info('Found ' + pageobj.getCreator());
+		return thispage.lookupCreation().then(() => {
+			this.params.initialContrib = thispage.getCreator();
+			thispage.getStatusElement().info('Found ' + thispage.getCreator());
 		});
 	}
 
@@ -669,7 +665,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 	checkPage() {
 		let pageobj = new Page(mw.config.get('wgPageName'), 'Tagging page');
 		pageobj.setChangeTags(Twinkle.changeTags);
-		return pageobj.load().then((pageobj) => {
+		return pageobj.load().then(() => {
 			let statelem = pageobj.getStatusElement();
 
 			if (!pageobj.exists()) {
