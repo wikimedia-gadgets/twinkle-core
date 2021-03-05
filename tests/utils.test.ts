@@ -1,5 +1,7 @@
 import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
 
+import { NS_TEMPLATE, NS_CATEGORY  } from '../src/namespaces';
+
 describe('utils', function () {
 	test('makeArray', function () {
 		expect(makeArray(undefined)).toEqual([]);
@@ -52,4 +54,10 @@ describe('utils', function () {
 		// @ts-ignore
 		expect(obj_entries(testObject)).toEqual(Object.entries(testObject));
 	});
+
+	test('namespaces', function () {
+		expect(NS_TEMPLATE).toBe(10);
+		expect(NS_CATEGORY).toBe(14);
+	});
+
 });
