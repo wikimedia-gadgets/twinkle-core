@@ -59,7 +59,7 @@ export class Page extends Morebits.wiki.page {
 							onFailure.call(this, this); // same as above
 						}
 						if (arg instanceof Morebits.wiki.api) {
-							var err = new Error(arg.getErrorCode() + ': ' + arg.getErrorText());
+							var err = new ApiError(arg.getErrorCode() + ': ' + arg.getErrorText());
 							err.code = arg.getErrorCode();
 							err.info = arg.getErrorText();
 							err.response = arg.getResponse();
@@ -73,28 +73,24 @@ export class Page extends Morebits.wiki.page {
 			};
 		});
 	}
+}
 
-	// The non-standard way of overriding the functions means we have to tell TS about it in some way.
-	// Using ts-ignore here as there are no definitions to go along with the declarations, but TS does
-	// take note of the new declaration.
-	// @ts-ignore
+export class ApiError extends Error {
+	code: string;
+	info: string;
+	response: Record<string, any>;
+}
+
+// The non-standard way of overriding the functions means we have to tell TS about it in some way.
+export interface Page {
 	load(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	lookupCreation(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	save(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	append(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	prepend(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	newSection(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	deletePage(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	undeletePage(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	protect(): JQuery.Promise<Morebits.wiki.api>;
-	// @ts-ignore
 	stabilize(): JQuery.Promise<Morebits.wiki.api>;
 }
