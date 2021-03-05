@@ -11,7 +11,7 @@ export class XfdCore extends TwinkleModule {
 	mode: XfdMode;
 	static modeList: typeof XfdMode[];
 
-	Window: Morebits.simpleWindow;
+	Window: Dialog;
 	fieldset: Morebits.quickForm.element;
 	result: HTMLFormElement;
 
@@ -153,7 +153,7 @@ export class XfdCore extends TwinkleModule {
 	}
 
 	makeWindow() {
-		var Window = new Dialog(700, 400);
+		let Window = new Dialog(700, 400);
 		Window.setTitle('Start a deletion discussion (XfD)');
 		Window.setFooterLinks(this.footerlinks);
 		this.makeForm(Window);
