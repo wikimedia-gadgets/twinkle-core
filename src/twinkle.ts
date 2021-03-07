@@ -1,4 +1,4 @@
-import { arr_includes, obj_entries } from './utils';
+import { arr_includes } from './utils';
 import { loadMessages } from './messenger';
 import messages from './messages.json';
 import { Config, configPreference } from './Config';
@@ -69,18 +69,6 @@ export namespace Twinkle {
 		portletType: null,
 		portletNext: null,
 
-		// Tag
-		groupByDefault: true,
-		watchTaggedVenues: ['articles', 'drafts', 'redirects', 'files'],
-		watchTaggedPages: '1 month',
-		watchMergeDiscussions: '1 month',
-		markTaggedPagesAsMinor: false,
-		markTaggedPagesAsPatrolled: true,
-		tagArticleSortOrder: 'cat',
-		customTagList: [],
-		customFileTagList: [],
-		customRedirectTagList: [],
-
 		// XfD
 		logXfdNominations: false,
 		xfdLogPageName: 'XfD log',
@@ -104,6 +92,20 @@ export namespace Twinkle {
 		confirmOnFluff: false,
 		confirmOnMobileFluff: true,
 		showRollbackLinks: [ 'diff', 'others' ],
+
+		// CSD
+		speedySelectionStyle: 'buttonClick',
+		watchSpeedyPages: [ 'g3', 'g5', 'g10', 'g11', 'g12' ],
+		watchSpeedyExpiry: '1 month',
+		markSpeedyPagesAsPatrolled: false,
+
+		// Warn
+		defaultWarningGroup: '1',
+		combinedSingletMenus: false,
+		showSharedIPNotice: true,
+		watchWarnings: '1 month',
+		oldSelect: false,
+		customWarningList: [],
 
 		// Hidden preferences
 		autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
@@ -138,8 +140,8 @@ export namespace Twinkle {
 	 * @param config
 	 */
 	export function setDefaultConfig(config: { name: string; value: any }[]) {
-		$.each(config, function (name, value) {
-			defaultConfig[name] = value;
+		config.forEach((pref) => {
+			defaultConfig[pref.name] = pref.value;
 		});
 	}
 
@@ -534,7 +536,7 @@ export class TwinkleModule {
 	 * Set of links shown in the bottom right of the module dialog.
 	 * Object keys are labels and values are the wiki page names
 	 */
-	footerLinks: { [label: string]: string };
+	footerlinks: { [label: string]: string };
 
 	makeWindow() {}
 }
