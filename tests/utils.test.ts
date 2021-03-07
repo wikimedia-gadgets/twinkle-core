@@ -1,6 +1,6 @@
 import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
 
-import { NS_TEMPLATE, NS_CATEGORY  } from '../src/namespaces';
+import {NS_TEMPLATE, NS_USER_TALK} from '../src/namespaces';
 
 describe('utils', function () {
 	test('makeArray', function () {
@@ -57,7 +57,7 @@ describe('utils', function () {
 
 	test('namespaces', function () {
 		expect(NS_TEMPLATE).toBe(10);
-		expect(NS_CATEGORY).toBe(14);
+		expect(NS_USER_TALK).toBe(3);
 	});
 
 });

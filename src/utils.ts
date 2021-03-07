@@ -1,3 +1,23 @@
+export type LogEvent = {
+	logid: number
+	ns: number
+	title: string
+	pageid: number
+	logpage: number
+	params: any
+	type: string
+	action: string
+	user: string
+	timestamp: string
+	comment: string
+}
+
+export class ApiError extends Error {
+	code: string;
+	info: string;
+	response: Record<string, any>;
+}
+
 export function makeArray<T>(obj: T | Array<T> | undefined | null): Array<T> {
 	if (!obj) {
 		return [];

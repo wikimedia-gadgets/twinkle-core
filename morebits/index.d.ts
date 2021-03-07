@@ -97,8 +97,8 @@ declare namespace Morebits {
 		getUTCMonthNameAbbrev(): string;
 		add(number: number, unit: string): Morebits.date;
 		subtract(number: number, unit: string): Morebits.date;
-		format(formatstr: string, zone: number | 'utc' | 'system'): string;
-		calendar(zone: number | 'utc' | 'system'): string;
+		format(formatstr: string, zone?: number | 'utc' | 'system'): string;
+		calendar(zone?: number | 'utc' | 'system'): string;
 		monthHeaderRegex(): RegExp;
 		monthHeader(level?: number): string;
 	}
@@ -125,7 +125,12 @@ declare namespace Morebits {
 				statusElement?: Morebits.status,
 				onFailure?: (apiobj: api) => any
 			);
+
+			/**
+			 * @deprecated
+			 */
 			responseXML: XMLDocument;
+			params: any;
 			setParent(parent: any): void;
 			setStatusElement(statusElement: Morebits.status): void;
 			post(callerAjaxParameters?: JQuery.AjaxSettings): JQuery.Promise<api>;
@@ -208,6 +213,87 @@ declare namespace Morebits {
 			 * @deprecated
 			 */
 			getCallbackParameters(): any;
+		}
+
+		class user {
+			constructor(userName: string, status?: Morebits.status | string);
+			load(onSuccess?, onFailure?): void;
+			block(onSuccess?, onFailure?): void;
+			unblock(onSuccess?, onFailure?): void;
+			groups(onSuccess?, onFailure?): void;
+			notify(onSuccess?, onFailure?): void;
+			setReason(reason: string): void;
+			setChangeTags(tags: string | string[]): void;
+			setExpiry(expiry: string | number | string[] | Morebits.date | Date): void;
+			setStatusElement(statusElement: Morebits.status): void;
+			getStatusElement(): Morebits.status;
+			setWatchUser(watchuser: boolean): void;
+			setWatchlistExpiry(watchlistExpiry: string | number | Morebits.date | Date): void;
+			useOriginalBlock(useOriginalBlockParams: boolean): void;
+			setAllowusertalk(allowusertalk: boolean): void;
+			setAnononly(anononly: boolean): void;
+			setAutoblock(autoblock: boolean): void;
+			setNocreate(nocreate: boolean): void;
+			setNoemail(noemail: boolean): void;
+			setReblock(reblock: boolean): void;
+			setHidename(hidename: string): void;
+			setPartial(partial: boolean): void;
+			setPartialPages(pages: string | string[]): void;
+			setPartialNamespaces(namespaces: string | string[] | number | number[]): void;
+			setAddGroups(addGroups: string[]): void;
+			setRemoveGroups(removeGroups: string | string[]): void;
+			setNotifyBots(notifyBots: boolean): void;
+			setNotifyIndef(notifyIndef: boolean): void;
+			setNotifySelf(notifySelf: boolean): void;
+			setNotifySkips(link: string, templates: string | string[]): void;
+			setMessage(message: string): void;
+			setSectionTitle(title: string): void;
+			setPageobjectFunctions(pageobjectFunctions: any): void;
+			getUserName(): string
+			exists(): boolean
+			getUserID(): number
+			getRegistration(): string
+			getEditCount(): number
+			isIP(): boolean
+			isIPRange(): boolean
+			getGroups(): string[]
+			getImplicitGroups(): string[]
+			getGrantedGroups(): string[]
+			isInGroup(group: string): boolean
+			getGroupExpiry(group: string): boolean
+			getRights(): string[]
+			hasRight(right: string): boolean
+			isHidden(): boolean
+			isSysop(): boolean
+			isBot(): boolean
+			getLoadTime(): string
+			hasBlockLog(): boolean
+			getLastBlockLogEntry()
+			isBlocked(): boolean
+			isRangeBlocked(): boolean
+			getBlockedRange(): string
+			getBlockInfo(): any;
+			getBlockingSysop(): string
+			getBlockTimestamp(): string
+			getBlockExpiry(): string
+			getBlockReason(): string
+			getAllowusertalk(): boolean
+			getAnononly(): boolean
+			getAutoblock(): boolean
+			getNocreate(): boolean
+			getNoemail(): boolean
+			getHidename(): boolean
+			getPartial(): boolean
+			getPartialPages(): string[]
+			getPartialNamespaces(): number[]
+			getTalkTitle(): string
+			getTalkText(): string
+			getTalkExists(): boolean
+			getTalkTimestamp(): string
+			getTalkLastEditor(): string
+			getTalkTemplates(): string[]
+			getTalkLinks(): string[]
+			getActionResponse(): Record<string, any>
 		}
 
 		class preview {

@@ -7,3 +7,5 @@ export const NS_FILE = namespaceIds.file;
 export const NS_TEMPLATE = namespaceIds.template;
 export const NS_CATEGORY = namespaceIds.category;
 export const NS_PROJECT = namespaceIds.project;
+export const NS_USER = namespaceIds.user;
+export const NS_USER_TALK = namespaceIds.user_talk;

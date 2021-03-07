@@ -12,6 +12,7 @@ export * from './messenger';
 export * from './Api';
 export * from './Page';
 export * from './Dialog';
+export * from './Config';
 
 // Twinkle modules
 export * from './diffCore';
@@ -21,3 +22,5 @@ export * from './xfdCore';
 export * from './warnCore';
 export * from './fluffCore';
 export * from './batchDeleteCore';
+export * from './protectCore';
+export * from './blockCore';
