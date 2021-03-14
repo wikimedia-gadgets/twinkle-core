@@ -25,3 +25,4 @@ export * from './batchDeleteCore';
 export * from './protectCore';
 export * from './blockCore';
 export * from './unlinkCore';
+export * from './batchUndeleteCore';

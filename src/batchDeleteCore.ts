@@ -36,7 +36,7 @@ class BatchDelete extends TwinkleModule {
 		Window.setTitle('Batch deletion');
 		Window.setFooterLinks(this.footerLinks);
 
-		var form = new Morebits.quickForm(this.evaluate);
+		var form = new Morebits.quickForm(this.evaluate.bind(this));
 		form.append({
 			type: 'checkbox',
 			list: [
@@ -459,7 +459,7 @@ class BatchDelete extends TwinkleModule {
 		pageDeleter.setOption('preserveIndividualStatusLines', input.delete_page as boolean);
 		pageDeleter.setPageList(input.pages as string[]);
 		pageDeleter.run(
-			(pageName: string) => {
+			function (pageName: string) {
 				var params = {
 					page: pageName,
 					delete_page: input.delete_page,
@@ -481,8 +481,8 @@ class BatchDelete extends TwinkleModule {
 				} else {
 					this.callbacks.doExtras(wikipedia_page);
 				}
-			},
-			() => {
+			}.bind(this),
+			function () {
 				if (input.delete_subpages && input.subpages) {
 					var subpageDeleter = new Morebits.batchOperation(msg('deleting-subpages'));
 					subpageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
@@ -508,7 +508,7 @@ class BatchDelete extends TwinkleModule {
 						wikipedia_page.deletePage(this.callbacks.doExtras, pageDeleter.workerFailure);
 					});
 				}
-			}
+			}.bind(this)
 		);
 	}
 
