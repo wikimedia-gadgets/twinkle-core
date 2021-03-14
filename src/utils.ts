@@ -1,16 +1,16 @@
 export type LogEvent = {
-	logid: number
-	ns: number
-	title: string
-	pageid: number
-	logpage: number
-	params: any
-	type: string
-	action: string
-	user: string
-	timestamp: string
-	comment: string
-}
+	logid: number;
+	ns: number;
+	title: string;
+	pageid: number;
+	logpage: number;
+	params: any;
+	type: string;
+	action: string;
+	user: string;
+	timestamp: string;
+	comment: string;
+};
 
 export class ApiError extends Error {
 	code: string;
@@ -90,6 +90,13 @@ export function generateBatchPageLinks(checkbox: HTMLInputElement) {
 	$checkbox.next().prepend([link, ' ']);
 }
 
+export function makeOptoutLink(module: string) {
+	if (!module) {
+		return '';
+	}
+	return 'notwinkle.test/?module=' + module;
+}
+
 /**
  * Make template wikitext from the template name and parameters
  * @param {string} name - name of the template. Include "subst:" if necessary
@@ -106,7 +113,7 @@ export function makeTemplate(name: string, parameters: Record<string | number, s
 	return '{{' + name + parameterText + '}}';
 }
 
-export function objectFromEntries(entries: [string, any][]) {
+export function objectFromEntries<T>(entries: [string, T][]): Record<string, T> {
 	let obj = {};
 	for (let [key, val] of entries) {
 		obj[key] = val;
