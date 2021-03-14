@@ -2,8 +2,8 @@ import { Twinkle, TwinkleModule } from './twinkle';
 import { makeArray, obj_entries } from './utils';
 import { Page } from './Page';
 import { Api } from './Api';
-import {Dialog} from "./Dialog";
-import {configPreference} from "./Config";
+import { Dialog } from './Dialog';
+import { configPreference } from './Config';
 
 // TODO: still quite a bit of enwiki specific logic here
 
@@ -1034,7 +1034,6 @@ export abstract class SpeedyCore extends TwinkleModule {
 				Morebits.wiki.actionCompleted.redirect = null;
 				this.dialog.close();
 				// XXX
-				// @ts-ignore
 				Twinkle.unlink.callback(
 					isFile
 						? 'Removing usages of and/or links to deleted file ' + Morebits.pageNameNorm

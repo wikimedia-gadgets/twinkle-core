@@ -1,5 +1,6 @@
 {
 	"colon-separator": ": ",
+	"word-separator": " ",
 	"blanknamespace": "(Article)",
 
 	"info": "Info",
@@ -51,6 +52,7 @@
 	"loading": "Loading... ",
 	"select-all": "Select All",
 	"deselect-all": "Deselect All",
+	"fetching-list": "Grabbing list of pages",
 
 	"option-delete": "Delete pages",
 	"option-talks": "Delete associated talk pages (except user talk pages)",
@@ -61,12 +63,11 @@
 	"option-subpage-unlink": "Unlink backlinks to each deleted subpage (in Main and Portal namespaces only)",
 	"option-unlink": "Unlink backlinks to each page (in Main and Portal namespaces only)",
 	"option-unlink-file": "Remove usages of each file (in all namespaces)",
-	"fetching-list": "Grabbing list of pages",
 	"pages-label": "Pages to delete",
 	"complete": "Batch deletion is now complete",
 	"confirm-protected": "You are about to delete {{formatnum:$1}} fully protected page(s). Are you sure?",
 	"dbatch-give-reason": "You need to give a reason, you cabal crony!",
-	"no-pages": "nothing to delete, aborting",
+	"dbatch-no-pages": "nothing to delete, aborting",
 	"deleting": "Deleting pages",
 	"starting": "Initiating requested tasks",
 	"deleting-page": "Deleting page $1",
@@ -86,6 +87,20 @@
 	"unlink-img-on": "Removing file usages on $1",
 	"img-comment": "Commented out because image was deleted",
 	"unlink-img-summary": "Removing instance of file $1 that has been deleted because \"$2\"",
+
+	"undbatch-restore-talks": "Restore talk pages of undeleted pages if they existed",
+	"undbatch-pages-label": "Pages to undelete",
+	"undbatch-complete": "Batch undeletion is now complete",
+	"undbatch-confirm-protected": "You are about to undelete {{formatnum:$1}} fully create protected page(s). Are you sure?",
+	"undbatch-no-pages": "nothing to undelete, aborting",
+	"undeleting": "Undeleting pages",
+	"undeleting-page": "Undeleting page $1",
+	"check-talk-deleted": "Checking talk page for deleted revisions",
+	"undeleting-talk-status": "Undeleting talk page of $1",
+	"undeleting-talk-summary": "Undeleting [[Help:Talk page|talk page]] of \"$1\"",
+	"create-protected-indef": "(fully create protected indefinitely)",
+	"create-protected": "(fully create protected, expires $1 (UTC))",
+
 
 	"unlink-title": "Unlinking backlinks",
 	"unlink-title-file": "Unlinking backlinks and file usages",
@@ -112,7 +127,6 @@
 	"summary-links-files": "Commenting out use(s) of file / Removing link(s) to \"$1\"",
 	"summary-links": "Removing link(s) to \"$1\"",
 	"summary-files": "Commenting out use(s) of file to \"$1\"",
-
 
 	"summary-added": "Added {{list:$1}} {{plural:$2|tag|tags}}",
 	"summary-removed": "Removed {{list:$1}} {{plural:$2|tag|tags}}",

@@ -449,7 +449,7 @@ class BatchDelete extends TwinkleModule {
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(form);
 		if ((input.pages as string[]).length === 0) {
-			Morebits.status.error(msg('error'), msg('no-pages'));
+			Morebits.status.error(msg('error'), msg('dbatch-no-pages'));
 			return;
 		}
 
