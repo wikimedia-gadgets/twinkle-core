@@ -119,6 +119,12 @@ export namespace Twinkle {
 		// Shared
 		markSharedIPAsMinor: true,
 
+		// Talkback
+		markTalkbackAsMinor: true,
+		insertTalkbackSignature: true, // always sign talkback templates
+		talkbackHeading: 'New message from ' + mw.config.get('wgUserName'),
+		mailHeading: "You've got mail!",
+
 		// Hidden preferences
 		autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
 		revertMaxRevisions: 50, // intentionally limited
