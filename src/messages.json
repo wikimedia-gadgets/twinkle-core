@@ -1,5 +1,6 @@
 {
 	"colon-separator": ": ",
+	"blanknamespace": "(Article)",
 
 	"info": "Info",
 	"note": "Note",
@@ -46,6 +47,11 @@
 	"pcreview-comment": "Automatically reviewing reversion",
 	"pcreview-accepting": "Automatically accepting your changes",
 
+	"reason": "Reason: ",
+	"loading": "Loading... ",
+	"select-all": "Select All",
+	"deselect-all": "Deselect All",
+
 	"option-delete": "Delete pages",
 	"option-talks": "Delete associated talk pages (except user talk pages)",
 	"option-redirects": "Delete redirects to deleted pages",
@@ -55,15 +61,11 @@
 	"option-subpage-unlink": "Unlink backlinks to each deleted subpage (in Main and Portal namespaces only)",
 	"option-unlink": "Unlink backlinks to each page (in Main and Portal namespaces only)",
 	"option-unlink-file": "Remove usages of each file (in all namespaces)",
-	"reason": "Reason: ",
 	"fetching-list": "Grabbing list of pages",
 	"pages-label": "Pages to delete",
-	"select-all": "Select All",
-	"deselect-all": "Deselect All",
-	"loading": "Loading... ",
 	"complete": "Batch deletion is now complete",
 	"confirm-protected": "You are about to delete {{formatnum:$1}} fully protected page(s). Are you sure?",
-	"give-reason": "You need to give a reason, you cabal crony!",
+	"dbatch-give-reason": "You need to give a reason, you cabal crony!",
 	"no-pages": "nothing to delete, aborting",
 	"deleting": "Deleting pages",
 	"starting": "Initiating requested tasks",
@@ -85,6 +87,33 @@
 	"img-comment": "Commented out because image was deleted",
 	"unlink-img-summary": "Removing instance of file $1 that has been deleted because \"$2\"",
 
+	"unlink-title": "Unlinking backlinks",
+	"unlink-title-file": "Unlinking backlinks and file usages",
+	"unlink-intro": "This tool allows you to unlink all incoming links (\"backlinks\") that point to this page. For instance, <code>[[$1|link text]]</code> would become <code>link text</code> and <code>[[$1]]</code> would become <code>$1</code>. Use it with caution.",
+	"unlink-intro-file": "This tool allows you to unlink all incoming links (\"backlinks\") that point to this page  and/or hide all inclusions of this file by wrapping them in <!-- --> comment markup. For instance, <code>[[:$1|link text]]</code> would become <code>link text</code> and <code>[[$1]]</code> would become <code><!-- [[$1]] --></code>. Use it with caution.",
+	"unlink-give-reason": "You must specify a reason for unlinking.",
+	"unlink-select-one": "You must select at least one item to unlink.",
+	"unlink-status-links-files": "Unlinking backlinks and instances of file usage",
+	"unlink-status-links": "Unlinking backlinks",
+	"unlink-status-files": "Unlinking instances of file usage",
+	"unlink-in": "Unlinking in page \"$1\"",
+	"no-file-usage": "No instances of file usage found.",
+	"file-usage": "File usage",
+	"first-n-files": "First {{formatnum:$1}} file usages shown.",
+	"backlinks": "Backlinks",
+	"no-backlinks": "No backlinks found.",
+	"first-n-links": "First {{formatnum:$1}} backlinks shown.",
+	"change-twpref": "You can change this with your Twinkle preferences, linked at the bottom of this Twinkle window",
+	"selected-namespaces": "Selected namespaces: {{list:$1}}",
+	"commented-out": "Commented out",
+	"no-links-files-found": "Didn't find any backlinks or file usages on the page.",
+	"no-links-found": "Didn't find any backlinks on the page.",
+	"no-files-found": "Didn't find any file usages on the page.",
+	"summary-links-files": "Commenting out use(s) of file / Removing link(s) to \"$1\"",
+	"summary-links": "Removing link(s) to \"$1\"",
+	"summary-files": "Commenting out use(s) of file to \"$1\"",
+
+
 	"summary-added": "Added {{list:$1}} {{plural:$2|tag|tags}}",
 	"summary-removed": "Removed {{list:$1}} {{plural:$2|tag|tags}}",
 	"summary-added-removed": "Added {{list:$1}}; and removed {{list:$2}} {{plural:$3|tag|tags}}",
@@ -103,5 +132,4 @@
 	"removing": "Already present tags: removing de-selected tags",
 	"resolved-redirect": "Resolved template redirect {{$1}} to {{$2}}",
 	"tagging-status": "Tagging $1"
-
 }

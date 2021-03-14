@@ -3,6 +3,7 @@ import { generateBatchPageLinks, sortByNamespace } from './utils';
 import { Dialog } from './Dialog';
 import { Page } from './Page';
 import { Api } from './Api';
+import { msg } from './messenger';
 
 export class UnlinkCore extends TwinkleModule {
 	moduleName = 'unlink';
@@ -12,17 +13,23 @@ export class UnlinkCore extends TwinkleModule {
 	portletName = 'Unlink';
 	portletTooltip = 'Unlink backlinks';
 
+	/**
+	 * Return true if the module can be used on the current page by the current user,
+	 * false otherwise
+	 */
+	isUsable(): boolean {
+		return (
+			mw.config.get('wgNamespaceNumber') >= 0 &&
+			mw.config.get('wgPageName') !== 'Wikipedia:Sandbox' &&
+			(Morebits.userIsInGroup('extendedconfirmed') || Morebits.userIsSysop)
+		);
+	}
+
 	constructor() {
 		super();
-		if (
-			mw.config.get('wgNamespaceNumber') < 0 ||
-			mw.config.get('wgPageName') === 'Wikipedia:Sandbox' ||
-			// Restrict to extended confirmed users (see #428)
-			(!Morebits.userIsInGroup('extendedconfirmed') && !Morebits.userIsSysop)
-		) {
-			return;
+		if (this.isUsable()) {
+			this.addMenu();
 		}
-		this.addMenu();
 	}
 
 	// the parameter is used when invoking unlink from admin speedy
@@ -30,52 +37,25 @@ export class UnlinkCore extends TwinkleModule {
 		var fileSpace = mw.config.get('wgNamespaceNumber') === 6;
 
 		var Window = new Dialog(600, 440);
-		Window.setTitle('Unlink backlinks' + (fileSpace ? ' and file usages' : ''));
+		Window.setTitle(fileSpace ? msg('unlink-title-file') : msg('unlink-title'));
 		Window.setFooterLinks(this.footerlinks);
 
 		var form = new Morebits.quickForm(this.evaluate.bind(this));
 
-		// prepend some documentation: files are commented out, while any
-		// display text is preserved for links (otherwise the link itself is used)
-		var linkTextBefore = Morebits.htmlNode(
-			'code',
-			'[[' + (fileSpace ? ':' : '') + Morebits.pageNameNorm + '|link text]]'
-		);
-		var linkTextAfter = Morebits.htmlNode('code', 'link text');
-		var linkPlainBefore = Morebits.htmlNode('code', '[[' + Morebits.pageNameNorm + ']]');
-		var linkPlainAfter;
-		if (fileSpace) {
-			linkPlainAfter = Morebits.htmlNode('code', '<!-- [[' + Morebits.pageNameNorm + ']] -->');
-		} else {
-			linkPlainAfter = Morebits.htmlNode('code', Morebits.pageNameNorm);
-		}
-		[linkTextBefore, linkTextAfter, linkPlainBefore, linkPlainAfter].forEach((node) => {
-			node.style.fontFamily = 'monospace';
-			node.style.fontStyle = 'normal';
-		});
-
 		form.append({
 			type: 'div',
-			style: 'margin-bottom: 0.5em',
-			label: [
-				'This tool allows you to unlink all incoming links ("backlinks") that point to this page' +
-					(fileSpace ? ', and/or hide all inclusions of this file by wrapping them in <!-- --> comment markup' : '') +
-					'. For instance, ',
-				linkTextBefore,
-				' would become ',
-				linkTextAfter,
-				' and ',
-				linkPlainBefore,
-				' would become ',
-				linkPlainAfter,
-				'. Use it with caution.',
-			],
+			style: 'margin-bottom: 0.5em;',
+			// prepend some documentation: files are commented out, while any
+			// display text is preserved for links (otherwise the link itself is used)
+			label: $.parseHTML(
+				fileSpace ? msg('unlink-intro-file', Morebits.pageNameNorm) : msg('unlink-intro', Morebits.pageNameNorm)
+			),
 		});
 
 		form.append({
 			type: 'input',
 			name: 'reason',
-			label: 'Reason: ',
+			label: msg('reason'),
 			value: presetReason ? presetReason : '',
 			size: 60,
 		});
@@ -101,14 +81,14 @@ export class UnlinkCore extends TwinkleModule {
 				blfilterredir: 'nonredirects',
 			});
 		}
-		var wikipedia_api = new Api('Grabbing backlinks', query);
+		var wikipedia_api = new Api(msg('fetching-backlinks'), query);
 		wikipedia_api.params = { form: form, Window: Window, image: fileSpace };
 		wikipedia_api.post().then(this.displayBacklinks);
 
 		var root = document.createElement('div');
 		root.style.padding = '15px'; // just so it doesn't look broken
 		Morebits.status.init(root);
-		wikipedia_api.getStatusElement().status('loading...');
+		wikipedia_api.getStatusElement().status(msg('loading'));
 		Window.setContent(root);
 		Window.display();
 	}
@@ -122,32 +102,31 @@ export class UnlinkCore extends TwinkleModule {
 		};
 
 		if (!input.reason) {
-			alert('You must specify a reason for unlinking.');
-			return;
+			return alert(msg('unlink-give-reason'));
 		}
 
 		input.backlinks = input.backlinks || [];
 		input.imageusage = input.imageusage || [];
 		var pages = Morebits.array.uniq(input.backlinks.concat(input.imageusage));
 		if (!pages.length) {
-			alert('You must select at least one item to unlink.');
-			return;
+			return alert('unlink-select-one');
 		}
 
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(form);
 
 		var unlinker = new Morebits.batchOperation(
-			'Unlinking ' +
-				(input.backlinks.length
-					? 'backlinks' + (input.imageusage.length ? ' and instances of file usage' : '')
-					: 'instances of file usage')
+			input.backlinks.length
+				? input.imageusage.length
+					? msg('unlink-status-links-files')
+					: msg('unlink-status-links')
+				: msg('unlink-status-files')
 		);
 		unlinker.setOption('preserveIndividualStatusLines', true);
 		unlinker.setPageList(pages);
 		var params = { reason: input.reason, unlinker: unlinker };
 		unlinker.run((pageName: string) => {
-			var wikipedia_page = new Page(pageName, 'Unlinking in page "' + pageName + '"');
+			var wikipedia_page = new Page(pageName, msg('unlink-in', pageName));
 			wikipedia_page.setBotEdit(true); // unlink considered a floody operation
 			wikipedia_page.setCallbackParameters(
 				$.extend(
@@ -158,7 +137,7 @@ export class UnlinkCore extends TwinkleModule {
 					params
 				)
 			);
-			wikipedia_page.load().then(this.unlinkBacklinks);
+			wikipedia_page.load().then(() => this.unlinkBacklinks(wikipedia_page));
 		});
 	}
 
@@ -176,34 +155,34 @@ export class UnlinkCore extends TwinkleModule {
 				list.push({ label: '', value: imageusage[i].title, checked: true });
 			}
 			if (!list.length) {
-				form.append({ type: 'div', label: 'No instances of file usage found.' });
+				form.append({ type: 'div', label: msg('no-file-usage') });
 			} else {
-				form.append({ type: 'header', label: 'File usage' });
+				form.append({ type: 'header', label: msg('file-usage') });
 				namespaces = [];
 				$.each(Twinkle.getPref('unlinkNamespaces'), (k, v) => {
-					namespaces.push(v === '0' ? '(Article)' : mw.config.get('wgFormattedNamespaces')[v]);
+					namespaces.push(v === '0' ? msg('blanknamespace') : mw.config.get('wgFormattedNamespaces')[v]);
 				});
 				form.append({
 					type: 'div',
-					label: 'Selected namespaces: ' + namespaces.join(', '),
-					tooltip: 'You can change this with your Twinkle preferences, at [[WP:TWPREFS]]',
+					label: msg('selected-namespaces', namespaces),
+					tooltip: msg('change-twpref'),
 				});
 				if (response['query-continue'] && response['query-continue'].imageusage) {
 					form.append({
 						type: 'div',
-						label: 'First ' + mw.language.convertNumber(list.length) + ' file usages shown.',
+						label: msg('first-n-files', list.length),
 					});
 				}
 				form.append({
 					type: 'button',
-					label: 'Select All',
+					label: msg('select-all'),
 					event: (e) => {
 						$(Morebits.quickForm.getElements(e.target.form, 'imageusage')).prop('checked', true);
 					},
 				});
 				form.append({
 					type: 'button',
-					label: 'Deselect All',
+					label: msg('deselect-all'),
 					event: (e) => {
 						$(Morebits.quickForm.getElements(e.target.form, 'imageusage')).prop('checked', false);
 					},
@@ -225,30 +204,30 @@ export class UnlinkCore extends TwinkleModule {
 				// Label made by Twinkle.generateBatchPageLinks
 				list.push({ label: '', value: backlinks[i].title, checked: true });
 			}
-			form.append({ type: 'header', label: 'Backlinks' });
+			form.append({ type: 'header', label: msg('backlinks') });
 			namespaces = [];
 			$.each(Twinkle.getPref('unlinkNamespaces'), (k, v) => {
-				namespaces.push(v === '0' ? '(Article)' : mw.config.get('wgFormattedNamespaces')[v]);
+				namespaces.push(v === '0' ? msg('blanknamespace') : mw.config.get('wgFormattedNamespaces')[v]);
 			});
 			form.append({
 				type: 'div',
-				label: 'Selected namespaces: ' + namespaces.join(', '),
-				tooltip: 'You can change this with your Twinkle preferences, linked at the bottom of this Twinkle window',
+				label: msg('selected-namespaces', namespaces),
+				tooltip: msg('change-twpref'),
 			});
 			if (response['query-continue'] && response['query-continue'].backlinks) {
 				form.append({
 					type: 'div',
-					label: 'First ' + mw.language.convertNumber(list.length) + ' backlinks shown.',
+					label: msg('first-n-links', list.length),
 				});
 			}
 			form.append({
 				type: 'button',
-				label: 'Select All',
+				label: msg('select-all'),
 				event: (e) => $(Morebits.quickForm.getElements(e.target.form, 'backlinks')).prop('checked', true),
 			});
 			form.append({
 				type: 'button',
-				label: 'Deselect All',
+				label: msg('deselect-all'),
 				event: (e) => $(Morebits.quickForm.getElements(e.target.form, 'backlinks')).prop('checked', false),
 			});
 			form.append({
@@ -259,7 +238,7 @@ export class UnlinkCore extends TwinkleModule {
 			});
 			havecontent = true;
 		} else {
-			form.append({ type: 'div', label: 'No backlinks found.' });
+			form.append({ type: 'div', label: msg('no-backlinks') });
 		}
 
 		if (havecontent) {
@@ -278,19 +257,17 @@ export class UnlinkCore extends TwinkleModule {
 		var params = pageobj.getCallbackParameters();
 		var wikiPage = new Morebits.wikitext.page(oldtext);
 
-		var summaryText = '',
-			warningString = false;
+		var errors = { backlink: false, fileusage: false };
 		var text;
 
 		// remove image usages
 		if (params.doImageusage) {
-			text = wikiPage.commentOutImage(mw.config.get('wgTitle'), 'Commented out').getText();
+			text = wikiPage.commentOutImage(mw.config.get('wgTitle'), msg('commented-out')).getText();
 			// did we actually make any changes?
-			if (text === oldtext) {
-				warningString = 'file usages';
-			} else {
-				summaryText = 'Commenting out use(s) of file';
+			if (text !== oldtext) {
 				oldtext = text;
+			} else {
+				errors.fileusage = true;
 			}
 		}
 
@@ -299,23 +276,35 @@ export class UnlinkCore extends TwinkleModule {
 			text = wikiPage.removeLink(Morebits.pageNameNorm).getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
-				warningString = warningString ? 'backlinks or file usages' : 'backlinks';
-			} else {
-				summaryText = (summaryText ? summaryText + ' / ' : '') + 'Removing link(s) to';
-				oldtext = text;
+				errors.backlink = true;
 			}
 		}
 
-		if (warningString) {
+		if (errors.backlink || errors.fileusage) {
 			// nothing to do!
-			pageobj.getStatusElement().error("Didn't find any " + warningString + ' on the page.');
+			pageobj
+				.getStatusElement()
+				.error(
+					errors.backlink
+						? errors.fileusage
+							? msg('no-links-files-found')
+							: msg('no-links-found')
+						: msg('no-files-found')
+				);
 			params.unlinker.workerFailure(pageobj);
 			return;
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary(summaryText + ' "' + Morebits.pageNameNorm + '": ' + params.reason + '.');
-		pageobj.setChangeTags(Twinkle.changeTags);
+		pageobj.setEditSummary(
+			(params.doBacklinks
+				? params.doImageusage
+					? msg('summary-links-files', Morebits.pageNameNorm)
+					: msg('summary-links', Morebits.pageNameNorm)
+				: msg('summary-files', Morebits.pageNameNorm)) +
+				msg('colon-separator') +
+				params.reason
+		);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save().then(params.unlinker.workerSuccess, params.unlinker.workerFailure);
 	}

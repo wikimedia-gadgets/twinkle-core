@@ -443,7 +443,7 @@ class BatchDelete extends TwinkleModule {
 		var input = Morebits.quickForm.getInputData(form);
 
 		if (!input.reason) {
-			alert(msg('give-reason'));
+			alert(msg('dbatch-give-reason'));
 			return;
 		}
 		Morebits.simpleWindow.setButtonsEnabled(false);
