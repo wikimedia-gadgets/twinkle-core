@@ -217,7 +217,7 @@ class Fluff extends TwinkleModule {
 
 		diff: () => {
 			// Autofill user talk links on diffs with vanarticle for easy warning, but don't autowarn
-			var warnFromTalk = function (xtitle) {
+			var warnFromTalk = (xtitle) => {
 				var talkLink = $('#mw-diff-' + xtitle + '2 .mw-usertoollinks a').first();
 				if (talkLink.length) {
 					var extraParams = 'vanarticle=' + mw.util.rawurlencode(Morebits.pageNameNorm) + '&' + 'noautowarn=true';
@@ -294,7 +294,7 @@ class Fluff extends TwinkleModule {
 			});
 	}
 
-	revert(type, vandal, rev, page) {
+	revert(type: 'vand' | 'norm' | 'agf', vandal: string, rev: number, page?: string) {
 		if (mw.util.isIPv6Address(vandal)) {
 			vandal = Morebits.ip.sanitizeIPv6(vandal);
 		}
@@ -338,9 +338,9 @@ class Fluff extends TwinkleModule {
 			type: 'csrf',
 			format: 'json',
 		};
-		var wikipedia_api = new Morebits.wiki.api(msg('fetching-data'), query, this.callbacks.main);
+		var wikipedia_api = new Morebits.wiki.api(msg('fetching-data'), query);
 		wikipedia_api.params = params;
-		wikipedia_api.post();
+		wikipedia_api.post().then((apiobj) => this.callbacks.main(apiobj));
 	}
 
 	revertToRevision(oldrev) {
@@ -358,12 +358,12 @@ class Fluff extends TwinkleModule {
 		toRevision: (pageobj) => {
 			var optional_summary = prompt(msg('prompt-reason-restore'), ''); // padded out to widen prompt in Firefox
 			if (optional_summary === null) {
-				pageobj.getStatusElement().error('Aborted by user.');
+				pageobj.getStatusElement().error(msg('user-aborted'));
 				return;
 			}
 
 			var summary = this.formatSummary(
-				'Restored revision ' + pageobj.getRevisionID() + ' by $USER',
+				msg('restore-summary', pageobj.getRevisionID()),
 				pageobj.getRevisionUser(),
 				optional_summary
 			);
@@ -378,7 +378,7 @@ class Fluff extends TwinkleModule {
 			}
 
 			Morebits.wiki.actionCompleted.redirect = pageobj.getPageName();
-			Morebits.wiki.actionCompleted.notice = 'Reversion completed';
+			Morebits.wiki.actionCompleted.notice = msg('reversion-complete');
 
 			pageobj.revert();
 		},
@@ -544,7 +544,7 @@ class Fluff extends TwinkleModule {
 					userHasAlreadyConfirmedAction = true;
 
 					summary = this.formatSummary(
-						msg('goodfaith-summary'), // $USER will be replaced by username
+						msg('goodfaith-summary'), // %USER% will be replaced by username
 						params.userHidden ? null : params.user,
 						extra_summary
 					);
@@ -552,7 +552,7 @@ class Fluff extends TwinkleModule {
 
 				case 'vand':
 					summary = this.formatSummary(
-						msg(msg('vandalism-summary'), params.count, params.gooduserHidden ? this.hiddenName : params.gooduser),
+						msg('vandalism-summary', params.count, params.gooduserHidden ? this.hiddenName : params.gooduser),
 						params.userHidden ? null : params.user
 					);
 					break;
@@ -569,7 +569,11 @@ class Fluff extends TwinkleModule {
 						userHasAlreadyConfirmedAction = true;
 					}
 
-					summary = this.formatSummary(msg('normal-summary'), params.userHidden ? null : params.user, extra_summary);
+					summary = this.formatSummary(
+						msg('normal-summary', params.count),
+						params.userHidden ? null : params.user,
+						extra_summary
+					);
 					break;
 			}
 
@@ -688,7 +692,7 @@ class Fluff extends TwinkleModule {
 
 	// Format a nicer edit summary than the default Morebits revert one, mainly by
 	// including user contribs and talk links and appending a custom reason.
-	// If builtInString contains the string "$USER", it will be replaced
+	// If builtInString contains the string "%USER%", it will be replaced
 	// by an appropriate user link if a user name is provided
 	formatSummary(builtInString: string, userName?: string, customString?: string) {
 		var result = builtInString;
@@ -701,23 +705,23 @@ class Fluff extends TwinkleModule {
 		// find number of UTF-8 bytes the resulting string takes up, and possibly add
 		// a contributions or contributions+talk link if it doesn't push the edit summary
 		// over the 499-byte limit
-		if (/\$USER/.test(builtInString)) {
+		if (/%USER%/.test(builtInString)) {
 			if (userName) {
-				var resultLen = unescape(encodeURIComponent(result.replace('$USER', ''))).length;
+				var resultLen = unescape(encodeURIComponent(result.replace('%USER%', ''))).length;
 				var contribsLink = '[[Special:Contributions/' + userName + '|' + userName + ']]';
 				var contribsLen = unescape(encodeURIComponent(contribsLink)).length;
 				if (resultLen + contribsLen <= 499) {
 					var talkLink = ' ([[User talk:' + userName + '|talk]])';
 					if (resultLen + contribsLen + unescape(encodeURIComponent(talkLink)).length <= 499) {
-						result = Morebits.string.safeReplace(result, '$USER', contribsLink + talkLink);
+						result = Morebits.string.safeReplace(result, '%USER%', contribsLink + talkLink);
 					} else {
-						result = Morebits.string.safeReplace(result, '$USER', contribsLink);
+						result = Morebits.string.safeReplace(result, '%USER%', contribsLink);
 					}
 				} else {
-					result = Morebits.string.safeReplace(result, '$USER', userName);
+					result = Morebits.string.safeReplace(result, '%USER%', userName);
 				}
 			} else {
-				result = Morebits.string.safeReplace(result, '$USER', this.hiddenName);
+				result = Morebits.string.safeReplace(result, '%USER%', this.hiddenName);
 			}
 		}
 
