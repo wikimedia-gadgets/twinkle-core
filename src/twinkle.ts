@@ -116,6 +116,9 @@ export namespace Twinkle {
 		customWelcomeList: [],
 		customWelcomeSignature: true,
 
+		// Shared
+		markSharedIPAsMinor: true,
+
 		// Hidden preferences
 		autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
 		revertMaxRevisions: 50, // intentionally limited
