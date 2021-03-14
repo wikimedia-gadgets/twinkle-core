@@ -82,20 +82,20 @@ export namespace Twinkle {
 
 		// Fluff (revert and rollback)
 		autoMenuAfterRollback: false,
-		openTalkPage: [ 'agf', 'norm', 'vand' ],
+		openTalkPage: ['agf', 'norm', 'vand'],
 		openTalkPageOnAutoRevert: false,
 		rollbackInPlace: false,
-		markRevertedPagesAsMinor: [ 'vand' ],
-		watchRevertedPages: [ 'agf', 'norm', 'vand', 'torev' ],
+		markRevertedPagesAsMinor: ['vand'],
+		watchRevertedPages: ['agf', 'norm', 'vand', 'torev'],
 		watchRevertedExpiry: '1 month',
 		offerReasonOnNormalRevert: true,
 		confirmOnFluff: false,
 		confirmOnMobileFluff: true,
-		showRollbackLinks: [ 'diff', 'others' ],
+		showRollbackLinks: ['diff', 'others'],
 
 		// CSD
 		speedySelectionStyle: 'buttonClick',
-		watchSpeedyPages: [ 'g3', 'g5', 'g10', 'g11', 'g12' ],
+		watchSpeedyPages: ['g3', 'g5', 'g10', 'g11', 'g12'],
 		watchSpeedyExpiry: '1 month',
 		markSpeedyPagesAsPatrolled: false,
 
@@ -106,6 +106,15 @@ export namespace Twinkle {
 		watchWarnings: '1 month',
 		oldSelect: false,
 		customWarningList: [],
+
+		// Welcome
+		topWelcomes: false,
+		watchWelcomes: '3 months',
+		insertUsername: true,
+		quickWelcomeMode: 'norm',
+		quickWelcomeTemplate: 'welcome',
+		customWelcomeList: [],
+		customWelcomeSignature: true,
 
 		// Hidden preferences
 		autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
