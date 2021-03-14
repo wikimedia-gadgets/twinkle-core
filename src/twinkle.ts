@@ -107,6 +107,9 @@ export namespace Twinkle {
 		oldSelect: false,
 		customWarningList: [],
 
+		// ARV
+		spiWatchReport: 'yes',
+
 		// Welcome
 		topWelcomes: false,
 		watchWelcomes: '3 months',
