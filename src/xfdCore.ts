@@ -4,8 +4,10 @@ import { Api } from './Api';
 import { msg } from './messenger';
 import { Config, configPreference } from './Config';
 import { Dialog } from './Dialog';
+import { NS_USER_TALK } from './namespaces';
 
 export class XfdCore extends TwinkleModule {
+	moduleName = 'XFD';
 	static moduleName = 'XFD';
 
 	mode: XfdMode;
@@ -14,6 +16,10 @@ export class XfdCore extends TwinkleModule {
 	Window: Dialog;
 	fieldset: Morebits.quickForm.element;
 	result: HTMLFormElement;
+
+	portletName = 'XFD';
+	portletId = 'twinkle-xfd';
+	windowTitle = 'Start a deletion discussion (XfD)';
 
 	constructor() {
 		super();
@@ -35,8 +41,6 @@ export class XfdCore extends TwinkleModule {
 				break;
 			}
 		}
-		this.portletName = 'XFD';
-		this.portletId = 'twinkle-xfd';
 		this.portletTooltip = this.getMenuTooltip();
 		this.addMenu();
 	}
@@ -148,13 +152,14 @@ export class XfdCore extends TwinkleModule {
 		if (this.mode) {
 			return this.mode.getMenuTooltip();
 		} else {
+			// can be overridden per mode so doesn't need i18n here
 			return 'Start a deletion discussion';
 		}
 	}
 
 	makeWindow() {
 		let Window = new Dialog(700, 400);
-		Window.setTitle('Start a deletion discussion (XfD)');
+		Window.setTitle(this.windowTitle);
 		Window.setFooterLinks(this.footerlinks);
 		this.makeForm(Window);
 	}
@@ -169,9 +174,8 @@ export class XfdCore extends TwinkleModule {
 		form.append({
 			type: 'select',
 			name: 'venue',
-			label: 'Deletion discussion venue:',
-			tooltip:
-				'When activated, a default choice is made, based on what namespace you are in. This default should be the most appropriate.',
+			label: msg('xfd-venue-label'),
+			tooltip: msg('xfd-venue-tooltip'),
 			event: this.onCategoryChange.bind(this),
 			list: XfdCore.modeList.map((mode) => ({
 				type: 'option',
@@ -191,10 +195,10 @@ export class XfdCore extends TwinkleModule {
 			type: 'checkbox',
 			list: [
 				{
-					label: 'Notify page creator if possible',
+					label: msg('notify-creator-label'),
 					value: 'notify',
 					name: 'notifycreator',
-					tooltip: "A notification template will be placed on the creator's talk page if this is true.",
+					tooltip: msg('notify-creator-tooltip'),
 					checked: true,
 				},
 			],
@@ -239,7 +243,7 @@ export class XfdCore extends TwinkleModule {
 			return mode.venueCode === venueCode;
 		})[0];
 		if (!mode) {
-			throw new Error('Unrecognised venue: ' + venueCode); // should never happen
+			throw new Error(msg('bad-venue', venueCode)); // should never happen
 		}
 		// @ts-ignore
 		this.mode = new mode();
@@ -293,7 +297,7 @@ export abstract class XfdMode {
 		this.fieldset.append({
 			type: 'textarea',
 			name: 'reason',
-			label: 'Reason: ',
+			label: msg('reason'),
 			value: ($(this.result).find('textarea').val() as string) || '',
 			tooltip: msg('reason-tooltip'),
 		});
@@ -370,6 +374,7 @@ export abstract class XfdMode {
 
 	/**
 	 * Only applicable for XFD processes that use separate discussion pages for every page.
+	 * This is English-language specific (XXX)
 	 */
 	determineDiscussionPage() {
 		let params = this.params;
@@ -429,10 +434,10 @@ export abstract class XfdMode {
 
 		var talkName = new mw.Title(pageobj.getPageName()).getTalkPage().toText();
 		if (talkName === pageobj.getPageName()) {
-			pageobj.getStatusElement().error('Page protected and nowhere to add an edit request, aborting');
+			pageobj.getStatusElement().error(msg('protected-no-editreq'));
 			return $.Deferred().reject();
 		}
-		pageobj.getStatusElement().warn('Page protected, requesting edit');
+		pageobj.getStatusElement().warn(msg('protected-editreq'));
 
 		var editRequest =
 			'{{subst:XfdCore edit protected|page=' +
@@ -443,21 +448,21 @@ export abstract class XfdMode {
 			params.tagText +
 			'</nowiki>}}';
 
-		var talk_page = new Page(talkName, 'Automatically posting edit request on talk page');
-		talk_page.setNewSectionTitle('Edit request to complete ' + toTLACase(params.venue) + ' nomination');
+		var talk_page = new Page(talkName, msg('posting-editreq'));
+		talk_page.setNewSectionTitle(msg('xfd-editreq-title', toTLACase(params.venue)));
 		talk_page.setNewSectionText(editRequest);
 		talk_page.setCreateOption('recreate');
 		talk_page.setWatchlist(Twinkle.getPref('xfdWatchPage'));
 		talk_page.setFollowRedirect(true); // should never be needed, but if the article is moved, we would want to follow the redirect
 
 		return talk_page.newSection().catch(function () {
-			talk_page.getStatusElement().warn('Unable to add edit request, the talk page may be protected');
+			talk_page.getStatusElement().warn(msg('xfd-editreq-failed'));
 			return $.Deferred().reject();
 		});
 	}
 
 	fetchCreatorInfo() {
-		let thispage = new Page(Morebits.pageNameNorm, 'Finding page creator');
+		let thispage = new Page(Morebits.pageNameNorm, msg('fetching-creator'));
 		thispage.setLookupNonRedirectCreator(this.params.lookupNonRedirectCreator);
 		return thispage.lookupCreation().then(() => {
 			this.params.initialContrib = thispage.getCreator();
@@ -471,17 +476,17 @@ export abstract class XfdMode {
 		// prefix-less username for addToLog
 		let params = this.params;
 
-		var notifyTitle = mw.Title.newFromText(notifyTarget, 3); // 3: user talk
+		var notifyTitle = mw.Title.newFromText(notifyTarget, NS_USER_TALK);
 		var targetNS = notifyTitle.getNamespaceId();
-		var usernameOrTarget = notifyTitle.getRelativeText(3);
-		statusElement = statusElement || new Morebits.status('Notifying initial contributor (' + usernameOrTarget + ')');
+		var usernameOrTarget = notifyTitle.getRelativeText(NS_USER_TALK);
+		statusElement = statusElement || new Morebits.status(msg('notifying-creator', usernameOrTarget));
 
 		let notifyPageTitle = notifyTitle.toText();
 		if (targetNS === 3) {
 			// Disallow warning yourself
 			if (usernameOrTarget === mw.config.get('wgUserName')) {
 				params.initialContrib = null; // disable initial contributor logging in userspace log
-				statusElement.warn('You (' + usernameOrTarget + ') created this page; skipping user notification');
+				statusElement.warn(msg('notify-self-skip', usernameOrTarget));
 				return $.Deferred().resolve();
 			}
 		}

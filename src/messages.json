@@ -49,6 +49,7 @@
 	"pcreview-accepting": "Automatically accepting your changes",
 
 	"reason": "Reason: ",
+	"reason-tooltip": "You can use wikimarkup in your reason. Twinkle will automatically sign your post.",
 	"loading": "Loading... ",
 	"select-all": "Select All",
 	"deselect-all": "Deselect All",
@@ -101,7 +102,6 @@
 	"create-protected-indef": "(fully create protected indefinitely)",
 	"create-protected": "(fully create protected, expires $1 (UTC))",
 
-
 	"unlink-title": "Unlinking backlinks",
 	"unlink-title-file": "Unlinking backlinks and file usages",
 	"unlink-intro": "This tool allows you to unlink all incoming links (\"backlinks\") that point to this page. For instance, <code>[[$1|link text]]</code> would become <code>link text</code> and <code>[[$1]]</code> would become <code>$1</code>. Use it with caution.",
@@ -145,5 +145,22 @@
 	"untagging": "Untagging",
 	"removing": "Already present tags: removing de-selected tags",
 	"resolved-redirect": "Resolved template redirect {{$1}} to {{$2}}",
-	"tagging-status": "Tagging $1"
+	"tagging-status": "Tagging $1",
+
+	"xfd-venue-label": "Deletion discussion venue:",
+	"xfd-venue-tooltip": "When activated, a default choice is made, based on what namespace you are in. This default should be the most appropriate.",
+	"notify-creator-label": "Notify page creator if possible",
+	"notify-creator-tooltip": "A notification template will be placed on the creator's talk page if this is true.",
+	"deletion-reason-here": "Your deletion rationale is provided below, which you can copy and paste into a new XFD dialog if you wish to try again:",
+	"looking-old-nominations": "Looking for prior nominations of this page",
+	"bad-venue": "Unrecognised venue: $1",
+	"nomination-complete-redirect": "Nomination complete, now redirecting to the discussion page",
+	"protected-no-editreq": "Page protected and nowhere to add an edit request, aborting",
+	"protected-editreq": "Page protected, requesting edit",
+	"posting-editreq": "Automatically posting edit request on talk page",
+	"xfd-editreq-title": "Edit request to complete $1 nomination",
+	"xfd-editreq-failed": "Unable to add edit request, the talk page may be protected",
+	"fetching-creator": "Finding page creator",
+	"notifying-creator": "Notifying initial contributor ($1)",
+	"notify-self-skip": "You ($1) created this page; skipping user notification"
 }
