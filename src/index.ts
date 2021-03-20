@@ -5,6 +5,7 @@
  */
 
 export * from './twinkle';
+export * from './twinkleModule';
 
 // Utilities
 export * from './utils';
@@ -13,6 +14,9 @@ export * from './Api';
 export * from './Page';
 export * from './Dialog';
 export * from './Config';
+export * from './namespaces';
+export * from './portlet';
+export * from './init';
 
 // Twinkle modules
 export * from './diffCore';

@@ -1,4 +1,174 @@
 import { Twinkle } from './twinkle';
+import { TwinkleModule } from './twinkleModule';
+import { obj_values } from './utils';
+
+let prefs: Record<string, any>;
+
+/**
+ * This holds the default set of preferences used by Twinkle.
+ * It is important that all new preferences added here, especially admin-only ones, are also added to
+ * |Twinkle.config.sections| in twinkleconfig.js, so they are configurable via the Twinkle preferences panel.
+ * For help on the actual preferences, see the comments in twinkleconfig.js.
+ */
+const defaultConfig = {
+	optionsVersion: 2,
+
+	// General
+	userTalkPageMode: 'tab',
+	dialogLargeFont: false,
+	disabledModules: [],
+	disabledSysopModules: [],
+
+	// Portlet
+	portletArea: null,
+	portletId: null,
+	portletName: null,
+	portletType: null,
+	portletNext: null,
+
+	// XfD
+	logXfdNominations: false,
+	xfdLogPageName: 'XfD log',
+	noLogOnXfdNomination: [],
+	xfdWatchDiscussion: 'default',
+	xfdWatchList: 'no',
+	xfdWatchPage: 'default',
+	xfdWatchUser: 'default',
+	xfdWatchRelated: 'default',
+	markXfdPagesAsPatrolled: true,
+
+	// Fluff (revert and rollback)
+	autoMenuAfterRollback: false,
+	openTalkPage: ['agf', 'norm', 'vand'],
+	openTalkPageOnAutoRevert: false,
+	rollbackInPlace: false,
+	markRevertedPagesAsMinor: ['vand'],
+	watchRevertedPages: ['agf', 'norm', 'vand', 'torev'],
+	watchRevertedExpiry: '1 month',
+	offerReasonOnNormalRevert: true,
+	confirmOnFluff: false,
+	confirmOnMobileFluff: true,
+	showRollbackLinks: ['diff', 'others'],
+
+	// CSD
+	speedySelectionStyle: 'buttonClick',
+	watchSpeedyPages: ['g3', 'g5', 'g10', 'g11', 'g12'],
+	watchSpeedyExpiry: '1 month',
+	markSpeedyPagesAsPatrolled: false,
+
+	// Warn
+	defaultWarningGroup: '1',
+	combinedSingletMenus: false,
+	showSharedIPNotice: true,
+	watchWarnings: '1 month',
+	oldSelect: false,
+	customWarningList: [],
+
+	// ARV
+	spiWatchReport: 'yes',
+
+	// Welcome
+	topWelcomes: false,
+	watchWelcomes: '3 months',
+	insertUsername: true,
+	quickWelcomeMode: 'norm',
+	quickWelcomeTemplate: 'welcome',
+	customWelcomeList: [],
+	customWelcomeSignature: true,
+
+	// Shared
+	markSharedIPAsMinor: true,
+
+	// Talkback
+	markTalkbackAsMinor: true,
+	insertTalkbackSignature: true, // always sign talkback templates
+	talkbackHeading: 'New message from ' + mw.config.get('wgUserName'),
+	mailHeading: "You've got mail!",
+
+	// Hidden preferences
+	autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
+	revertMaxRevisions: 50, // intentionally limited
+	batchMax: 5000,
+	batchChunks: 50,
+
+	// Deprecated options, as a fallback for add-on scripts/modules
+	summaryAd: ' ([[WP:TW|TW]])',
+	deletionSummaryAd: ' ([[WP:TW|TW]])',
+	protectionSummaryAd: ' ([[WP:TW|TW]])',
+};
+
+/**
+ * Extends the defaultConfig
+ * @param config
+ */
+export function setDefaultConfig(config: { name: string; value: any }[]) {
+	config.forEach((pref) => {
+		defaultConfig[pref.name] = pref.value;
+	});
+}
+
+export function getPref(name: string): any {
+	if (typeof prefs === 'object' && prefs[name] !== undefined) {
+		return prefs[name];
+	}
+	// Old preferences format, used before twinkleoptions.js was a thing
+	if (typeof window.TwinkleConfig === 'object' && window.TwinkleConfig[name] !== undefined) {
+		return window.TwinkleConfig[name];
+	}
+	if (typeof window.FriendlyConfig === 'object' && window.FriendlyConfig[name] !== undefined) {
+		return window.FriendlyConfig[name];
+	}
+	return defaultConfig[name];
+}
+
+export function loadUserConfig(): JQuery.Promise<void> {
+	let scriptpathbefore = mw.util.wikiScript('index') + '?title=',
+		scriptpathafter = '&action=raw&ctype=text/javascript&happy=yes';
+
+	return $.ajax({
+		url:
+			scriptpathbefore +
+			'User:' +
+			encodeURIComponent(mw.config.get('wgUserName')) +
+			'/twinkleoptions.js' +
+			scriptpathafter,
+		dataType: 'text',
+	})
+		.then(function (optionsText) {
+			// Quick pass if user has no options
+			if (optionsText === '') {
+				return;
+			}
+
+			// Twinkle options are basically a JSON object with some comments. Strip those:
+			optionsText = optionsText.replace(/(?:^(?:\/\/[^\n]*\n)*\n*|(?:\/\/[^\n]*(?:\n|$))*$)/g, '');
+
+			// First version of options had some boilerplate code to make it eval-able -- strip that too. This part may become obsolete down the line.
+			if (optionsText.lastIndexOf('window.Twinkle.prefs = ', 0) === 0) {
+				optionsText = optionsText.replace(/(?:^window.Twinkle.prefs = |;\n*$)/g, '');
+			}
+
+			try {
+				let options = JSON.parse(optionsText);
+				if (options) {
+					if (options.twinkle || options.friendly) {
+						// Old preferences format
+						prefs = $.extend(options.twinkle, options.friendly);
+					} else {
+						prefs = options;
+					}
+					// v2 established after unification of Twinkle/Friendly objects
+					prefs.optionsVersion = prefs.optionsVersion || 1;
+				}
+			} catch (e) {
+				mw.notify('Could not parse your Twinkle preferences', { type: 'error' });
+			}
+		})
+		.catch(function () {
+			mw.notify('Could not load your Twinkle preferences', { type: 'error' });
+			// not rejected
+		});
+}
 
 export type configPreference = {
 	name: string;
