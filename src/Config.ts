@@ -189,7 +189,11 @@ export type configSection = {
 	hidden?: boolean;
 };
 
-export class Config {
+export class Config extends TwinkleModule {
+	constructor() {
+		super();
+		Config.init();
+	}
 	static sections: Record<string, configSection> = {
 		general: {
 			title: 'General',
@@ -406,7 +410,7 @@ export class Config {
 			container.style.width = '100%';
 			contentform.appendChild(container);
 
-			Config.sections.forEach((section) => {
+			obj_values(Config.sections).forEach((section) => {
 				if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
 					return true; // i.e. "continue" in this context
 				}
@@ -450,7 +454,7 @@ export class Config {
 
 					var label,
 						input,
-						gotPref = Twinkle.getPref(pref.name);
+						gotPref = getPref(pref.name);
 					switch (pref.type) {
 						case 'boolean': // create a checkbox
 							cell.setAttribute('colspan', '2');
@@ -730,14 +734,14 @@ export class Config {
 		var wantedpref = e.target.id.substring(21); // "twinkle-config-reset-" prefix is stripped
 
 		// search tactics
-		$(Config.sections).each(function (sectionkey, section) {
+		obj_values(Config.sections).forEach(function (section) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
-				return true; // continue: skip impossibilities
+				return true; // continuze: skip impossibilities
 			}
 
 			var foundit = false;
 
-			$(section.preferences).each((prefkey, pref) => {
+			section.preferences.forEach((pref) => {
 				if (pref.name !== wantedpref) {
 					return true; // continue
 				}
@@ -753,29 +757,29 @@ export class Config {
 		return false; // stop link from scrolling page
 	}
 
-	static resetPref(pref: configPreference) {
+	static resetPref(pref: Omit<configPreference, 'default'>) {
 		switch (pref.type) {
 			case 'boolean':
-				document.getElementById(pref.name).checked = Twinkle.defaultConfig[pref.name];
+				(document.getElementById(pref.name) as HTMLInputElement).checked = defaultConfig[pref.name];
 				break;
 
 			case 'string':
 			case 'integer':
 			case 'enum':
-				document.getElementById(pref.name).value = Twinkle.defaultConfig[pref.name];
+				(document.getElementById(pref.name) as HTMLInputElement).value = defaultConfig[pref.name];
 				break;
 
 			case 'set':
 				$.each(pref.setValues, function (itemkey) {
-					if (document.getElementById(pref.name + '_' + itemkey)) {
-						document.getElementById(pref.name + '_' + itemkey).checked =
-							Twinkle.defaultConfig[pref.name].indexOf(itemkey) !== -1;
+					let checkbox = document.getElementById(pref.name + '_' + itemkey) as HTMLInputElement;
+					if (checkbox) {
+						checkbox.checked = defaultConfig[pref.name].indexOf(itemkey) !== -1;
 					}
 				});
 				break;
 
 			case 'customList':
-				$(document.getElementById(pref.name)).data('value', Twinkle.defaultConfig[pref.name]);
+				$(document.getElementById(pref.name)).data('value', defaultConfig[pref.name]);
 				break;
 
 			default:
@@ -786,11 +790,11 @@ export class Config {
 
 	static resetAllPrefs() {
 		// no confirmation message - the user can just refresh/close the page to abort
-		$(Config.sections).each(function (sectionkey, section: configSection) {
+		obj_values(Config.sections).forEach(function (section: configSection) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
 				return true; // continue: skip impossibilities
 			}
-			$(section.preferences).each(function (prefkey, pref: configPreference) {
+			section.preferences.forEach(function (pref: configPreference) {
 				if (!pref.adminOnly || Morebits.userIsSysop) {
 					Config.resetPref(pref);
 				}
@@ -850,13 +854,13 @@ export class Config {
 			return a === b;
 		};
 
-		$(Config.sections).each(function (sectionkey, section: configSection) {
+		obj_values(Config.sections).forEach(function (section: configSection) {
 			if (section.adminOnly && !Morebits.userIsSysop) {
 				return; // i.e. "continue" in this context
 			}
 
 			// reach each of the preferences from the form
-			$(section.preferences).each(function (prefkey, pref: configPreference) {
+			section.preferences.forEach(function (pref: configPreference) {
 				var userValue; // = undefined
 
 				// only read form values for those prefs that have them
@@ -880,7 +884,7 @@ export class Config {
 										'The value you specified for ' +
 											pref.name +
 											' (' +
-											pref.value +
+											form[pref.name].value +
 											') was invalid.  The save will continue, but the invalid data value will be skipped.'
 									);
 									userValue = null;
@@ -914,15 +918,15 @@ export class Config {
 								alert('twinkleconfig: unknown data type for preference ' + pref.name);
 								break;
 						}
-					} else if (Twinkle.prefs) {
+					} else if (prefs) {
 						// Retain the hidden preferences that may have customised by the user from twinkleoptions.js
 						// undefined if not set
-						userValue = Twinkle.prefs[pref.name];
+						userValue = prefs[pref.name];
 					}
 				}
 
 				// only save those preferences that are *different* from the default
-				if (userValue !== undefined && !compare(userValue, Twinkle.defaultConfig[pref.name])) {
+				if (userValue !== undefined && !compare(userValue, defaultConfig[pref.name])) {
 					newConfig[pref.name] = userValue;
 				}
 			});
