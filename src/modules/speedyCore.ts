@@ -55,6 +55,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 	portletTooltip = Morebits.userIsSysop
 		? 'Delete page according to WP:CSD'
 		: 'Request speedy deletion according to WP:CSD';
+	windowTitle = 'Choose criteria for speedy deletion';
 
 	constructor() {
 		super();
@@ -63,7 +64,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 	makeWindow() {
 		this.dialog = new Dialog(getPref('speedyWindowWidth'), getPref('speedyWindowHeight'));
-		this.dialog.setTitle('Choose criteria for speedy deletion');
+		this.dialog.setTitle(this.windowTitle);
 		this.dialog.setFooterLinks(this.footerlinks);
 
 		this.hasCSD = !!$('#delete-reason').length;

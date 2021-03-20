@@ -13,6 +13,7 @@ export class BatchUndeleteCore extends TwinkleModule {
 	portletName = 'Und-batch';
 	portletId = 'twinkle-batchundelete';
 	portletTooltip = "Undelete 'em all";
+	windowTitle = 'Batch undelete';
 
 	constructor() {
 		super();
@@ -29,7 +30,7 @@ export class BatchUndeleteCore extends TwinkleModule {
 
 	makeWindow() {
 		var Window = new Dialog(600, 400);
-		Window.setTitle('Batch undelete');
+		Window.setTitle(this.windowTitle);
 		Window.setFooterLinks(this.footerlinks);
 
 		var form = new Morebits.quickForm(this.evaluate.bind(this));

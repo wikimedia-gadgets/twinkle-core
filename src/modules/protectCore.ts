@@ -1,25 +1,27 @@
 import { Dialog } from '../Dialog';
 import { LogEvent } from '../utils';
 import { TwinkleModule } from '../twinkleModule';
-import { addPortletLink } from '../portlet';
 
 export class ProtectCore extends TwinkleModule {
+	moduleName = 'protect';
+	static moduleName = 'protect';
+
+	portletName = Morebits.userIsSysop ? 'PP' : 'RPP';
+	portletId = 'twinkle-protect';
+	portletTooltip = Morebits.userIsSysop ? 'Protect page' : 'Request page protection';
+	windowTitle = Morebits.userIsSysop ? 'Apply, request or tag page protection' : 'Request or tag page protection';
+
 	constructor() {
 		super();
 		if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgNamespaceNumber') === 8) {
 			return;
 		}
-		addPortletLink(
-			this.makeWindow.bind(this),
-			Morebits.userIsSysop ? 'PP' : 'RPP',
-			'tw-rpp',
-			Morebits.userIsSysop ? 'Protect page' : 'Request page protection'
-		);
+		this.addMenu();
 	}
 
 	makeWindow() {
 		var Window = new Dialog(620, 530);
-		Window.setTitle(Morebits.userIsSysop ? 'Apply, request or tag page protection' : 'Request or tag page protection');
+		Window.setTitle(this.windowTitle);
 		Window.setFooterLinks(this.footerlinks);
 
 		var form = new Morebits.quickForm(this.evaluate.bind(this));

@@ -34,13 +34,15 @@ export abstract class WarnCore extends TwinkleModule {
 	dialog: Dialog;
 	warnings: Record<string, warningLevel>;
 
+	portletName = 'Warn';
+	portletId = 'twinkle-warn';
+	portletTooltip = 'Warn/notify user';
+	windowTitle = 'Warn/notify user';
+
 	constructor() {
 		super();
 
 		if (mw.config.exists('wgRelevantUserName') && !Morebits.ip.isRange(mw.config.get('wgRelevantUserName'))) {
-			this.portletName = 'Warn';
-			this.portletId = 'twinkle-warn';
-			this.portletTooltip = 'Warn/notify user';
 			this.addMenu();
 		}
 
@@ -96,7 +98,7 @@ export abstract class WarnCore extends TwinkleModule {
 		}
 
 		let dialog = (this.dialog = new Dialog(600, 440));
-		dialog.setTitle('Warn/notify user');
+		dialog.setTitle(this.windowTitle);
 		dialog.setFooterLinks(this.footerlinks);
 
 		let form = new Morebits.quickForm((e) => this.evaluate(e));

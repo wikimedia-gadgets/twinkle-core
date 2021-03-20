@@ -3,10 +3,17 @@ import { generateArrowLinks } from '../utils';
 import { Dialog, footerLinks } from '../Dialog';
 import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
-import { addPortletLink } from '../portlet';
 import { getPref } from '../Config';
 
 class BatchDelete extends TwinkleModule {
+	moduleName = 'batchdelete';
+	static moduleName = 'batchdelete';
+
+	portletName = 'D-batch';
+	portletId = 'twinkle-batchdelete';
+	portletTooltip = 'Delete pages found in this category/on this page';
+	windowTitle = 'Batch deletion';
+
 	constructor() {
 		super();
 
@@ -15,12 +22,7 @@ class BatchDelete extends TwinkleModule {
 			((mw.config.get('wgCurRevisionId') && mw.config.get('wgNamespaceNumber') > 0) ||
 				mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex')
 		) {
-			addPortletLink(
-				this.callback.bind(this),
-				'D-batch',
-				'tw-batch',
-				'Delete pages found in this category/on this page'
-			);
+			this.addMenu();
 		}
 	}
 
@@ -33,10 +35,10 @@ class BatchDelete extends TwinkleModule {
 
 	footerLinks: footerLinks;
 
-	callback() {
+	makeWindow() {
 		this.subpagesLoaded = false;
 		var Window = new Dialog(600, 400);
-		Window.setTitle('Batch deletion');
+		Window.setTitle(this.windowTitle);
 		Window.setFooterLinks(this.footerLinks);
 
 		var form = new Morebits.quickForm(this.evaluate.bind(this));

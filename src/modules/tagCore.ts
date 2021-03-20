@@ -33,9 +33,13 @@ export interface tagSubgroup extends quickFormElementData {
 export type tagListType = tagData[] | Record<string, tagData[] | Record<string, tagData[]>>;
 
 export class TagCore extends TwinkleModule {
+	moduleName = 'Tag';
 	static moduleName = 'Tag';
+
 	mode: TagMode;
 	static modeList: typeof TagMode[];
+	portletName = 'Tag';
+	portletId = 'twinkle-tag';
 
 	constructor() {
 		super();
@@ -50,8 +54,6 @@ export class TagCore extends TwinkleModule {
 			// no mode is active
 			return;
 		}
-		this.portletName = 'Tag';
-		this.portletId = 'twinkle-tag';
 		this.portletTooltip = this.mode.getMenuTooltip();
 		this.addMenu();
 	}

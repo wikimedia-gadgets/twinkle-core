@@ -50,11 +50,6 @@ export namespace Twinkle {
 	export let registeredModules: typeof TwinkleModule[] = [];
 }
 
-/// TEMP
-Twinkle.getPref = getPref;
-Twinkle.addPortletLink = addPortletLink;
-Twinkle.setDefaultConfig = setDefaultConfig;
-
 // Declare pre-existing globals. `Window` is the type of `window`.
 declare global {
 	interface Window {
