@@ -1,9 +1,10 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { makeArray, obj_entries } from './utils';
-import { Page } from './Page';
-import { Api } from './Api';
-import { Dialog } from './Dialog';
-import { configPreference } from './Config';
+import { Twinkle } from '../twinkle';
+import { makeArray, obj_entries } from '../utils';
+import { Page } from '../Page';
+import { Api } from '../Api';
+import { Dialog } from '../Dialog';
+import { configPreference, getPref } from '../Config';
+import { TwinkleModule } from '../twinkleModule';
 
 // TODO: still quite a bit of enwiki specific logic here
 
@@ -28,6 +29,7 @@ export interface criterion extends quickFormElementData {
 	hideSubgroupWhenSysop?: true;
 	hideWhenRedirect?: true;
 }
+
 export interface criteriaSubgroup extends quickFormElementData {
 	parameter?: string;
 	utparam?: string;
@@ -60,7 +62,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 	}
 
 	makeWindow() {
-		this.dialog = new Dialog(Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight'));
+		this.dialog = new Dialog(getPref('speedyWindowWidth'), getPref('speedyWindowHeight'));
 		this.dialog.setTitle('Choose criteria for speedy deletion');
 		this.dialog.setFooterLinks(this.footerlinks);
 
@@ -69,7 +71,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 		let form = new Morebits.quickForm(
 			(e) => this.evaluate(e),
-			Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null
+			getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null
 		);
 		this.form = form;
 
@@ -82,13 +84,13 @@ export abstract class SpeedyCore extends TwinkleModule {
 						value: 'tag_only',
 						name: 'tag_only',
 						tooltip: 'If you just want to tag the page, instead of deleting it now',
-						checked: !(this.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
+						checked: !(this.hasCSD || getPref('deleteSysopDefaultToDelete')),
 						event: (event) => {
 							let cForm = event.target.form;
 							let cChecked = event.target.checked;
 							// enable talk page checkbox
 							if (cForm.deleteTalkPage) {
-								cForm.deleteTalkPage.checked = !cChecked && Twinkle.getPref('deleteTalkPageOnDelete');
+								cForm.deleteTalkPage.checked = !cChecked && getPref('deleteTalkPageOnDelete');
 							}
 							// enable redirects checkbox
 							cForm.deleteRedirects.checked = !cChecked;
@@ -133,7 +135,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 							name: 'deleteTalkPage',
 							tooltip:
 								"This option deletes the page's talk page in addition. If you choose the F8 (moved to Commons) criterion, this option is ignored and the talk page is *not* deleted.",
-							checked: Twinkle.getPref('deleteTalkPageOnDelete'),
+							checked: getPref('deleteTalkPageOnDelete'),
 							event: (event) => event.stopPropagation(),
 						},
 					],
@@ -148,7 +150,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 						name: 'deleteRedirects',
 						tooltip:
 							'This option deletes all incoming redirects in addition. Avoid this option for procedural (e.g. move/merge) deletions.',
-						checked: Twinkle.getPref('deleteRedirectsOnDelete'),
+						checked: getPref('deleteRedirectsOnDelete'),
 						event: (event) => event.stopPropagation(),
 					},
 					{
@@ -198,7 +200,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 					tooltip:
 						'A notification template will be placed on the talk page of the creator, IF you have a notification enabled in your Twinkle preferences ' +
 						'for the criterion you choose AND this box is checked. The creator may be welcomed as well.',
-					checked: !Morebits.userIsSysop || !(this.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
+					checked: !Morebits.userIsSysop || !(this.hasCSD || getPref('deleteSysopDefaultToDelete')),
 					event: (event) => event.stopPropagation(),
 				},
 				{
@@ -235,7 +237,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 			label: 'Failed to initialize the CSD module. Please try again, or tell the Twinkle developers about the issue.',
 		});
 
-		if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
+		if (getPref('speedySelectionStyle') !== 'radioClick') {
 			form.append({ type: 'submit', className: 'tw-speedy-submit' }); // Renamed in modeChanged
 		}
 
@@ -294,7 +296,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 		return (this.mode = {
 			isSysop: !!form.tag_only && !form.tag_only.checked,
 			isMultiple: form.tag_only && !form.tag_only.checked ? form.delmultiple.checked : form.multiple.checked,
-			isRadioClick: Twinkle.getPref('speedySelectionStyle') === 'radioClick',
+			isRadioClick: getPref('speedySelectionStyle') === 'radioClick',
 		});
 	}
 
@@ -335,7 +337,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 		if (this.mode.isSysop && this.hasCSD) {
 			let customOption = $('input[name=csd][value=reason]')[0];
 			if (customOption) {
-				if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
+				if (getPref('speedySelectionStyle') !== 'radioClick') {
 					// force listeners to re-init
 					customOption.click();
 				}
@@ -502,13 +504,13 @@ export abstract class SpeedyCore extends TwinkleModule {
 
 		if (this.mode.isSysop) {
 			params.promptForSummary = params.normalizeds.some((norm) => {
-				return Twinkle.getPref('promptForSpeedyDeletionSummary').indexOf(norm) !== -1;
+				return getPref('promptForSpeedyDeletionSummary').indexOf(norm) !== -1;
 			});
 			params.warnUser =
 				params.warnusertalk &&
 				params.normalizeds.some((norm, index) => {
 					return (
-						Twinkle.getPref('warnUserOnSpeedyDelete').indexOf(norm) !== -1 &&
+						getPref('warnUserOnSpeedyDelete').indexOf(norm) !== -1 &&
 						!(norm === 'g6' && params.values[index] !== 'copypaste')
 					);
 				});
@@ -517,7 +519,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 				params.notify &&
 				params.normalizeds.some(function (norm, index) {
 					return (
-						Twinkle.getPref('notifyUserOnSpeedyDeletionNomination').indexOf(norm) !== -1 &&
+						getPref('notifyUserOnSpeedyDeletionNomination').indexOf(norm) !== -1 &&
 						!(norm === 'g6' && params.csd[index] !== 'copypaste')
 					);
 				});
@@ -526,12 +528,12 @@ export abstract class SpeedyCore extends TwinkleModule {
 			});
 		}
 		params.watch = params.normalizeds.some(function (norm) {
-			return Twinkle.getPref('watchSpeedyPages').indexOf(norm) !== -1 && Twinkle.getPref('watchSpeedyExpiry');
+			return getPref('watchSpeedyPages').indexOf(norm) !== -1 && getPref('watchSpeedyExpiry');
 		});
 		params.welcomeuser =
 			(params.notifyUser || params.warnUser) &&
 			params.normalizeds.some((norm) => {
-				return Twinkle.getPref('welcomeUserOnSpeedyDeletionNotification').indexOf(norm) !== -1;
+				return getPref('welcomeUserOnSpeedyDeletionNotification').indexOf(norm) !== -1;
 			});
 
 		this.preprocessParamInputs();
@@ -656,7 +658,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 	}
 
 	patrolPage() {
-		if (Twinkle.getPref('markSpeedyPagesAsPatrolled')) {
+		if (getPref('markSpeedyPagesAsPatrolled')) {
 			new Page(Morebits.pageNameNorm).triage();
 		}
 		return $.Deferred().resolve();
@@ -1053,15 +1055,15 @@ export abstract class SpeedyCore extends TwinkleModule {
 	addToLog() {
 		let params = this.params;
 		let shouldLog =
-			Twinkle.getPref('logSpeedyNominations') &&
+			getPref('logSpeedyNominations') &&
 			params.normalizeds.some(function (norm) {
-				return Twinkle.getPref('noLogOnSpeedyNomination').indexOf(norm) === -1;
+				return getPref('noLogOnSpeedyNomination').indexOf(norm) === -1;
 			});
 		if (!shouldLog) {
 			return $.Deferred().resolve();
 		}
 
-		let usl = new Morebits.userspaceLogger(Twinkle.getPref('speedyLogPageName'));
+		let usl = new Morebits.userspaceLogger(getPref('speedyLogPageName'));
 		usl.initialText =
 			"This is a log of all [[WP:CSD|speedy deletion]] nominations made by this user using [[WP:TW|Twinkle]]'s CSD module.\n\n" +
 			'If you no longer wish to keep this log, you can turn it off using the [[Wikipedia:Twinkle/Preferences|preferences panel]], and ' +
@@ -1154,4 +1156,11 @@ export abstract class SpeedyCore extends TwinkleModule {
 	 * succeeds, doesn't return anything.
 	 */
 	validateInputs(): string | void {}
+
+	userPreferences() {
+		return {
+			title: 'CSD',
+			preferences: [] as configPreference[],
+		};
+	}
 }

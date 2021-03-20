@@ -1,9 +1,10 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { generateArrowLinks, sortByNamespace } from './utils';
-import { Page } from './Page';
-import { Api } from './Api';
-import { Dialog } from './Dialog';
-import { msg } from './messenger';
+import { generateArrowLinks, sortByNamespace } from '../utils';
+import { Page } from '../Page';
+import { Api } from '../Api';
+import { Dialog } from '../Dialog';
+import { msg } from '../messenger';
+import { TwinkleModule } from '../twinkleModule';
+import { getPref } from '../Config';
 
 export class BatchUndeleteCore extends TwinkleModule {
 	moduleName = 'batchundelete';
@@ -62,7 +63,7 @@ export class BatchUndeleteCore extends TwinkleModule {
 			prop: 'info',
 			inprop: 'protection',
 			titles: mw.config.get('wgPageName'),
-			gpllimit: Twinkle.getPref('batchMax'),
+			gpllimit: getPref('batchMax'),
 			format: 'json',
 		};
 		var statelem = new Morebits.status(msg('fetching-list'));
@@ -157,7 +158,7 @@ export class BatchUndeleteCore extends TwinkleModule {
 		}
 
 		var pageUndeleter = new Morebits.batchOperation(msg('undeleting'));
-		pageUndeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+		pageUndeleter.setOption('chunkSize', getPref('batchChunks'));
 		pageUndeleter.setOption('preserveIndividualStatusLines', true);
 		pageUndeleter.setPageList(input.pages);
 		pageUndeleter.run((pageName: string) => {

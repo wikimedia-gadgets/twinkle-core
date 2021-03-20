@@ -1,5 +1,6 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { Api } from './Api';
+import { Api } from '../Api';
+import { TwinkleModule } from '../twinkleModule';
+import { addPortletLink } from '../portlet';
 
 export class DiffCore extends TwinkleModule {
 	static moduleName = 'Diff';
@@ -10,7 +11,7 @@ export class DiffCore extends TwinkleModule {
 			return;
 		}
 
-		Twinkle.addPortletLink(
+		addPortletLink(
 			mw.util.getUrl(mw.config.get('wgPageName'), {
 				diff: 'cur',
 				oldid: 'prev',
@@ -25,21 +26,21 @@ export class DiffCore extends TwinkleModule {
 			return;
 		}
 
-		Twinkle.addPortletLink(
+		addPortletLink(
 			() => this.evaluate(false),
 			'Since',
 			'tw-since',
 			'Show difference between last diff and the revision made by previous user'
 		);
 
-		Twinkle.addPortletLink(
+		addPortletLink(
 			() => this.evaluate(true),
 			'Since mine',
 			'tw-sincemine',
 			'Show difference between last diff and my last revision'
 		);
 
-		Twinkle.addPortletLink(
+		addPortletLink(
 			mw.util.getUrl(mw.config.get('wgPageName'), {
 				diff: 'cur',
 				oldid: /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr('href'))[1],

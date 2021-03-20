@@ -1,10 +1,11 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { Dialog } from './Dialog';
-import { Config } from './Config';
-import { arr_includes, makeTemplate, obj_entries, obj_values, str_startsWith } from './utils';
-import { msg } from './messenger';
-import { Page } from './Page';
-import { NS_USER_TALK } from './namespaces';
+import { Twinkle } from '../twinkle';
+import { Dialog } from '../Dialog';
+import { makeTemplate, obj_entries, str_startsWith } from '../utils';
+import { msg } from '../messenger';
+import { Page } from '../Page';
+import { NS_USER_TALK } from '../namespaces';
+import { TwinkleModule } from '../twinkleModule';
+import { getPref } from '../Config';
 
 export interface warning {
 	// name of the template to be substituted
@@ -44,7 +45,7 @@ export abstract class WarnCore extends TwinkleModule {
 		}
 
 		if (
-			Twinkle.getPref('autoMenuAfterRollback') &&
+			getPref('autoMenuAfterRollback') &&
 			mw.config.get('wgNamespaceNumber') === 3 &&
 			mw.util.getParamValue('vanarticle') &&
 			!mw.util.getParamValue('friendlywelcome') &&
@@ -240,7 +241,7 @@ export abstract class WarnCore extends TwinkleModule {
 	>;
 
 	getWarningGroups(): Array<quickFormElementData> {
-		const defaultGroupPref = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
+		const defaultGroupPref = parseInt(getPref('defaultWarningGroup'), 10);
 		return obj_entries(this.warningLevels)
 			.filter(([value, config]) => {
 				// if config.visible function is not defined, level should be visible,
@@ -266,7 +267,7 @@ export abstract class WarnCore extends TwinkleModule {
 		let list;
 
 		if (newlevel === 'custom') {
-			list = Twinkle.getPref('customWarningList').map((item) => ({
+			list = getPref('customWarningList').map((item) => ({
 				label: '{{' + item.value + '}}: ' + item.label,
 				value: item.value,
 				$data: item,
@@ -299,7 +300,7 @@ export abstract class WarnCore extends TwinkleModule {
 			}
 			list.push({
 				label: 'Custom warnings',
-				list: Twinkle.getPref('customWarningList').map((item) => ({
+				list: getPref('customWarningList').map((item) => ({
 					label: '{{' + item.value + '}}: ' + item.label,
 					value: item.value,
 					$data: item,
@@ -369,7 +370,7 @@ export abstract class WarnCore extends TwinkleModule {
 		this.changeSubcategory(e);
 
 		// Use select2 to make the select menu searchable
-		if (!Twinkle.getPref('oldSelect')) {
+		if (!getPref('oldSelect')) {
 			$(e.target.form.sub_group)
 				.select2({
 					width: '100%',
@@ -497,15 +498,17 @@ export abstract class WarnCore extends TwinkleModule {
 
 		var wikipedia_page = new Page(userTalkPage.toText(), 'User talk page modification');
 		wikipedia_page.setFollowRedirect(true, false);
-		wikipedia_page.load().then(() => {
-			return this.main(wikipedia_page, params);
-		}).then(() => {
-			Morebits.status.actionCompleted('Warning complete, reloading talk page in a few seconds');
-			setTimeout(() => {
-				location.href = mw.util.getUrl(userTalkPage.toText());
-			}, 8000);
-		});
-
+		wikipedia_page
+			.load()
+			.then(() => {
+				return this.main(wikipedia_page, params);
+			})
+			.then(() => {
+				Morebits.status.actionCompleted('Warning complete, reloading talk page in a few seconds');
+				setTimeout(() => {
+					location.href = mw.util.getUrl(userTalkPage.toText());
+				}, 8000);
+			});
 	}
 
 	/**
@@ -644,7 +647,7 @@ export abstract class WarnCore extends TwinkleModule {
 
 		pageobj.setEditSummary(summary + '.');
 		pageobj.setChangeTags(Twinkle.changeTags);
-		pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
+		pageobj.setWatchlist(getPref('watchWarnings'));
 
 		// Get actual warning text
 		var warningText = this.getWarningWikitext(
@@ -654,7 +657,7 @@ export abstract class WarnCore extends TwinkleModule {
 			params.main_group === 'custom'
 		);
 
-		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
+		if (getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
 			Morebits.status.info('Info', 'Adding a shared IP notice');
 			warningText += '\n{{subst:Shared IP advice}}';
 		}

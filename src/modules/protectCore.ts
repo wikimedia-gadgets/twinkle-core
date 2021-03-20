@@ -1,6 +1,7 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { Dialog } from './Dialog';
-import { LogEvent } from './utils';
+import { Dialog } from '../Dialog';
+import { LogEvent } from '../utils';
+import { TwinkleModule } from '../twinkleModule';
+import { addPortletLink } from '../portlet';
 
 export class ProtectCore extends TwinkleModule {
 	constructor() {
@@ -8,7 +9,7 @@ export class ProtectCore extends TwinkleModule {
 		if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgNamespaceNumber') === 8) {
 			return;
 		}
-		Twinkle.addPortletLink(
+		addPortletLink(
 			this.makeWindow.bind(this),
 			Morebits.userIsSysop ? 'PP' : 'RPP',
 			'tw-rpp',

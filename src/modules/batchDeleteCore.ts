@@ -1,7 +1,10 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { generateArrowLinks } from './utils';
-import { Dialog, footerLinks } from './Dialog';
-import { msg } from './messenger';
+import { Twinkle } from '../twinkle';
+import { generateArrowLinks } from '../utils';
+import { Dialog, footerLinks } from '../Dialog';
+import { msg } from '../messenger';
+import { TwinkleModule } from '../twinkleModule';
+import { addPortletLink } from '../portlet';
+import { getPref } from '../Config';
 
 class BatchDelete extends TwinkleModule {
 	constructor() {
@@ -12,7 +15,7 @@ class BatchDelete extends TwinkleModule {
 			((mw.config.get('wgCurRevisionId') && mw.config.get('wgNamespaceNumber') > 0) ||
 				mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex')
 		) {
-			Twinkle.addPortletLink(
+			addPortletLink(
 				this.callback.bind(this),
 				'D-batch',
 				'tw-batch',
@@ -124,14 +127,14 @@ class BatchDelete extends TwinkleModule {
 			$.extend(query, {
 				generator: 'categorymembers',
 				gcmtitle: mw.config.get('wgPageName'),
-				gcmlimit: Twinkle.getPref('batchMax'),
+				gcmlimit: getPref('batchMax'),
 			});
 
 			// On Special:PrefixIndex
 		} else if (mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex') {
 			$.extend(query, {
 				generator: 'allpages',
-				gaplimit: Twinkle.getPref('batchMax'),
+				gaplimit: getPref('batchMax'),
 			});
 			if (mw.util.getParamValue('prefix')) {
 				$.extend(query, {
@@ -162,7 +165,7 @@ class BatchDelete extends TwinkleModule {
 			$.extend(query, {
 				generator: 'links',
 				titles: mw.config.get('wgPageName'),
-				gpllimit: Twinkle.getPref('batchMax'),
+				gpllimit: getPref('batchMax'),
 			});
 		}
 
@@ -317,7 +320,7 @@ class BatchDelete extends TwinkleModule {
 				.get();
 
 			var subpageLister = new Morebits.batchOperation();
-			subpageLister.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+			subpageLister.setOption('chunkSize', getPref('batchChunks'));
 			subpageLister.setPageList(pages);
 			subpageLister.run(
 				(pageName: string) => {
@@ -454,7 +457,7 @@ class BatchDelete extends TwinkleModule {
 		}
 
 		var pageDeleter = new Morebits.batchOperation(input.delete_page ? msg('deleting') : msg('starting'));
-		pageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+		pageDeleter.setOption('chunkSize', getPref('batchChunks'));
 		// we only need the initial status lines if we're deleting the pages in the pages array
 		pageDeleter.setOption('preserveIndividualStatusLines', input.delete_page as boolean);
 		pageDeleter.setPageList(input.pages as string[]);
@@ -485,7 +488,7 @@ class BatchDelete extends TwinkleModule {
 			function () {
 				if (input.delete_subpages && input.subpages) {
 					var subpageDeleter = new Morebits.batchOperation(msg('deleting-subpages'));
-					subpageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+					subpageDeleter.setOption('chunkSize', getPref('batchChunks'));
 					subpageDeleter.setOption('preserveIndividualStatusLines', true);
 					subpageDeleter.setPageList(input.subpages as string[]);
 					subpageDeleter.run((pageName: string) => {
@@ -599,7 +602,7 @@ class BatchDelete extends TwinkleModule {
 			}
 
 			var redirectDeleter = new Morebits.batchOperation(msg('deleting-redirects', apiobj.params.page));
-			redirectDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+			redirectDeleter.setOption('chunkSize', getPref('batchChunks'));
 			redirectDeleter.setPageList(pages);
 			redirectDeleter.run((pageName: string) => {
 				var wikipedia_page = new Morebits.wiki.page(pageName, 'Deleting ' + pageName);
@@ -632,7 +635,7 @@ class BatchDelete extends TwinkleModule {
 			}
 
 			var unlinker = new Morebits.batchOperation(msg('unlink-page', apiobj.params.page));
-			unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+			unlinker.setOption('chunkSize', getPref('batchChunks'));
 			unlinker.setPageList(pages);
 			unlinker.run((pageName: string) => {
 				var wikipedia_page = new Morebits.wiki.page(pageName, msg('unlink-on', pageName));
@@ -685,7 +688,7 @@ class BatchDelete extends TwinkleModule {
 			}
 
 			var unlinker = new Morebits.batchOperation(msg('unlink-page', apiobj.params.page));
-			unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
+			unlinker.setOption('chunkSize', getPref('batchChunks'));
 			unlinker.setPageList(pages);
 			unlinker.run((pageName: string) => {
 				var wikipedia_page = new Morebits.wiki.page(pageName, msg('unlink-img-on', pageName));

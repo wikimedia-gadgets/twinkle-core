@@ -1,9 +1,10 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { generateBatchPageLinks, sortByNamespace } from './utils';
-import { Dialog } from './Dialog';
-import { Page } from './Page';
-import { Api } from './Api';
-import { msg } from './messenger';
+import { generateBatchPageLinks, sortByNamespace } from '../utils';
+import { Dialog } from '../Dialog';
+import { Page } from '../Page';
+import { Api } from '../Api';
+import { msg } from '../messenger';
+import { TwinkleModule } from '../twinkleModule';
+import { getPref } from '../Config';
 
 export class UnlinkCore extends TwinkleModule {
 	moduleName = 'unlink';
@@ -65,7 +66,7 @@ export class UnlinkCore extends TwinkleModule {
 			list: ['backlinks'],
 			bltitle: mw.config.get('wgPageName'),
 			bllimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
-			blnamespace: Twinkle.getPref('unlinkNamespaces'),
+			blnamespace: getPref('unlinkNamespaces'),
 			rawcontinue: true,
 			format: 'json',
 		};
@@ -159,7 +160,7 @@ export class UnlinkCore extends TwinkleModule {
 			} else {
 				form.append({ type: 'header', label: msg('file-usage') });
 				namespaces = [];
-				$.each(Twinkle.getPref('unlinkNamespaces'), (k, v) => {
+				$.each(getPref('unlinkNamespaces'), (k, v) => {
 					namespaces.push(v === '0' ? msg('blanknamespace') : mw.config.get('wgFormattedNamespaces')[v]);
 				});
 				form.append({
@@ -206,7 +207,7 @@ export class UnlinkCore extends TwinkleModule {
 			}
 			form.append({ type: 'header', label: msg('backlinks') });
 			namespaces = [];
-			$.each(Twinkle.getPref('unlinkNamespaces'), (k, v) => {
+			$.each(getPref('unlinkNamespaces'), (k, v) => {
 				namespaces.push(v === '0' ? msg('blanknamespace') : mw.config.get('wgFormattedNamespaces')[v]);
 			});
 			form.append({

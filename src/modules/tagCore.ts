@@ -1,10 +1,10 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { makeArray, obj_entries, obj_values, stripNs } from './utils';
-import { msg } from './messenger';
-import { Api } from './Api';
-import { Page } from './Page';
-import { Config, configPreference } from './Config';
-import { Dialog } from './Dialog';
+import { makeArray, obj_entries, obj_values, stripNs } from '../utils';
+import { msg } from '../messenger';
+import { Api } from '../Api';
+import { Page } from '../Page';
+import { Config, configPreference, getPref } from '../Config';
+import { Dialog } from '../Dialog';
+import { TwinkleModule } from '../twinkleModule';
 
 export interface tagData {
 	// name of the tag template, without namespace prefix (required)
@@ -404,8 +404,7 @@ export abstract class TagMode {
 			});
 		} else {
 			obj_values(this.tagList).forEach((group: tagData[] | Record<string, tagData[]>) => {
-				// XXX: Can't figure out what's wrong with the type
-				// @ts-ignore
+				//  what's wrong with this type?
 				obj_values(group).forEach((subgroup: tagData | tagData[]) => {
 					if (Array.isArray(subgroup)) {
 						subgroup.forEach((item) => {
@@ -430,7 +429,7 @@ export abstract class TagMode {
 					label: msg('mark-patrolled'),
 					value: 'patrol',
 					name: 'patrol',
-					checked: Twinkle.getPref('markTaggedPagesAsPatrolled'),
+					checked: getPref('markTaggedPagesAsPatrolled'),
 				},
 			],
 		});
@@ -821,8 +820,8 @@ export abstract class TagMode {
 		this.pageobj.setEditSummary(
 			TagCore.makeEditSummary(this.params.tags, this.params.tagsToRemove, this.params.reason)
 		);
-		this.pageobj.setWatchlist(Twinkle.getPref('watchTaggedPages'));
-		this.pageobj.setMinorEdit(Twinkle.getPref('markTaggedPagesAsMinor'));
+		this.pageobj.setWatchlist(getPref('watchTaggedPages'));
+		this.pageobj.setMinorEdit(getPref('markTaggedPagesAsMinor'));
 		this.pageobj.setCreateOption('nocreate');
 
 		if (this.params.patrol) {
@@ -849,6 +848,7 @@ export class QuickFilter {
 			}
 		});
 	}
+
 	static onInputChange(this: HTMLInputElement) {
 		// flush the DOM of all existing underline spans
 		QuickFilter.$allCheckboxDivs.find('.search-hit').each(function (i, e) {

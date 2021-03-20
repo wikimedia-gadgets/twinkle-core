@@ -19,14 +19,14 @@ export * from './portlet';
 export * from './init';
 
 // Twinkle modules
-export * from './diffCore';
-export * from './speedyCore';
-export * from './tagCore';
-export * from './xfdCore';
-export * from './warnCore';
-export * from './fluffCore';
-export * from './batchDeleteCore';
-export * from './protectCore';
-export * from './blockCore';
-export * from './unlinkCore';
-export * from './batchUndeleteCore';
+export * from './modules/diffCore';
+export * from './modules/speedyCore';
+export * from './modules/tagCore';
+export * from './modules/xfdCore';
+export * from './modules/warnCore';
+export * from './modules/fluffCore';
+export * from './modules/batchDeleteCore';
+export * from './modules/protectCore';
+export * from './modules/blockCore';
+export * from './modules/unlinkCore';
+export * from './modules/batchUndeleteCore';

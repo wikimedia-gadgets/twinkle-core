@@ -1,6 +1,9 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { Dialog } from './Dialog';
-import { LogEvent } from './utils';
+import { Twinkle } from '../twinkle';
+import { Dialog } from '../Dialog';
+import { LogEvent } from '../utils';
+import { msg } from '../messenger';
+import { TwinkleModule } from '../twinkleModule';
+import { getPref } from '../Config';
 
 export type BlockPresetInfo = {
 	expiry?: string;
@@ -24,7 +27,7 @@ export type BlockPresetInfo = {
 };
 
 var menuFormattedNamespaces = $.extend({}, mw.config.get('wgFormattedNamespaces'));
-menuFormattedNamespaces[0] = '(Article)';
+menuFormattedNamespaces[0] = msg('blanknamespace');
 
 export class BlockCore extends TwinkleModule {
 	moduleName = 'block';
@@ -40,6 +43,7 @@ export class BlockCore extends TwinkleModule {
 	blockPresetsInfo: Record<string, BlockPresetInfo>;
 	blockGroups: quickFormElementData[];
 	blockGroupsPartial: quickFormElementData[];
+	dsinfo: Record<string, { code: string; page?: string }>;
 
 	constructor() {
 		super();
@@ -96,7 +100,7 @@ export class BlockCore extends TwinkleModule {
 					label: 'Partial block',
 					value: 'partial',
 					tooltip: 'Enable partial blocks and partial block templates.',
-					checked: Twinkle.getPref('defaultToPartialBlocks'), // Overridden if already blocked
+					checked: getPref('defaultToPartialBlocks'), // Overridden if already blocked
 				},
 				{
 					label: 'Add block template to user talk page',
@@ -120,7 +124,7 @@ export class BlockCore extends TwinkleModule {
 		  // (mw.util.isIPv6Address(mw.config.get('wgRelevantUserName')) || parseInt(mw.config.get('wgRelevantUserName').replace(/^(.+?)\/?(\d{1,3})?$/, '$2'), 10) > 64)) {
 		  In practice, though, since functionally-equivalent ranges are
 		  (mis)treated as separate by MediaWiki's logging ([[phab:T146628]]),
-		  using Morebits.ip.get64 provides a modicum of relief in thise case.
+		  using Morebits.ip.get64 provides a modicum of relief in this case.
 		*/
 		var sixtyFour = Morebits.ip.get64(mw.config.get('wgRelevantUserName'));
 		if (sixtyFour && sixtyFour !== mw.config.get('wgRelevantUserName')) {
@@ -230,9 +234,11 @@ export class BlockCore extends TwinkleModule {
 		// Toggle unblock link if not the user in question; always first
 		var unblockLink = document.querySelector('.morebits-dialog-footerlinks a');
 		if (this.blockedUserName !== this.relevantUserName) {
-			(unblockLink.hidden = true), (unblockLink.nextSibling.hidden = true); // link+trailing bullet
+			unblockLink.hidden = true;
+			unblockLink.nextSibling.hidden = true; // link+trailing bullet
 		} else {
-			(unblockLink.hidden = false), (unblockLink.nextSibling.hidden = false); // link+trailing bullet
+			unblockLink.hidden = false;
+			unblockLink.nextSibling.hidden = false; // link+trailing bullet
 		}
 
 		// Semi-busted on ranges, see [[phab:T270737]] and [[phab:T146628]].
@@ -295,7 +301,7 @@ export class BlockCore extends TwinkleModule {
 			unblockLink.title = unblockLink.title.replace(priorName, this.relevantUserName);
 
 			// Correct partial state
-			$form.find('[name=actiontype][value=partial]').prop('checked', Twinkle.getPref('defaultToPartialBlocks'));
+			$form.find('[name=actiontype][value=partial]').prop('checked', getPref('defaultToPartialBlocks'));
 			if (this.blockedUserName === this.relevantUserName) {
 				$form.find('[name=actiontype][value=partial]').prop('checked', this.currentBlockInfo.partial);
 			}
@@ -341,11 +347,7 @@ export class BlockCore extends TwinkleModule {
 			prior.list = [{ label: 'Prior block settings', value: 'prior', selected: true }];
 
 			// Arrays of objects are annoying to check
-			if (
-				!blockGroup.some(function (bg) {
-					return bg.label === prior.label;
-				})
-			) {
+			if (!blockGroup.some((bg) => bg.label === prior.label)) {
 				blockGroup.push(prior);
 			}
 
@@ -365,9 +367,7 @@ export class BlockCore extends TwinkleModule {
 			}
 		} else {
 			// But first remove any prior prior
-			blockGroup = blockGroup.filter(function (bg) {
-				return bg.label !== prior.label;
-			});
+			blockGroup = blockGroup.filter((bg) => bg.label !== prior.label);
 		}
 
 		// Can be in preset or template field, so the old one in the template
@@ -994,28 +994,7 @@ export class BlockCore extends TwinkleModule {
 
 	seeAlsos = [];
 
-	toggle_see_alsos(e: QuickFormEvent) {
-		let checkbox = e.target;
-		var reason = checkbox.form.reason.value.replace(
-			new RegExp('( <!--|;) ' + 'see also ' + this.seeAlsos.join(' and ') + '( -->)?'),
-			''
-		);
-
-		this.seeAlsos = this.seeAlsos.filter(el => el !== checkbox.value);
-
-		if (checkbox.checked) {
-			this.seeAlsos.push(checkbox.value);
-		}
-		var seeAlsoMessage = this.seeAlsos.join(' and ');
-
-		if (!this.seeAlsos.length) {
-			checkbox.form.reason.value = reason;
-		} else if (reason.indexOf('{{') !== -1) {
-			checkbox.form.reason.value = reason + ' <!-- see also ' + seeAlsoMessage + ' -->';
-		} else {
-			checkbox.form.reason.value = reason + '; see also ' + seeAlsoMessage;
-		}
-	}
+	toggle_see_alsos(e: QuickFormEvent) {}
 
 	update_form(e, data) {
 		var form = e.target.form,
@@ -1388,7 +1367,7 @@ export class BlockCore extends TwinkleModule {
 
 		var wikipedia_page = new Morebits.wiki.page(userTalkPage, 'User talk page modification');
 		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.load(this.main);
+		wikipedia_page.load((pageobj) => this.main(pageobj));
 	}
 
 	getBlockNoticeWikitext(params) {
@@ -1481,7 +1460,7 @@ export class BlockCore extends TwinkleModule {
 
 		params.indefinite = Morebits.string.isInfinity(params.expiry);
 
-		if (params.indefinite && Twinkle.getPref('blankTalkpageOnIndefBlock') && params.template !== 'uw-lblock') {
+		if (params.indefinite && getPref('blankTalkpageOnIndefBlock') && params.template !== 'uw-lblock') {
 			Morebits.status.info(
 				'Info',
 				'Blanking talk page per preferences and creating a new talk page section for this month'
@@ -1525,7 +1504,7 @@ export class BlockCore extends TwinkleModule {
 		pageobj.setPageText(text);
 		pageobj.setEditSummary(summary);
 		pageobj.setChangeTags(Twinkle.changeTags);
-		pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
+		pageobj.setWatchlist(getPref('watchWarnings'));
 		pageobj.save();
 	}
 }

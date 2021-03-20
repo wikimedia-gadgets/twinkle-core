@@ -1,5 +1,7 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { msg } from './messenger';
+import { Twinkle } from '../twinkle';
+import { msg } from '../messenger';
+import { TwinkleModule } from '../twinkleModule';
+import { getPref } from '../Config';
 
 class Fluff extends TwinkleModule {
 	moduleName = 'fluff';
@@ -131,9 +133,9 @@ class Fluff extends TwinkleModule {
 				// Get the username these contributions are for
 				var username = mw.config.get('wgRelevantUserName');
 				if (
-					Twinkle.getPref('showRollbackLinks').indexOf('contribs') !== -1 ||
-					(mw.config.get('wgUserName') !== username && Twinkle.getPref('showRollbackLinks').indexOf('others') !== -1) ||
-					(mw.config.get('wgUserName') === username && Twinkle.getPref('showRollbackLinks').indexOf('mine') !== -1)
+					getPref('showRollbackLinks').indexOf('contribs') !== -1 ||
+					(mw.config.get('wgUserName') !== username && getPref('showRollbackLinks').indexOf('others') !== -1) ||
+					(mw.config.get('wgUserName') === username && getPref('showRollbackLinks').indexOf('mine') !== -1)
 				) {
 					var $list = $('#mw-content-text').find('ul li:has(span.mw-uctop):has(.mw-changeslist-diff)');
 
@@ -158,7 +160,7 @@ class Fluff extends TwinkleModule {
 		},
 
 		recentchanges: () => {
-			if (Twinkle.getPref('showRollbackLinks').indexOf('recent') !== -1) {
+			if (getPref('showRollbackLinks').indexOf('recent') !== -1) {
 				// Latest and revertable (not page creations, logs, categorizations, etc.)
 				var $list = $('.mw-changeslist .mw-changeslist-last.mw-changeslist-src-mw-edit');
 				// Exclude top-level header if "group changes" preference is used
@@ -180,7 +182,7 @@ class Fluff extends TwinkleModule {
 		},
 
 		history: () => {
-			if (Twinkle.getPref('showRollbackLinks').indexOf('history') !== -1) {
+			if (getPref('showRollbackLinks').indexOf('history') !== -1) {
 				// All revs
 				var histList = $('#pagehistory li').toArray();
 
@@ -252,7 +254,7 @@ class Fluff extends TwinkleModule {
 				var newTitle = document.getElementById('mw-diff-ntitle1').parentNode;
 				newTitle.insertBefore(this.linkBuilder.restoreThisRevisionLink('wgDiffNewId'), newTitle.firstChild);
 			} else if (
-				Twinkle.getPref('showRollbackLinks').indexOf('diff') !== -1 &&
+				getPref('showRollbackLinks').indexOf('diff') !== -1 &&
 				mw.config.get('wgDiffOldId') &&
 				(mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId') ||
 					document.getElementById('differences-prevlink'))
@@ -331,7 +333,7 @@ class Fluff extends TwinkleModule {
 			titles: pagename,
 			inprop: 'watched',
 			intestactions: 'edit',
-			rvlimit: Twinkle.getPref('revertMaxRevisions'),
+			rvlimit: getPref('revertMaxRevisions'),
 			rvprop: ['ids', 'timestamp', 'user'],
 			curtimestamp: '',
 			meta: 'tokens',
@@ -370,10 +372,10 @@ class Fluff extends TwinkleModule {
 
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setEditSummary(summary);
-			if (Twinkle.getPref('watchRevertedPages').indexOf('torev') !== -1) {
-				pageobj.setWatchlist(Twinkle.getPref('watchRevertedExpiry'));
+			if (getPref('watchRevertedPages').indexOf('torev') !== -1) {
+				pageobj.setWatchlist(getPref('watchRevertedExpiry'));
 			}
-			if (Twinkle.getPref('markRevertedPagesAsMinor').indexOf('torev') !== -1) {
+			if (getPref('markRevertedPagesAsMinor').indexOf('torev') !== -1) {
 				pageobj.setMinorEdit(true);
 			}
 
@@ -504,7 +506,7 @@ class Fluff extends TwinkleModule {
 			}
 
 			if (!found) {
-				statelem.error(msg('no-previous-revision', userNorm, Twinkle.getPref('revertMaxRevisions')));
+				statelem.error(msg('no-previous-revision', userNorm, getPref('revertMaxRevisions')));
 				return;
 			}
 
@@ -560,7 +562,7 @@ class Fluff extends TwinkleModule {
 				case 'norm':
 				/* falls through */
 				default:
-					if (Twinkle.getPref('offerReasonOnNormalRevert')) {
+					if (getPref('offerReasonOnNormalRevert')) {
 						extra_summary = prompt(msg('summary-prompt'), ''); // padded out to widen prompt in Firefox
 						if (extra_summary === null) {
 							statelem.error(msg('user-aborted'));
@@ -578,9 +580,9 @@ class Fluff extends TwinkleModule {
 			}
 
 			if (
-				(Twinkle.getPref('confirmOnFluff') ||
+				(getPref('confirmOnFluff') ||
 					// Mobile user agent taken from [[en:MediaWiki:Gadget-confirmationRollback-mobile.js]]
-					(Twinkle.getPref('confirmOnMobileFluff') &&
+					(getPref('confirmOnMobileFluff') &&
 						/Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|Opera Mini/i.test(navigator.userAgent))) &&
 				!userHasAlreadyConfirmedAction &&
 				!confirm(msg('revert-confirm'))
@@ -592,7 +594,7 @@ class Fluff extends TwinkleModule {
 			// Decide whether to notify the user on success
 			if (
 				!this.skipTalk &&
-				Twinkle.getPref('openTalkPage').indexOf(params.type) !== -1 &&
+				getPref('openTalkPage').indexOf(params.type) !== -1 &&
 				!params.userHidden &&
 				mw.config.get('wgUserName') !== params.user
 			) {
@@ -618,10 +620,10 @@ class Fluff extends TwinkleModule {
 			revertPage.setChangeTags(Twinkle.changeTags);
 			revertPage.setOldID(params.goodid);
 			revertPage.setCallbackParameters(params);
-			if (Twinkle.getPref('watchRevertedPages').indexOf(params.type) !== -1) {
-				revertPage.setWatchlist(Twinkle.getPref('watchRevertedExpiry'));
+			if (getPref('watchRevertedPages').indexOf(params.type) !== -1) {
+				revertPage.setWatchlist(getPref('watchRevertedExpiry'));
 			}
-			if (Twinkle.getPref('markRevertedPagesAsMinor').indexOf(params.type) !== -1) {
+			if (getPref('markRevertedPagesAsMinor').indexOf(params.type) !== -1) {
 				revertPage.setMinorEdit(true);
 			}
 
@@ -652,7 +654,7 @@ class Fluff extends TwinkleModule {
 					count: params.count,
 				};
 
-				switch (Twinkle.getPref('userTalkPageMode')) {
+				switch (getPref('userTalkPageMode')) {
 					case 'tab':
 						window.open(mw.util.getUrl('', windowQuery), '_blank');
 						break;
@@ -752,8 +754,8 @@ class Fluff extends TwinkleModule {
 				this.addLinks.history();
 			}
 		} else if (mw.config.get('wgNamespaceNumber') === -1) {
-			this.skipTalk = !Twinkle.getPref('openTalkPageOnAutoRevert');
-			this.rollbackInPlace = Twinkle.getPref('rollbackInPlace');
+			this.skipTalk = !getPref('openTalkPageOnAutoRevert');
+			this.rollbackInPlace = getPref('rollbackInPlace');
 
 			if (mw.config.get('wgCanonicalSpecialPageName') === 'Contributions') {
 				this.addLinks.contributions();

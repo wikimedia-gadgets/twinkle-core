@@ -1,10 +1,11 @@
-import { Twinkle, TwinkleModule } from './twinkle';
-import { Page } from './Page';
-import { Api } from './Api';
-import { msg } from './messenger';
-import { Config, configPreference } from './Config';
-import { Dialog } from './Dialog';
-import { NS_USER_TALK } from './namespaces';
+import { Twinkle } from '../twinkle';
+import { Page } from '../Page';
+import { Api } from '../Api';
+import { msg } from '../messenger';
+import { Config, configPreference, getPref } from '../Config';
+import { Dialog } from '../Dialog';
+import { NS_FILE, NS_USER_TALK } from '../namespaces';
+import { TwinkleModule } from '../twinkleModule';
 
 export class XfdCore extends TwinkleModule {
 	moduleName = 'XFD';
@@ -440,7 +441,7 @@ export abstract class XfdMode {
 		pageobj.getStatusElement().warn(msg('protected-editreq'));
 
 		var editRequest =
-			'{{subst:XfdCore edit protected|page=' +
+			'{{subst:Xfd edit protected|page=' +
 			pageobj.getPageName() +
 			'|discussion=' +
 			params.discussionpage +
@@ -449,10 +450,10 @@ export abstract class XfdMode {
 			'</nowiki>}}';
 
 		var talk_page = new Page(talkName, msg('posting-editreq'));
-		talk_page.setNewSectionTitle(msg('xfd-editreq-title', toTLACase(params.venue)));
+		talk_page.setNewSectionTitle(msg('xfd-editreq-title', params.venue));
 		talk_page.setNewSectionText(editRequest);
 		talk_page.setCreateOption('recreate');
-		talk_page.setWatchlist(Twinkle.getPref('xfdWatchPage'));
+		talk_page.setWatchlist(getPref('xfdWatchPage'));
 		talk_page.setFollowRedirect(true); // should never be needed, but if the article is moved, we would want to follow the redirect
 
 		return talk_page.newSection().catch(function () {
@@ -497,9 +498,9 @@ export abstract class XfdMode {
 		usertalkpage.setCreateOption('recreate');
 		// Different pref for RfD target notifications: XXX: handle this better!
 		if (params.venue === 'rfd' && targetNS !== 3) {
-			usertalkpage.setWatchlist(Twinkle.getPref('xfdWatchRelated'));
+			usertalkpage.setWatchlist(getPref('xfdWatchRelated'));
 		} else {
-			usertalkpage.setWatchlist(Twinkle.getPref('xfdWatchUser'));
+			usertalkpage.setWatchlist(getPref('xfdWatchUser'));
 		}
 		usertalkpage.setFollowRedirect(true, false);
 		return usertalkpage.append().catch(() => {
@@ -535,15 +536,15 @@ export abstract class XfdMode {
 		return this.notifyTalkPage(this.params.initialContrib);
 	}
 
-	// Should be called after notifyTalkPage() which may unset this.params.intialContrib
+	// Should be called after notifyTalkPage() which may unset this.params.initialContrib
 	addToLog() {
 		let params = this.params;
 
-		if (!Twinkle.getPref('logXfdNominations') || Twinkle.getPref('noLogOnXfdNomination').indexOf(params.venue) !== -1) {
+		if (!getPref('logXfdNominations') || getPref('noLogOnXfdNomination').indexOf(params.venue) !== -1) {
 			return $.Deferred().resolve();
 		}
 
-		var usl = new Morebits.userspaceLogger(Twinkle.getPref('xfdLogPageName')); // , 'Adding entry to userspace log');
+		var usl = new Morebits.userspaceLogger(getPref('xfdLogPageName')); // , 'Adding entry to userspace log');
 
 		usl.initialText =
 			"This is a log of all [[WP:XFD|deletion discussion]] nominations made by this user using [[WP:TW|Twinkle]]'s XfD module.\n\n" +
@@ -556,7 +557,13 @@ export abstract class XfdMode {
 	}
 
 	getUserspaceLoggingEditSummary() {
-		return 'Logging ' + toTLACase(this.params.venue) + ' nomination of [[:' + Morebits.pageNameNorm + ']].';
+		return 'Logging ' + this.params.venue + ' nomination of [[:' + Morebits.pageNameNorm + ']].';
+	}
+
+	getUserspaceLoggingText1(): string {
+		return `
+			# [[:{{subst:FULLPAGENAME}}]]: {{subst:#ifeq:{{subst:NAMESPACENUMBER}}|6| ([{{fullurl:Special:Log|page={{urlencode:{{subst:FULLPAGENAME}}}}}} log])|}} nominated at [[WP:{{subst:uc:$1}}|$1]]{{subst:#if:$2|; notified {{user|1=$2}}|}}
+		`;
 	}
 
 	getUserspaceLoggingText(): string {
@@ -564,7 +571,7 @@ export abstract class XfdMode {
 
 		// If a logged file is deleted but exists on commons, the wikilink will be blue, so provide a link to the log
 		var fileLogLink =
-			mw.config.get('wgNamespaceNumber') === 6
+			mw.config.get('wgNamespaceNumber') === NS_FILE
 				? ' ([{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} log])'
 				: '';
 		// CFD/S and RM don't have canonical links
@@ -580,7 +587,7 @@ export abstract class XfdMode {
 			' at [[WP:' +
 			params.venue.toUpperCase() +
 			'|' +
-			toTLACase(params.venue) +
+			params.venue +
 			']]';
 
 		appendText += this.getUserspaceLoggingExtraInfo();
