@@ -1,8 +1,6 @@
 import { arr_includes } from './utils';
-import { loadMessages } from './messenger';
-import messages from './messages.json';
+import { initMessaging } from './messenger';
 import { Twinkle } from './twinkle';
-import MWMessages from './mw-messages';
 import { getPref, loadUserConfig } from './Config';
 import { setPortletConfig } from './portlet';
 
@@ -28,19 +26,6 @@ export function addInitCallback(func: () => void, name: string) {
 	});
 }
 
-function loadMediaWikiMessages() {
-	return new mw.Api()
-		.getMessages(MWMessages, {
-			amlang: mw.config.get('wgContentLanguage'),
-			// cache them, as messages are not going to change that often
-			maxage: 99999999,
-			smaxage: 99999999,
-		})
-		.then((messages) => {
-			loadMessages(messages);
-		});
-}
-
 /**
  * Pre-requisites for initializing Twinkle
  */
@@ -61,10 +46,8 @@ export function init() {
 	// Set skin-specific configuration
 	setPortletConfig();
 
-	// Populate messages
-	loadMessages(messages);
-
-	$.when([loadUserConfig(), loadMediaWikiMessages()]).then(() => {
+	// Parallelize API calls
+	return $.when([loadUserConfig(), initMessaging()]).then(() => {
 		ready.resolve();
 	});
 }
@@ -78,6 +61,7 @@ ready.then(() => {
 		);
 	}
 
+	// XXX: this is post-init hook
 	// Hide the lingering space if the TW menu is empty
 	if (mw.config.get('skin') === 'vector' && getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
 		$('#p-cactions').css('margin-right', 'initial');

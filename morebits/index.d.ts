@@ -3,6 +3,10 @@
  */
 
 declare namespace Morebits {
+	namespace i18n {
+		function setParser(parser: {get: ((...args: any[]) => string)})
+	}
+
 	function userIsInGroup(group: string): boolean;
 	const userIsSysop: boolean;
 
@@ -147,7 +151,7 @@ declare namespace Morebits {
 		class page {
 			constructor(pageName: string, status?: Morebits.status | string);
 			load(onSuccess: (pageobj: page) => void, onFailure?: (pageobj: page) => void): void;
-			lookupCreation(onSuccess: (pageobj: page) => void): void;
+			lookupCreation(onSuccess: (pageobj: page) => void, onFailure?: ((pageobj: page) => void)): void;
 			save(onSuccess?: (pageobj: page) => void, onFailure?: (pageobj: page) => void): void;
 			append(onSuccess?: (pageobj: page) => void, onFailure?: (pageobj: page) => void): void;
 			prepend(onSuccess?: (pageobj: page) => void, onFailure?: (pageobj: page) => void): void;
@@ -299,7 +303,7 @@ declare namespace Morebits {
 		class preview {
 			constructor(previewbox: HTMLElement);
 			previewbox: HTMLElement;
-			beginRender(wikitext: string, pageTitle: string, sectionTitle?: string): void;
+			beginRender(wikitext: string, pageTitle: string, sectionTitle?: string): JQuery.Promise<Morebits.wiki.api>;
 			closePreview(): void;
 		}
 	}
@@ -426,7 +430,7 @@ interface quickFormElementData {
 	tooltip?: string;
 	extra?: any;
 	adminonly?: boolean;
-	label?: string | HTMLElement | (string | HTMLElement)[]; // non-string cases applicable for type=div only
+	label?: string | Node | (string | Node)[]; // non-string cases applicable for type=div only
 	value?: string;
 	size?: string | number; // for input
 	multiple?: boolean; // for select

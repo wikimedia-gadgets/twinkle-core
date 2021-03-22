@@ -1,5 +1,5 @@
-// If this exceeds 50 items, refactor init.ts to split the array into chunks of 50
-// and query the API in parallel
+// If this exceeds 50 items, refactor loadMediaWikiMessages() to split the array
+// into chunks of 50 and query the API in parallel
 export default [
 	'colon-separator',
 	'word-separator',
