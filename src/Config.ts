@@ -1,5 +1,4 @@
 import { Twinkle } from './twinkle';
-import { TwinkleModule } from './twinkleModule';
 import { obj_values } from './utils';
 
 let prefs: Record<string, any>;
@@ -189,11 +188,7 @@ export type configSection = {
 	hidden?: boolean;
 };
 
-export class Config extends TwinkleModule {
-	constructor() {
-		super();
-		Config.init();
-	}
+export class Config {
 	static sections: Record<string, configSection> = {
 		general: {
 			title: 'General',
