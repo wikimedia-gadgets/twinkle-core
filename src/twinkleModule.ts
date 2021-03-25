@@ -1,5 +1,9 @@
-import { Config, configPreference, setDefaultConfig } from './Config';
+import { Config, PreferenceGroup, setDefaultConfig } from './Config';
 import { addPortletLink } from './portlet';
+import { arr_includes } from './utils';
+import { userDisabledModules } from './init';
+
+export let initialisedModules: TwinkleModule[] = [];
 
 /**
  * Base class for all Twinkle modules
@@ -16,10 +20,12 @@ export class TwinkleModule {
 	portletId: string;
 	portletTooltip: string;
 
-	constructor() {
-		let prefs = this.userPreferences();
+	constructor() {}
+
+	static register(module: typeof TwinkleModule) {
+		let prefs = module.userPreferences();
 		if (prefs) {
-			Config.addSection(this.moduleName, { ...prefs, module: this.moduleName });
+			Config.addGroup(module.moduleName, { ...prefs, module: module.moduleName });
 			setDefaultConfig(
 				prefs.preferences.map((pref) => {
 					return {
@@ -29,16 +35,25 @@ export class TwinkleModule {
 				})
 			);
 		}
+
+		if (!arr_includes(userDisabledModules, module.moduleName)) {
+			initialisedModules.push(new module());
+		}
 	}
 
-	userPreferences(): { title: string; preferences: configPreference[] } | void {}
+	static userPreferences(): PreferenceGroup | void {}
 
 	addPreference(pref) {
 		Config.addPreference(this.moduleName, pref);
 	}
 
 	addMenu() {
-		addPortletLink(() => this.makeWindow(), this.portletName, this.portletId, this.portletTooltip);
+		addPortletLink(
+			() => this.makeWindow(),
+			this.portletName,
+			this.portletId || 'twinkle-' + this.moduleName.toLowerCase(),
+			this.portletTooltip
+		);
 	}
 
 	/**

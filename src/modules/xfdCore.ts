@@ -2,7 +2,7 @@ import { Twinkle } from '../twinkle';
 import { Page } from '../Page';
 import { Api } from '../Api';
 import { msg } from '../messenger';
-import { Config, configPreference, getPref } from '../Config';
+import { Config, Preference, getPref } from '../Config';
 import { Dialog } from '../Dialog';
 import { NS_FILE, NS_USER_TALK } from '../namespaces';
 import { TwinkleModule } from '../twinkleModule';
@@ -27,7 +27,8 @@ export class XfdCore extends TwinkleModule {
 		// Disable on:
 		// * special pages
 		// * non-existent pages
-		// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are eligible for CSD F2, or R4 if it's a redirect)
+		// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are
+		// eligible for CSD F2, or R4 if it's a redirect)
 		if (
 			mw.config.get('wgNamespaceNumber') < 0 ||
 			!mw.config.get('wgArticleId') ||
@@ -44,109 +45,6 @@ export class XfdCore extends TwinkleModule {
 		}
 		this.portletTooltip = this.getMenuTooltip();
 		this.addMenu();
-	}
-
-	userPreferences(): { title: string; preferences: configPreference[] } | void {
-		return {
-			title: 'XfD (deletion discussions)',
-			preferences: [
-				{
-					name: 'logXfdNominations',
-					label: 'Keep a log in userspace of all pages you nominate for a deletion discussion (XfD)',
-					helptip: 'The userspace log offers a good way to keep track of all pages you nominate for XfD using Twinkle.',
-					type: 'boolean',
-					default: false,
-				},
-				{
-					name: 'xfdLogPageName',
-					label: 'Keep the deletion discussion userspace log at this user subpage',
-					helptip:
-						'Enter a subpage name in this box. You will find your XfD log at User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the XfD userspace log.',
-					type: 'string',
-					default: 'XfD log',
-				},
-				{
-					name: 'noLogOnXfdNomination',
-					label: 'Do not create a userspace log entry when nominating at this venue',
-					type: 'set',
-					setValues: {
-						afd: 'AfD',
-						tfd: 'TfD',
-						ffd: 'FfD',
-						cfd: 'CfD',
-						cfds: 'CfD/S',
-						mfd: 'MfD',
-						rfd: 'RfD',
-						rm: 'RM',
-					},
-					default: [],
-				},
-
-				// TwinkleConfig.xfdWatchPage (string)
-				// The watchlist setting of the page being nominated for XfD.
-				{
-					name: 'xfdWatchPage',
-					label: 'Add the nominated page to watchlist',
-					type: 'enum',
-					enumValues: Config.watchlistEnums,
-					default: 'default',
-				},
-
-				// TwinkleConfig.xfdWatchDiscussion (string)
-				// The watchlist setting of the newly created XfD page (for those processes that create discussion pages for each nomination),
-				// or the list page for the other processes.
-				{
-					name: 'xfdWatchDiscussion',
-					label: 'Add the deletion discussion page to watchlist',
-					helptip:
-						'This refers to the discussion subpage (for AfD and MfD) or the daily log page (for TfD, CfD, RfD and FfD)',
-					type: 'enum',
-					enumValues: Config.watchlistEnums,
-					default: 'default',
-				},
-
-				// TwinkleConfig.xfdWatchList (string)
-				// The watchlist setting of the XfD list page, *if* the discussion is on a separate page.
-				{
-					name: 'xfdWatchList',
-					label: 'Add the daily log/list page to the watchlist (AfD and MfD)',
-					helptip:
-						'This only applies for AfD and MfD, where the discussions are transcluded onto a daily log page (for AfD) or the main MfD page (for MfD).',
-					type: 'enum',
-					enumValues: Config.watchlistEnums,
-					default: 'no',
-				},
-
-				// TwinkleConfig.xfdWatchUser (string)
-				// The watchlist setting of the user talk page if they receive a notification.
-				{
-					name: 'xfdWatchUser',
-					label: 'Add user talk page of initial contributor to watchlist (when notifying)',
-					type: 'enum',
-					enumValues: Config.watchlistEnums,
-					default: 'default',
-				},
-
-				// TwinkleConfig.xfdWatchRelated (string)
-				// The watchlist setting of the target of a redirect being nominated for RfD.
-				{
-					name: 'xfdWatchRelated',
-					label: "Add the redirect's target page to watchlist (when notifying)",
-					helptip:
-						'This only applies for RfD, when leaving a notification on the talk page of the target of the redirect',
-					type: 'enum',
-					enumValues: Config.watchlistEnums,
-					default: 'default',
-				},
-
-				{
-					name: 'markXfdPagesAsPatrolled',
-					label: 'Mark page as patrolled/reviewed when nominating for AFD (if possible)',
-					type: 'boolean',
-					default: true,
-				},
-			],
-		};
 	}
 
 	getMenuTooltip() {
@@ -258,6 +156,73 @@ export class XfdCore extends TwinkleModule {
 		$(this.result).find('fieldset[name=work_area]').replaceWith(renderedFieldset);
 		this.mode.postRender(renderedFieldset as HTMLFieldSetElement);
 	}
+
+	static userPreferences(): { title: string; preferences: Preference[] } | void {
+		return {
+			title: 'XfD (deletion discussions)',
+			preferences: [
+				{
+					name: 'logXfdNominations',
+					label: msg('pref-logXfdNominations-label'),
+					helptip: msg('pref-logXfdNominations-tooltip'),
+					type: 'boolean',
+					default: false,
+				},
+				{
+					name: 'xfdLogPageName',
+					label: msg('pref-xfdLogPageName-label'),
+					helptip: msg('pref-xfdLogPageName-tooltip'),
+					type: 'string',
+					default: 'XfD log',
+				},
+
+				// TwinkleConfig.xfdWatchPage (string)
+				// The watchlist setting of the page being nominated for XfD.
+				{
+					name: 'xfdWatchPage',
+					label: msg('pref-xfdWatchPage-label'),
+					helptip: msg('pref-xfdWatchPage-tooltip'),
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default',
+				},
+
+				// TwinkleConfig.xfdWatchDiscussion (string)
+				// The watchlist setting of the newly created XfD page (for those processes that create discussion
+				// pages for each nomination), or the list page for the other processes.
+				{
+					name: 'xfdWatchDiscussion',
+					label: msg('pref-xfdWatchDiscussion-label'),
+					helptip: msg('pref-xfdWatchDiscussion-tooltip'),
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default',
+				},
+
+				// TwinkleConfig.xfdWatchList (string)
+				// The watchlist setting of the XfD list page, *if* the discussion is on a separate page.
+				{
+					name: 'xfdWatchList',
+					label: msg('pref-xfdWatchList-label'),
+					helptip: msg('pref-xfdWatchList-tooltip'),
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'no',
+				},
+
+				// TwinkleConfig.xfdWatchUser (string)
+				// The watchlist setting of the user talk page if they receive a notification.
+				{
+					name: 'xfdWatchUser',
+					label: msg('pref-xfdWatchUser-label'),
+					helptip: msg('pref-xfdWatchUser-tooltip'),
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default',
+				},
+			],
+		};
+	}
 }
 
 export abstract class XfdMode {
@@ -304,11 +269,23 @@ export abstract class XfdMode {
 		});
 	}
 
-	// Used as the label for the fieldset in the UI, and in the default notification edit summary
+	/**
+	 * Used as the label for the fieldset in the UI, and in the default notification
+	 * edit summary
+	 */
 	abstract getFieldsetLabel();
 
+	/**
+	 * Actions performed after the form is rendered.
+	 * @param renderedFieldset
+	 */
 	postRender(renderedFieldset: HTMLFieldSetElement) {}
 
+	/**
+	 * Return any warnings about the choice of the selected venue (e.g. using
+	 * Articles for Deletion for requesting deletion of template).
+	 * This is displayed in red.
+	 */
 	getVenueWarning(): string | void {}
 
 	// Overridden for tfd, cfd, cfds
@@ -330,8 +307,14 @@ export abstract class XfdMode {
 		form.previewer.beginRender(templatetext, 'WP:TW'); // Force wikitext
 	}
 
+	/**
+	 * Returns the wikitext of the discussion to be created.
+	 */
 	abstract getDiscussionWikitext(): string;
 
+	/**
+	 * Executes on form submission
+	 */
 	evaluate(): void {
 		this.params = Morebits.quickForm.getInputData(this.result);
 		this.preprocessParams();
@@ -430,7 +413,12 @@ export abstract class XfdMode {
 		});
 	}
 
-	autoEditRequest(pageobj) {
+	/**
+	 * Post an edit request to the talk page if the page could not
+	 * be tagged with a deletion tag (usually because the page is protected)
+	 * @param pageobj
+	 */
+	autoEditRequest(pageobj: Page) {
 		let params = this.params;
 
 		var talkName = new mw.Title(pageobj.getPageName()).getTalkPage().toText();
@@ -454,7 +442,8 @@ export abstract class XfdMode {
 		talk_page.setNewSectionText(editRequest);
 		talk_page.setCreateOption('recreate');
 		talk_page.setWatchlist(getPref('xfdWatchPage'));
-		talk_page.setFollowRedirect(true); // should never be needed, but if the article is moved, we would want to follow the redirect
+		talk_page.setFollowRedirect(true); // should never be needed, but if the article is moved, we would want to
+		// follow the redirect
 
 		return talk_page.newSection().catch(function () {
 			talk_page.getStatusElement().warn(msg('xfd-editreq-failed'));
@@ -536,7 +525,10 @@ export abstract class XfdMode {
 		return this.notifyTalkPage(this.params.initialContrib);
 	}
 
-	// Should be called after notifyTalkPage() which may unset this.params.initialContrib
+	/**
+	 * Log the XFD nomination to the userspace log.
+	 * Should be called after notifyTalkPage() which may unset this.params.initialContrib
+	 */
 	addToLog() {
 		let params = this.params;
 
@@ -623,6 +615,7 @@ export function num2order(num: number): string {
 
 /**
  * Provide Wikipedian TLA style: AfD, RfD, CfDS, RM, SfD, etc.
+ * TODO: Remove this
  * @param {string} venue
  * @returns {string}
  */

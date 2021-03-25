@@ -1,5 +1,3 @@
-import { addPortletLink } from './portlet';
-import { getPref, setDefaultConfig } from './Config';
 import type { TwinkleModule } from './twinkleModule';
 
 /**
@@ -38,22 +36,29 @@ export namespace Twinkle {
 	export let summaryAd = ` (${scriptName})`;
 
 	/**
-	 * List of special pages where Twinkle is active.
+	 * List of functions that to be run before any modules are initialised. If
+	 * a function returns a promise, it will be awaited. Ensure that the promise
+	 * resolves. Twinkle modules will not be initialised if any of these functions
+	 * throws an error or returns a rejected promise.
 	 */
-	export let activeSpecialPages = ['Block', 'Contributions', 'Recentchanges', 'Recentchangeslinked'].concat(
-		Morebits.userIsSysop ? ['DeletedContributions', 'Prefixindex'] : []
-	);
+	export let preModuleInitHooks: Array<() => void | PromiseLike<void>> = [];
+
+	/**
+	 * Initialisation hooks that can access the user config via getPref().
+	 * These are executed after the user config is loaded and before modules are
+	 * initialised. If a hook returns a promise, it will be awaited.
+	 */
+	export let preModuleInitHooksWithConfig: Array<() => void | PromiseLike<void>> = [];
 
 	/**
 	 * List of registered modules
 	 */
 	export let registeredModules: typeof TwinkleModule[] = [];
-}
 
-// Declare pre-existing globals. `Window` is the type of `window`.
-declare global {
-	interface Window {
-		TwinkleConfig?: Record<string, any>;
-		FriendlyConfig?: Record<string, any>;
-	}
+	/**
+	 * List of special pages where Twinkle is active.
+	 */
+	export let activeSpecialPages = ['Block', 'Contributions', 'Recentchanges', 'Recentchangeslinked'].concat(
+		Morebits.userIsSysop ? ['DeletedContributions', 'Prefixindex'] : []
+	);
 }

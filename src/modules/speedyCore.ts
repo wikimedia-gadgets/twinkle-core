@@ -3,7 +3,7 @@ import { makeArray, obj_entries } from '../utils';
 import { Page } from '../Page';
 import { Api } from '../Api';
 import { Dialog } from '../Dialog';
-import { configPreference, getPref } from '../Config';
+import { Preference, getPref } from '../Config';
 import { TwinkleModule } from '../twinkleModule';
 
 // TODO: still quite a bit of enwiki specific logic here
@@ -1161,7 +1161,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 	userPreferences() {
 		return {
 			title: 'CSD',
-			preferences: [] as configPreference[],
+			preferences: [] as Preference[],
 		};
 	}
 }

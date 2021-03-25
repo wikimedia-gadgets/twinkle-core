@@ -12,6 +12,7 @@ let prefs: Record<string, any>;
 const defaultConfig = {
 	optionsVersion: 2,
 
+	// TODO: Use the defaults in Config.sections
 	// General
 	userTalkPageMode: 'tab',
 	dialogLargeFont: false,
@@ -24,6 +25,17 @@ const defaultConfig = {
 	portletName: null,
 	portletType: null,
 	portletNext: null,
+
+	// Hidden preferences
+	autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
+	revertMaxRevisions: 50, // intentionally limited
+	batchMax: 5000,
+	batchChunks: 50,
+
+	// Deprecated options, as a fallback for add-on scripts/modules
+	summaryAd: ' ([[WP:TW|TW]])',
+	deletionSummaryAd: ' ([[WP:TW|TW]])',
+	protectionSummaryAd: ' ([[WP:TW|TW]])',
 
 	// XfD
 	logXfdNominations: false,
@@ -83,17 +95,6 @@ const defaultConfig = {
 	insertTalkbackSignature: true, // always sign talkback templates
 	talkbackHeading: 'New message from ' + mw.config.get('wgUserName'),
 	mailHeading: "You've got mail!",
-
-	// Hidden preferences
-	autolevelStaleDays: 3, // Huggle is 3, CBNG is 2
-	revertMaxRevisions: 50, // intentionally limited
-	batchMax: 5000,
-	batchChunks: 50,
-
-	// Deprecated options, as a fallback for add-on scripts/modules
-	summaryAd: ' ([[WP:TW|TW]])',
-	deletionSummaryAd: ' ([[WP:TW|TW]])',
-	protectionSummaryAd: ' ([[WP:TW|TW]])',
 };
 
 /**
@@ -118,6 +119,13 @@ export function getPref(name: string): any {
 		return window.FriendlyConfig[name];
 	}
 	return defaultConfig[name];
+}
+// Declare pre-existing globals. `Window` is the type of `window`.
+declare global {
+	interface Window {
+		TwinkleConfig?: Record<string, any>;
+		FriendlyConfig?: Record<string, any>;
+	}
 }
 
 export function loadUserConfig(): JQuery.Promise<void> {
@@ -169,7 +177,8 @@ export function loadUserConfig(): JQuery.Promise<void> {
 		});
 }
 
-export type configPreference = {
+// TODO: Type this more tightly if possible
+export type Preference = {
 	name: string;
 	type: 'boolean' | 'string' | 'enum' | 'integer' | 'set' | 'customList';
 	label?: string;
@@ -177,19 +186,19 @@ export type configPreference = {
 	enumValues?: Record<string, string>;
 	setValues?: Record<string, string>;
 	adminOnly?: boolean;
-	default: any;
+	default: boolean | string | number | { value: string; label: string }[];
 };
 
-export type configSection = {
+export type PreferenceGroup = {
 	title: string;
 	module?: string;
-	preferences: Omit<configPreference, 'default'>[];
+	preferences: Preference[];
 	adminOnly?: boolean;
 	hidden?: boolean;
 };
 
 export class Config {
-	static sections: Record<string, configSection> = {
+	static sections: Record<string, PreferenceGroup> = {
 		general: {
 			title: 'General',
 			module: 'general',
@@ -207,6 +216,7 @@ export class Config {
 						tab: 'In a new tab',
 						blank: 'In a totally new window',
 					},
+					default: 'tab',
 				},
 
 				// TwinkleConfig.dialogLargeFont (boolean)
@@ -214,6 +224,7 @@ export class Config {
 					name: 'dialogLargeFont',
 					label: 'Use larger text in Twinkle dialogs',
 					type: 'boolean',
+					default: false,
 				},
 
 				// Config.disabledModules (array)
@@ -238,6 +249,7 @@ export class Config {
 						unlink: 'Unlink',
 						fluff: 'Revert and rollback',
 					},
+					default: [],
 				},
 
 				// Config.disabledSysopModules (array)
@@ -254,6 +266,7 @@ export class Config {
 						batchprotect: 'P-batch',
 						batchundelete: 'Und-batch',
 					},
+					default: [],
 				},
 			],
 		},
@@ -287,6 +300,7 @@ export class Config {
 				{
 					name: 'revertMaxRevisions',
 					type: 'integer',
+					default: 50,
 				},
 				// twinklewarn.js: When using the autolevel select option, how many days makes a prior warning stale
 				// Huggle is three days ([[Special:Diff/918980316]] and [[Special:Diff/919417999]]) while ClueBotNG is two:
@@ -294,28 +308,31 @@ export class Config {
 				{
 					name: 'autolevelStaleDays',
 					type: 'integer',
+					default: 3,
 				},
 				// How many pages should be queried by deprod and batchdelete/protect/undelete
 				{
 					name: 'batchMax',
 					type: 'integer',
 					adminOnly: true,
+					default: 5000,
 				},
 				// How many pages should be processed at a time by deprod and batchdelete/protect/undelete
 				{
 					name: 'batchChunks',
 					type: 'integer',
 					adminOnly: true,
+					default: 50,
 				},
 			],
 		},
 	};
 
-	static addSection(module: string, section: configSection) {
+	static addGroup(module: string, section: PreferenceGroup) {
 		Config.sections[module] = section;
 	}
 
-	static addPreference(module: string, pref: configPreference) {
+	static addPreference(module: string, pref: Preference) {
 		Config.sections[module].preferences.push(pref);
 	}
 
@@ -752,7 +769,7 @@ export class Config {
 		return false; // stop link from scrolling page
 	}
 
-	static resetPref(pref: Omit<configPreference, 'default'>) {
+	static resetPref(pref: Omit<Preference, 'default'>) {
 		switch (pref.type) {
 			case 'boolean':
 				(document.getElementById(pref.name) as HTMLInputElement).checked = defaultConfig[pref.name];
@@ -785,11 +802,11 @@ export class Config {
 
 	static resetAllPrefs() {
 		// no confirmation message - the user can just refresh/close the page to abort
-		obj_values(Config.sections).forEach(function (section: configSection) {
+		obj_values(Config.sections).forEach(function (section: PreferenceGroup) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
 				return true; // continue: skip impossibilities
 			}
-			section.preferences.forEach(function (pref: configPreference) {
+			section.preferences.forEach(function (pref: Preference) {
 				if (!pref.adminOnly || Morebits.userIsSysop) {
 					Config.resetPref(pref);
 				}
@@ -849,13 +866,13 @@ export class Config {
 			return a === b;
 		};
 
-		obj_values(Config.sections).forEach(function (section: configSection) {
+		obj_values(Config.sections).forEach(function (section: PreferenceGroup) {
 			if (section.adminOnly && !Morebits.userIsSysop) {
 				return; // i.e. "continue" in this context
 			}
 
 			// reach each of the preferences from the form
-			section.preferences.forEach(function (pref: configPreference) {
+			section.preferences.forEach(function (pref: Preference) {
 				var userValue; // = undefined
 
 				// only read form values for those prefs that have them

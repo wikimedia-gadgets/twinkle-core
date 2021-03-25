@@ -2,7 +2,7 @@ import { makeArray, obj_entries, obj_values, stripNs } from '../utils';
 import { msg } from '../messenger';
 import { Api } from '../Api';
 import { Page } from '../Page';
-import { Config, configPreference, getPref } from '../Config';
+import { Config, Preference, getPref } from '../Config';
 import { Dialog } from '../Dialog';
 import { TwinkleModule } from '../twinkleModule';
 
@@ -58,29 +58,25 @@ export class TagCore extends TwinkleModule {
 		this.addMenu();
 	}
 
-	userPreferences() {
+	makeWindow() {
+		var Window = new Dialog(630, 500);
+		// anyone got a good policy/guideline/info page/instructional page link??
+		Window.setFooterLinks(this.footerlinks);
+		this.mode.makeForm(Window);
+		this.mode.formRender();
+		this.mode.postRender();
+	}
+
+	static userPreferences() {
 		return {
 			title: 'Tag',
 			preferences: [
-				{
-					name: 'watchTaggedVenues',
-					label: 'Add page to watchlist when tagging these type of pages',
-					type: 'set',
-					setValues: { articles: 'Articles', drafts: 'Drafts', redirects: 'Redirects', files: 'Files' },
-					default: ['articles', 'drafts', 'redirects', 'files'],
-				},
 				{
 					name: 'watchTaggedPages',
 					label: 'When tagging a page, how long to watch it for',
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
-					default: 'yes',
-				},
-				{
-					name: 'watchMergeDiscussions',
-					label: 'Add talk pages to watchlist when starting merge discussions',
-					type: 'enum',
-					enumValues: Config.watchlistEnums,
+					default: 'no',
 				},
 				{
 					name: 'markTaggedPagesAsMinor',
@@ -94,51 +90,8 @@ export class TagCore extends TwinkleModule {
 					type: 'boolean',
 					default: true,
 				},
-				{
-					name: 'groupByDefault',
-					label: 'Check the "group into {{multiple issues}}" box by default',
-					type: 'boolean',
-					default: true,
-				},
-				{
-					name: 'customTagList',
-					label: 'Custom article/draft maintenance tags to display',
-					helptip:
-						"These appear as additional options at the bottom of the list of tags. For example, you could add new maintenance tags which have not yet been added to Twinkle's defaults.",
-					type: 'customList',
-					customListValueTitle: 'Template name (no curly brackets)',
-					customListLabelTitle: 'Text to show in Tag dialog',
-					default: [],
-				},
-				{
-					name: 'customFileTagList',
-					label: 'Custom file maintenance tags to display',
-					helptip: 'Additional tags that you wish to add for files.',
-					type: 'customList',
-					customListValueTitle: 'Template name (no curly brackets)',
-					customListLabelTitle: 'Text to show in Tag dialog',
-					default: [],
-				},
-				{
-					name: 'customRedirectTagList',
-					label: 'Custom redirect category tags to display',
-					helptip: 'Additional tags that you wish to add for redirects.',
-					type: 'customList',
-					customListValueTitle: 'Template name (no curly brackets)',
-					customListLabelTitle: 'Text to show in Tag dialog',
-					default: [],
-				},
-			] as configPreference[],
+			] as Preference[],
 		};
-	}
-
-	makeWindow() {
-		var Window = new Dialog(630, 500);
-		// anyone got a good policy/guideline/info page/instructional page link??
-		Window.setFooterLinks(this.footerlinks);
-		this.mode.makeForm(Window);
-		this.mode.formRender();
-		this.mode.postRender();
 	}
 
 	/**
