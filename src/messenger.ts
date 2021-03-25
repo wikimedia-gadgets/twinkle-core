@@ -1,15 +1,15 @@
-import Banana, { Messages } from 'orange-i18n';
-import messages from './messages.json';
-import MWMessages from './mw-messages';
+import Banana, { Messages } from "orange-i18n";
+import messages from "../i18n/en.json";
+import MWMessages from "./mw-messages";
 
-let banana = new Banana(mw.config.get('wgContentLanguage'));
+let banana = new Banana(mw.config.get("wgContentLanguage"));
 
 /**
  * Load messages into the message store.
  * @param messages
  */
 export function loadMessages(messages: Messages) {
-	banana.load(messages, mw.config.get('wgContentLanguage'));
+	banana.load(messages, mw.config.get("wgContentLanguage"));
 }
 
 /**
@@ -26,7 +26,7 @@ export function msg(msg: string, ...parameters: (string | number | string[])[]) 
  */
 export function initMessaging() {
 	// Populate messages in object
-	loadMessages(messages);
+	loadMessages(messages as Messages);
 
 	// Set Morebits i18n
 	Morebits.i18n.setParser({ get: msg });
@@ -43,7 +43,7 @@ export function initMessaging() {
 function loadMediaWikiMessages() {
 	return new mw.Api()
 		.getMessages(MWMessages, {
-			amlang: mw.config.get('wgContentLanguage'),
+			amlang: mw.config.get("wgContentLanguage"),
 			// cache them, as messages are not going to change that often
 			maxage: 99999999,
 			smaxage: 99999999,

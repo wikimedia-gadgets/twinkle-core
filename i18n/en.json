@@ -158,5 +158,18 @@
 	"xfd-editreq-failed": "Unable to add edit request, the talk page may be protected",
 	"fetching-creator": "Finding page creator",
 	"notifying-creator": "Notifying initial contributor ($1)",
-	"notify-self-skip": "You ($1) created this page; skipping user notification"
+	"notify-self-skip": "You ($1) created this page; skipping user notification",
+
+	"pref-logXfdNominations-label": "Keep a log in userspace of all pages you nominate for a deletion discussion (XfD)",
+	"pref-logXfdNominations-tooltip":"The userspace log offers a good way to keep track of all pages you nominate for XfD using Twinkle.",
+	"pref-xfdLogPageName-label": "Keep the deletion discussion userspace log at this user subpage",
+	"pref-xfdLogPageName-tooltip": "Enter a subpage name in this box. You will find your XfD log at User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the XfD userspace log.",
+	"pref-xfdWatchPage-label": "Add the nominated page to watchlist",
+	"pref-xfdWatchPage-tooltip": "",
+	"pref-xfdWatchDiscussion-label": "Add the deletion discussion page to watchlist",
+	"pref-xfdWatchDiscussion-tooltip": 	"This refers to the discussion subpage (for AfD and MfD) or the daily log page (for TfD, CfD, RfD and FfD)",
+	"pref-xfdWatchList-label": "Add the daily log/list page to the watchlist (AfD and MfD)",
+	"pref-xfdWatchList-tooltip": "This only applies for AfD and MfD, where the discussions are transcluded onto a daily log page (for AfD) or the main MfD page (for MfD).",
+	"pref-xfdWatchUser-label": "Add user talk page of initial contributor to watchlist (when notifying)",
+	"pref-xfdWatchUser-tooltip": ""
 }
