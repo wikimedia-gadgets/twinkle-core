@@ -21,6 +21,7 @@
 	"files": [
 		"build/"
 	],
+	"license": "CC-BY-SA-3.0",
 	"dependencies": {
 		"orange-i18n": "^1.3.0",
 		"types-mediawiki": "^0.7.3"
