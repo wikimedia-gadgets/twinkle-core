@@ -8,8 +8,6 @@ The twinkle-starter repository (yet to be created) will provide a template using
 
 Documentation for twinkle-core is hosted on Toolforge. Check it out at https://tools-static.wmflabs.org/twinkle/core-docs ([alternative link](https://twinkle.toolforge.org/core-docs)).
 
-As is the custom with TypeScript libraries, the GitHub repo only contains the TS source files, and the NPM package only contains the built JS and .d.ts files.
-
 ## Contributing
 
 - Set up an IDE or code editor to work with JS/TS. Popular choices include Visual Studio Code or one of the JetBrains IDEs if you have a licence (JetBrains offers free licenses to [MediaWiki contributors](https://www.mediawiki.org/wiki/JetBrains_IDEs) and [students](https://www.jetbrains.com/community/education/#students)). If you are a command line veteran, check out [TypeScript for Vim](https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript/) or [emacs](https://wikemacs.org/wiki/TypeScript)!

@@ -1,7 +1,7 @@
 {
 	"title": "Twinkle core",
 	"name": "twinkle-core",
-	"version": "3.0.1",
+	"version": "3.0.2-beta",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/wikimedia-gadgets/twinkle-core"
@@ -19,7 +19,9 @@
 		"docs": "typedoc src/index.ts --out docs --ignoreCompilerErrors"
 	},
 	"files": [
-		"build/"
+		"src/",
+		"i18n/",
+		"morebits/"
 	],
 	"license": "CC-BY-SA-3.0",
 	"dependencies": {
@@ -39,6 +41,7 @@
 		"jsdom": "^16.4.0",
 		"lint-staged": "^10.5.3",
 		"mock-mediawiki": "^1.0.1",
+		"mwn": "^0.10.3",
 		"prettier": "^2.2.1",
 		"qunit": "^2.13.0",
 		"ts-jest": "^26.4.4",
