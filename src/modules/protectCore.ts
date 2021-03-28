@@ -1,12 +1,14 @@
-import { Dialog } from '../Dialog';
-import { LogEvent } from '../utils';
-import { TwinkleModule } from '../twinkleModule';
 import { Twinkle } from '../twinkle';
+import { TwinkleModule } from '../twinkleModule';
+import { Dialog } from '../Dialog';
+import { arr_includes, LogEvent, obj_entries } from '../utils';
 import { getPref } from '../Config';
+import { msg } from '../messenger';
+import { NS_USER_TALK } from '../namespaces';
 // XXX
 import { hatnoteRegex } from '../../../twinkle-enwiki/src/common';
 
-export class ProtectCore extends TwinkleModule {
+export abstract class ProtectCore extends TwinkleModule {
 	moduleName = 'protect';
 	static moduleName = 'protect';
 
@@ -31,7 +33,7 @@ export class ProtectCore extends TwinkleModule {
 		var form = new Morebits.quickForm(this.evaluate.bind(this));
 		var actionfield = form.append({
 			type: 'field',
-			label: 'Type of action',
+			label: msg('protect-action-type'),
 		});
 		actionfield.append({
 			type: 'radio',
@@ -39,31 +41,28 @@ export class ProtectCore extends TwinkleModule {
 			event: this.changeAction.bind(this),
 			list: [
 				{
-					label: 'Protect page',
+					label: msg('protect-protect-label'),
 					value: 'protect',
-					tooltip: 'Apply actual protection to the page.',
+					tooltip: msg('protect-protect-tooltip'),
 					checked: true,
 					adminonly: true,
 				},
 				{
-					label: 'Request page protection',
+					label: msg('protect-request-label'),
 					value: 'request',
-					tooltip:
-						'If you want to request protection via WP:RPP' +
-						(Morebits.userIsSysop ? ' instead of doing the protection by yourself.' : '.'),
+					tooltip: Morebits.userIsSysop ? msg('protect-request-sysop-tooltip') : msg('protect-request-tooltip'),
 					checked: !Morebits.userIsSysop,
 				},
 				{
-					label: 'Tag page with protection template',
+					label: msg('protect-tag-label'),
 					value: 'tag',
-					tooltip:
-						'If the protecting admin forgot to apply a protection template, or you have just protected the page without tagging, you can use this to apply the appropriate protection tag.',
+					tooltip: msg('protect-tag-tooltip'),
 					disabled: mw.config.get('wgArticleId') === 0 || mw.config.get('wgPageContentModel') === 'Scribunto',
 				},
 			],
 		});
 
-		form.append({ type: 'field', label: 'Preset', name: 'field_preset' });
+		form.append({ type: 'field', label: msg('preset'), name: 'field_preset' });
 		form.append({ type: 'field', label: '1', name: 'field1' });
 		form.append({ type: 'field', label: '2', name: 'field2' });
 
@@ -81,15 +80,10 @@ export class ProtectCore extends TwinkleModule {
 		this.fetchProtectionLevel();
 	}
 
-	// A list of bots who may be the protecting sysop, for whom we shouldn't
-	// remind the user contact before requesting unprotection (evaluate)
-	trustedBots = ['MusikBot II', 'TFA Protector Bot'];
-
 	// Check if FlaggedRevs extension is enabled
 	hasFlaggedRevs =
 		mw.loader.getState('ext.flaggedRevs.review') &&
-		// FlaggedRevs only valid in some namespaces, hardcoded until [[phab:T218479]]
-		(mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 4);
+		arr_includes(Twinkle.flaggedRevsNamespaces, mw.config.get('wgNamespaceNumber'));
 
 	// Limit template editor; a Twinkle restriction, not a site setting
 	isTemplate = mw.config.get('wgNamespaceNumber') === 10 || mw.config.get('wgNamespaceNumber') === 828;
@@ -241,8 +235,8 @@ export class ProtectCore extends TwinkleModule {
 
 	hasProtectLog: boolean;
 	hasStableLog: boolean;
-	protectLog: LogEvent[];
-	stableLog: LogEvent[];
+	protectLog: false | LogEvent[];
+	stableLog: false | LogEvent[];
 
 	showLogAndCurrentProtectInfo() {
 		var currentlyProtected = !$.isEmptyObject(this.currentProtectionLevels);
@@ -253,23 +247,25 @@ export class ProtectCore extends TwinkleModule {
 			if (this.hasProtectLog) {
 				$linkMarkup.append(
 					$(
-						'<a target="_blank" href="' +
-							mw.util.getUrl('Special:Log', {
-								action: 'view',
-								page: mw.config.get('wgPageName'),
-								type: 'protect',
-							}) +
-							'">protection log</a>'
+						link(msg('protectlogpage'), 'Special:Log', {
+							action: 'view',
+							page: mw.config.get('wgPageName'),
+							type: 'protect',
+						})
 					)
 				);
 				if (!currentlyProtected || (!this.currentProtectionLevels.edit && !this.currentProtectionLevels.move)) {
 					var lastProtectAction = this.protectLog[0];
 					if (lastProtectAction.action === 'unprotect') {
-						$linkMarkup.append(' (unprotected ' + new Morebits.date(lastProtectAction.timestamp).calendar('utc') + ')');
+						$linkMarkup.append(
+							msg('word-separator'),
+							msg('parentheses', msg('unprotected-time', lastProtectAction.timestamp))
+						);
 					} else {
 						// protect or modify
 						$linkMarkup.append(
-							' (expired ' + new Morebits.date(lastProtectAction.params.details[0].expiry).calendar('utc') + ')'
+							msg('word-separator'),
+							msg('parentheses', msg('expired-time', lastProtectAction.params.details[0].expiry))
 						);
 					}
 				}
@@ -279,33 +275,32 @@ export class ProtectCore extends TwinkleModule {
 			if (this.hasStableLog) {
 				$linkMarkup.append(
 					$(
-						'<a target="_blank" href="' +
-							mw.util.getUrl('Special:Log', {
-								action: 'view',
-								page: mw.config.get('wgPageName'),
-								type: 'stable',
-							}) +
-							'">pending changes log</a>)'
+						link(msg('stable-logpage'), 'Special:Log', {
+							action: 'view',
+							page: mw.config.get('wgPageName'),
+							type: 'stable',
+						})
 					)
 				);
 				if (!currentlyProtected || !this.currentProtectionLevels.stabilize) {
 					var lastStabilizeAction = this.stableLog[0];
 					if (lastStabilizeAction.action === 'reset') {
-						$linkMarkup.append(' (reset ' + new Morebits.date(lastStabilizeAction.timestamp).calendar('utc') + ')');
+						$linkMarkup.append(
+							msg('word-separator'),
+							msg('parentheses', msg('reset-time', lastStabilizeAction.timestamp))
+						);
 					} else {
 						// config or modify
 						$linkMarkup.append(
-							' (expired ' + new Morebits.date(lastStabilizeAction.params.expiry).calendar('utc') + ')'
+							msg('word-separator'),
+							msg('parentheses', msg('expired-time', lastStabilizeAction.params.expiry))
 						);
 					}
 				}
 			}
 
 			Morebits.status.init($('div[name="hasprotectlog"] span')[0]);
-			Morebits.status.warn(
-				currentlyProtected ? 'Previous protections' : 'This page has been protected in the past',
-				$linkMarkup[0]
-			);
+			Morebits.status.warn(currentlyProtected ? msg('prev-protections') : msg('past-protected'), $linkMarkup[0]);
 		}
 
 		Morebits.status.init($('div[name="currentprot"] span')[0]);
@@ -313,44 +308,45 @@ export class ProtectCore extends TwinkleModule {
 			statusLevel = 'info';
 
 		if (currentlyProtected) {
+			// XXX: i18n here is a huge PITA
+
 			$.each(this.currentProtectionLevels, (type, settings) => {
 				var label = type === 'stabilize' ? 'Pending Changes' : Morebits.string.toUpperCaseFirstChar(type);
 
 				if (type === 'cascading') {
 					// Covered by another page
-					label = 'Cascading protection ';
-					protectionNode.push($('<b>' + label + '</b>')[0]);
-					if (settings.source) {
-						// Should by definition exist
-						var sourceLink =
-							'<a target="_blank" href="' + mw.util.getUrl(settings.source) + '">' + settings.source + '</a>';
-						protectionNode.push($('<span>from ' + sourceLink + '</span>')[0]);
-					}
+					// label = 'Cascading protection ';
+					// protectionNode.push($('<b>' + label + '</b>')[0]);
+					// var sourceLink = link(settings.source, settings.source);
+					// protectionNode.push($('<span>from ' + sourceLink + '</span>')[0]);
+
+					protectionNode.push(`<b>Cascading protection</b> <span>from [[${settings.source}]]</span>`);
 				} else {
-					var level = settings.level;
+					// var level = settings.level;
 					// Make cascading protection more prominent
 					if (settings.cascade) {
-						level += ' (cascading)';
+						protectionNode.push(`<b>${label}: ${settings.level} (cascading)</b>`);
 					}
-					protectionNode.push($('<b>' + label + ': ' + level + '</b>')[0]);
+					// protectionNode.push($('<b>' + label + ': ' + level + '</b>')[0]);
+					protectionNode.push(`<b>${label}: ${settings.level}</b>`);
 				}
 
 				if (settings.expiry === 'infinity') {
 					protectionNode.push(' (indefinite) ');
 				} else {
-					protectionNode.push(' (expires ' + new Morebits.date(settings.expiry).calendar('utc') + ') ');
+					protectionNode.push(
+						msg('word-separator'),
+						msg('parentheses', msg('expires-time', settings.expiry)),
+						msg('word-separator')
+					);
 				}
 				if (settings.admin) {
-					var adminLink =
-						'<a target="_blank" href="' +
-						mw.util.getUrl('User talk:' + settings.admin) +
-						'">' +
-						settings.admin +
-						'</a>';
+					var adminLink = link(settings.admin, mw.Title.newFromText(settings.admin, NS_USER_TALK).toText());
 					protectionNode.push($('<span>by ' + adminLink + '</span>')[0]);
 				}
 				protectionNode.push($('<span> \u2022 </span>')[0]);
 			});
+
 			protectionNode = protectionNode.slice(0, -1); // remove the trailing bullet
 			statusLevel = 'warn';
 		} else {
@@ -361,9 +357,28 @@ export class ProtectCore extends TwinkleModule {
 	}
 
 	changeAction(e) {
-		var field_preset;
-		var field1;
-		var field2;
+		let field_preset, field1, field2;
+		let protectionLevels = this.getProtectionLevels();
+		let protectionLengths = this.getProtectionLengths();
+		let protectionTypes = this.getProtectionPresets();
+		let protectionTypesCreate = this.getCreateProtectionPresets();
+
+		const protLevelsToQuickformList = (levels: typeof protectionLevels, type: string) =>
+			obj_entries(levels)
+				.filter(([, data]) => {
+					return (
+						arr_includes(data.types, type) &&
+						(data.applicable === undefined ||
+							(typeof data.applicable === 'boolean' && data.applicable) ||
+							(typeof data.applicable === 'function' && data.applicable(type)))
+					);
+				})
+				.sort((a, b) => {
+					return a[1].weight < b[1].weight ? -1 : 1;
+				})
+				.map(([code, data]) => {
+					return { label: data.label, value: code, selected: data.defaultSelected };
+				});
 
 		switch (e.target.values) {
 			case 'protect':
@@ -371,12 +386,16 @@ export class ProtectCore extends TwinkleModule {
 				field_preset.append({
 					type: 'select',
 					name: 'category',
-					label: 'Choose a preset:',
+					label: msg('choose-preset'),
 					event: this.changePreset.bind(this),
-					list: mw.config.get('wgArticleId') ? this.protectionTypes : this.protectionTypesCreate,
+					list: mw.config.get('wgArticleId') ? protectionTypes : protectionTypesCreate,
 				});
 
-				field2 = new Morebits.quickForm.element({ type: 'field', label: 'Protection options', name: 'field2' });
+				field2 = new Morebits.quickForm.element({
+					type: 'field',
+					label: msg('protect-options'),
+					name: 'field2',
+				});
 				field2.append({ type: 'div', name: 'currentprot', label: ' ' }); // holds the current protection
 				// level, as filled out by the async
 				// callback
@@ -385,12 +404,12 @@ export class ProtectCore extends TwinkleModule {
 				if (mw.config.get('wgArticleId')) {
 					field2.append({
 						type: 'checkbox',
-						event: this.formevents.editmodify.bind(this),
+						event: this.formevents.editmodify,
 						list: [
 							{
-								label: 'Modify edit protection',
+								label: msg('protect-edit-modify'),
 								name: 'editmodify',
-								tooltip: 'If this is turned off, the edit protection level, and expiry time, will be left as is.',
+								tooltip: msg('protect-edit-modify-tooltip'),
 								checked: true,
 							},
 						],
@@ -398,33 +417,30 @@ export class ProtectCore extends TwinkleModule {
 					field2.append({
 						type: 'select',
 						name: 'editlevel',
-						label: 'Edit protection:',
-						event: this.formevents.editlevel.bind(this),
-						list: this.protectionLevels.filter((level) => {
-							// Filter TE outside of templates and modules
-							return this.isTemplate || level.value !== 'templateeditor';
-						}),
+						label: msg('protect-edit-label'),
+						event: this.formevents.editlevel,
+						list: protLevelsToQuickformList(protectionLevels, 'edit'),
 					});
 					field2.append({
 						type: 'select',
 						name: 'editexpiry',
-						label: 'Expires:',
+						label: msg('expires-label'),
 						event: (e) => {
 							if (e.target.value === 'custom') {
 								this.doCustomExpiry(e.target);
 							}
 						},
 						// default expiry selection (2 days) is conditionally set in this.changePreset
-						list: this.protectionLengths,
+						list: protectionLengths,
 					});
 					field2.append({
 						type: 'checkbox',
-						event: this.formevents.movemodify.bind(this),
+						event: this.formevents.movemodify,
 						list: [
 							{
-								label: 'Modify move protection',
+								label: msg('protect-move-modify'),
 								name: 'movemodify',
-								tooltip: 'If this is turned off, the move protection level, and expiry time, will be left as is.',
+								tooltip: msg('protect-move-modify-tooltip'),
 								checked: true,
 							},
 						],
@@ -432,34 +448,31 @@ export class ProtectCore extends TwinkleModule {
 					field2.append({
 						type: 'select',
 						name: 'movelevel',
-						label: 'Move protection:',
-						event: this.formevents.movelevel.bind(this),
-						list: this.protectionLevels.filter((level) => {
-							// Autoconfirmed is required for a move, redundant
-							return level.value !== 'autoconfirmed' && (this.isTemplate || level.value !== 'templateeditor');
-						}),
+						label: msg('protect-move-label'),
+						event: this.formevents.movelevel,
+						list: protLevelsToQuickformList(protectionLevels, 'move'),
 					});
 					field2.append({
 						type: 'select',
 						name: 'moveexpiry',
-						label: 'Expires:',
+						label: msg('expires-label'),
 						event: (e) => {
 							if (e.target.value === 'custom') {
 								this.doCustomExpiry(e.target);
 							}
 						},
 						// default expiry selection (2 days) is conditionally set in this.changePreset
-						list: this.protectionLengths,
+						list: protectionLengths,
 					});
 					if (this.hasFlaggedRevs) {
 						field2.append({
 							type: 'checkbox',
-							event: this.formevents.pcmodify.bind(this),
+							event: this.formevents.pcmodify,
 							list: [
 								{
-									label: 'Modify pending changes protection',
+									label: msg('protect-stable-modify'),
 									name: 'pcmodify',
-									tooltip: 'If this is turned off, the pending changes level, and expiry time, will be left as is.',
+									tooltip: msg('protect-stable-modify-tooltip'),
 									checked: true,
 								},
 							],
@@ -467,24 +480,21 @@ export class ProtectCore extends TwinkleModule {
 						field2.append({
 							type: 'select',
 							name: 'pclevel',
-							label: 'Pending changes:',
-							event: this.formevents.pclevel.bind(this),
-							list: [
-								{ label: 'None', value: 'none' },
-								{ label: 'Pending change', value: 'autoconfirmed', selected: true },
-							],
+							label: msg('protect-stable-label'),
+							event: this.formevents.pclevel,
+							list: protLevelsToQuickformList(protectionLevels, 'stable'),
 						});
 						field2.append({
 							type: 'select',
 							name: 'pcexpiry',
-							label: 'Expires:',
+							label: msg('expires-label'),
 							event: (e) => {
 								if (e.target.value === 'custom') {
 									this.doCustomExpiry(e.target);
 								}
 							},
 							// default expiry selection (1 month) is conditionally set in this.changePreset
-							list: this.protectionLengths,
+							list: protectionLengths,
 						});
 					}
 				} else {
@@ -492,33 +502,27 @@ export class ProtectCore extends TwinkleModule {
 					field2.append({
 						type: 'select',
 						name: 'createlevel',
-						label: 'Create protection:',
-						event: this.formevents.createlevel.bind(this),
-						list: this.protectionLevels.filter((level) => {
-							// Filter TE always, and autoconfirmed in mainspace, redundant since WP:ACPERM
-							return (
-								level.value !== 'templateeditor' &&
-								(mw.config.get('wgNamespaceNumber') !== 0 || level.value !== 'autoconfirmed')
-							);
-						}),
+						label: msg('protect-create-label'),
+						event: this.formevents.createlevel,
+						list: protLevelsToQuickformList(protectionLevels, 'create'),
 					});
 					field2.append({
 						type: 'select',
 						name: 'createexpiry',
-						label: 'Expires:',
+						label: msg('expires-label'),
 						event: (e) => {
 							if (e.target.value === 'custom') {
 								this.doCustomExpiry(e.target);
 							}
 						},
 						// default expiry selection (indefinite) is conditionally set in this.changePreset
-						list: this.protectionLengths,
+						list: protectionLengths,
 					});
 				}
 				field2.append({
 					type: 'textarea',
 					name: 'protectReason',
-					label: 'Reason (for protection log):',
+					label: msg('protect-reason'),
 				});
 				field2.append({
 					type: 'div',
@@ -596,7 +600,7 @@ export class ProtectCore extends TwinkleModule {
 					name: 'category',
 					label: 'Type and reason:',
 					event: this.changePreset.bind(this),
-					list: mw.config.get('wgArticleId') ? this.protectionTypes : this.protectionTypesCreate,
+					list: mw.config.get('wgArticleId') ? protectionTypes : protectionTypesCreate,
 				});
 
 				field1 = new Morebits.quickForm.element({ type: 'field', label: 'Options', name: 'field1' });
@@ -735,124 +739,63 @@ export class ProtectCore extends TwinkleModule {
 	}
 
 	// NOTE: This list is used by batchprotect as well
-	protectionLevels = [
-		{ label: 'All', value: 'all' },
-		{ label: 'Autoconfirmed', value: 'autoconfirmed' },
-		{ label: 'Extended confirmed', value: 'extendedconfirmed' },
-		{ label: 'Template editor', value: 'templateeditor' },
-		{ label: 'Sysop', value: 'sysop', selected: true },
-	];
+	getProtectionLevels(): Record<
+		string,
+		{
+			label: string;
+			weight: number;
+			defaultSelected?: true;
+			applicable?: boolean | ((type: string) => boolean);
+			types: ('edit' | 'move' | 'create' | 'stable')[];
+		}
+	> {
+		return {
+			all: {
+				label: 'All',
+				weight: 0,
+				types: ['edit', 'move', 'create', 'stable'],
+			},
+			autoconfirmed: {
+				label: msg('group-autoconfirmed'),
+				weight: 10,
+				types: ['edit', 'create', 'stable'],
+			},
+			sysop: {
+				label: msg('group-sysop'),
+				defaultSelected: true,
+				weight: 40,
+				types: ['edit', 'move', 'create', 'stable'],
+			},
+		};
+	}
 
 	// default expiry selection is conditionally set in this.changePreset
 	// NOTE: This list is used by batchprotect as well
-	protectionLengths = [
-		{ label: '1 hour', value: '1 hour' },
-		{ label: '2 hours', value: '2 hours' },
-		{ label: '3 hours', value: '3 hours' },
-		{ label: '6 hours', value: '6 hours' },
-		{ label: '12 hours', value: '12 hours' },
-		{ label: '1 day', value: '1 day' },
-		{ label: '2 days', value: '2 days' },
-		{ label: '3 days', value: '3 days' },
-		{ label: '4 days', value: '4 days' },
-		{ label: '1 week', value: '1 week' },
-		{ label: '2 weeks', value: '2 weeks' },
-		{ label: '1 month', value: '1 month' },
-		{ label: '2 months', value: '2 months' },
-		{ label: '3 months', value: '3 months' },
-		{ label: '1 year', value: '1 year' },
-		{ label: 'indefinite', value: 'infinity' },
-		{ label: 'Custom...', value: 'custom' },
-	];
+	getProtectionLengths() {
+		return [
+			{ label: msg('duration-hours', 1), value: '1 hour' },
+			{ label: msg('duration-hours', 2), value: '2 hours' },
+			{ label: msg('duration-hours', 3), value: '3 hours' },
+			{ label: msg('duration-hours', 6), value: '6 hours' },
+			{ label: msg('duration-hours', 12), value: '12 hours' },
+			{ label: msg('duration-days', 1), value: '1 day' },
+			{ label: msg('duration-days', 2), value: '2 days' },
+			{ label: msg('duration-days', 3), value: '3 days' },
+			{ label: msg('duration-days', 4), value: '4 days' },
+			{ label: msg('duration-weeks', 1), value: '1 week' },
+			{ label: msg('duration-weeks', 2), value: '2 weeks' },
+			{ label: msg('duration-months', 1), value: '1 month' },
+			{ label: msg('duration-months', 2), value: '2 months' },
+			{ label: msg('duration-months', 3), value: '3 months' },
+			{ label: msg('duration-years', 1), value: '1 year' },
+			{ label: msg('protect-expiry-indefinite'), value: 'infinity' },
+			{ label: 'Custom...', value: 'custom' },
+		];
+	}
 
-	protectionTypes = [
-		{ label: 'Unprotection', value: 'unprotect' },
-		{
-			label: 'Full protection',
-			list: [
-				{ label: 'Generic (full)', value: 'pp-protected' },
-				{ label: 'Content dispute/edit warring (full)', value: 'pp-dispute' },
-				{ label: 'Persistent vandalism (full)', value: 'pp-vandalism' },
-				{ label: 'User talk of blocked user (full)', value: 'pp-usertalk' },
-			],
-		},
-		{
-			label: 'Template protection',
-			list: [{ label: 'Highly visible template (TE)', value: 'pp-template' }],
-		},
-		{
-			label: 'Extended confirmed protection',
-			list: [
-				{ label: 'Arbitration enforcement (ECP)', selected: true, value: 'pp-30-500-arb' },
-				{ label: 'Persistent vandalism (ECP)', value: 'pp-30-500-vandalism' },
-				{ label: 'Disruptive editing (ECP)', value: 'pp-30-500-disruptive' },
-				{ label: 'BLP policy violations (ECP)', value: 'pp-30-500-blp' },
-				{ label: 'Sockpuppetry (ECP)', value: 'pp-30-500-sock' },
-			],
-		},
-		{
-			label: 'Semi-protection',
-			list: [
-				{ label: 'Generic (semi)', value: 'pp-semi-protected' },
-				{ label: 'Persistent vandalism (semi)', selected: true, value: 'pp-semi-vandalism' },
-				{ label: 'Disruptive editing (semi)', value: 'pp-semi-disruptive' },
-				{ label: 'Adding unsourced content (semi)', value: 'pp-semi-unsourced' },
-				{ label: 'BLP policy violations (semi)', value: 'pp-semi-blp' },
-				{ label: 'Sockpuppetry (semi)', value: 'pp-semi-sock' },
-				{ label: 'User talk of blocked user (semi)', value: 'pp-semi-usertalk' },
-			],
-		},
-		{
-			label: 'Pending changes',
-			list: [
-				{ label: 'Generic (PC)', value: 'pp-pc-protected' },
-				{ label: 'Persistent vandalism (PC)', value: 'pp-pc-vandalism' },
-				{ label: 'Disruptive editing (PC)', value: 'pp-pc-disruptive' },
-				{ label: 'Adding unsourced content (PC)', value: 'pp-pc-unsourced' },
-				{ label: 'BLP policy violations (PC)', value: 'pp-pc-blp' },
-			],
-		},
-		{
-			label: 'Move protection',
-			list: [
-				{ label: 'Generic (move)', value: 'pp-move' },
-				{ label: 'Dispute/move warring (move)', value: 'pp-move-dispute' },
-				{ label: 'Page-move vandalism (move)', value: 'pp-move-vandalism' },
-				{ label: 'Highly visible page (move)', value: 'pp-move-indef' },
-			],
-		},
-	].filter((type) => {
-		// Filter for templates and flaggedrevs
-		return (
-			(this.isTemplate || type.label !== 'Template protection') &&
-			(this.hasFlaggedRevs || type.label !== 'Pending changes')
-		);
-	});
+	abstract getProtectionPresets(): quickFormElementData[];
 
-	protectionTypesCreate = [
-		{ label: 'Unprotection', value: 'unprotect' },
-		{
-			label: 'Create protection',
-			list: [
-				{ label: 'Generic ({{pp-create}})', value: 'pp-create' },
-				{ label: 'Offensive name', value: 'pp-create-offensive' },
-				{ label: 'Repeatedly recreated', selected: true, value: 'pp-create-salt' },
-				{ label: 'Recently deleted BLP', value: 'pp-create-blp' },
-			],
-		},
-	];
-
-	// A page with both regular and PC protection will be assigned its regular
-	// protection weight plus 2
-	protectionWeight = {
-		sysop: 40,
-		templateeditor: 30,
-		extendedconfirmed: 20,
-		autoconfirmed: 10,
-		flaggedrevs_autoconfirmed: 5, // Pending Changes protection alone
-		all: 0,
-		flaggedrevs_none: 0, // just in case
-	};
+	abstract getCreateProtectionPresets(): quickFormElementData[];
 
 	protectionPresetsInfo: Record<
 		string,
@@ -1021,7 +964,7 @@ export class ProtectCore extends TwinkleModule {
 				var statusInited = false;
 				var thispage;
 
-				var allDone = function twinkleprotectCallbackAllDone() {
+				var allDone = () => {
 					if (thispage) {
 						thispage.getStatusElement().info('done');
 					}
@@ -1030,7 +973,7 @@ export class ProtectCore extends TwinkleModule {
 					}
 				};
 
-				var protectIt = function twinkleprotectCallbackProtectIt(next) {
+				var protectIt = (next) => {
 					thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), 'Protecting page');
 					if (mw.config.get('wgArticleId')) {
 						if (input.editmodify) {
@@ -1075,7 +1018,7 @@ export class ProtectCore extends TwinkleModule {
 					thispage.protect(next);
 				};
 
-				var stabilizeIt = function twinkleprotectCallbackStabilizeIt() {
+				var stabilizeIt = () => {
 					if (thispage) {
 						thispage.getStatusElement().info('done');
 					}
@@ -1189,19 +1132,12 @@ export class ProtectCore extends TwinkleModule {
 						break;
 					case 'unprotect':
 						var admins = $.map(this.currentProtectionLevels, (pl) => {
-							if (!pl.admin || this.trustedBots.indexOf(pl.admin) !== -1) {
+							if (!pl.admin || Twinkle.botUsernameRegex.test(pl.admin)) {
 								return null;
 							}
-							return 'User:' + pl.admin;
+							return pl.admin;
 						});
-						if (
-							admins.length &&
-							!confirm(
-								'Have you attempted to contact the protecting admins (' +
-									Morebits.array.uniq(admins).join(', ') +
-									') first?'
-							)
-						) {
+						if (admins.length && !confirm(msg('sysops-contacted', Morebits.array.uniq(admins)))) {
 							return false;
 						}
 					// otherwise falls through
@@ -1300,7 +1236,7 @@ export class ProtectCore extends TwinkleModule {
 				var rppPage = new Morebits.wiki.page(rppName, 'Requesting protection of page');
 				rppPage.setFollowRedirect(true);
 				rppPage.setCallbackParameters(rppparams);
-				rppPage.load(this.fileRequest);
+				rppPage.load(() => this.fileRequest(rppPage));
 				break;
 			default:
 				alert('twinkleprotect: unknown kind of action');
@@ -1470,15 +1406,16 @@ export class ProtectCore extends TwinkleModule {
 		var protInfo = this.protectionPresetsInfo[params.category];
 
 		// function to compute protection weights (see comment at this.protectionWeight)
+		let protectionLevels = this.getProtectionLevels();
 		var computeWeight = (mainLevel, stabilizeLevel?) => {
-			var result = this.protectionWeight[mainLevel || 'all'];
+			var result = protectionLevels[mainLevel || 'all'].weight;
 			if (stabilizeLevel) {
 				if (result) {
 					if (stabilizeLevel.level === 'autoconfirmed') {
 						result += 2;
 					}
 				} else {
-					result = this.protectionWeight['flaggedrevs_' + stabilizeLevel];
+					result = protectionLevels[stabilizeLevel].weight / 2;
 				}
 			}
 			return result;
@@ -1486,15 +1423,13 @@ export class ProtectCore extends TwinkleModule {
 
 		// compare the page's current protection weights with the protection we are requesting
 		var editWeight = computeWeight(
-			this.currentProtectionLevels.edit && this.currentProtectionLevels.edit.level,
-			this.currentProtectionLevels.stabilize && this.currentProtectionLevels.stabilize.level
+			this.currentProtectionLevels.edit?.level,
+			this.currentProtectionLevels.stabilize?.level
 		);
 		if (
 			computeWeight(protInfo.edit, protInfo.stabilize) > editWeight ||
-			computeWeight(protInfo.move) >
-				computeWeight(this.currentProtectionLevels.move && this.currentProtectionLevels.move.level) ||
-			computeWeight(protInfo.create) >
-				computeWeight(this.currentProtectionLevels.create && this.currentProtectionLevels.create.level)
+			computeWeight(protInfo.move) > computeWeight(this.currentProtectionLevels.move?.level) ||
+			computeWeight(protInfo.create) > computeWeight(this.currentProtectionLevels.create?.level)
 		) {
 			increase = true;
 		}
@@ -1552,4 +1487,8 @@ export class ProtectCore extends TwinkleModule {
 			}
 		});
 	}
+}
+
+function link(displaytext: string, title: string, params?: any) {
+	return `<a target="_blank" href="${mw.util.getUrl(title, params)}">${displaytext}</a>`;
 }

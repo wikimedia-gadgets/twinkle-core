@@ -1,9 +1,24 @@
-// If this exceeds 50 items, refactor loadMediaWikiMessages() to split the array
-// into chunks of 50 and query the API in parallel
+// See full list of available messages at
+// https://github.com/wikimedia/mediawiki/blob/master/languages/i18n/en.json
+
 export default [
 	'colon-separator',
 	'word-separator',
+	'parentheses',
 	'blanknamespace',
+
+	// ProtectCore
+	'protectlogpage',
+	'stable-logpage',
+	'duration-hours',
+	'duration-days',
+	'duration-weeks',
+	'duration-years',
+	'protect-expiry-indefinite',
+	'group-autoconfirmed',
+	'group-sysop',
+
+	// Months and days (for morebits)
 	'january',
 	'jan',
 	'february',
@@ -12,7 +27,7 @@ export default [
 	'mar',
 	'april',
 	'apr',
-	'may',
+	'may_long',
 	'may',
 	'june',
 	'jun',

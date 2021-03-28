@@ -606,6 +606,7 @@ class Fluff extends TwinkleModule {
 			// figure out whether we need to/can review the edit
 			if (
 				this.flaggedRevsEnabled &&
+				// XXX: user group
 				(Morebits.userIsInGroup('reviewer') || Morebits.userIsSysop) &&
 				!!page.flagged &&
 				page.flagged.stable_revid >= params.goodid &&

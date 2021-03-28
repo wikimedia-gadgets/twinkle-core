@@ -1037,7 +1037,7 @@ export abstract class SpeedyCore extends TwinkleModule {
 				Morebits.wiki.actionCompleted.redirect = null;
 				this.dialog.close();
 				// XXX
-				Twinkle.unlink.callback(
+				Twinkle.unlink.makeWindow(
 					isFile
 						? 'Removing usages of and/or links to deleted file ' + Morebits.pageNameNorm
 						: 'Removing links to deleted page ' + Morebits.pageNameNorm
