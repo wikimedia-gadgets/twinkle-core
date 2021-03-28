@@ -485,8 +485,8 @@ export abstract class XfdMode {
 		usertalkpage.setAppendText('\n\n' + this.getNotifyText());
 		usertalkpage.setEditSummary(this.getNotifyEditSummary());
 		usertalkpage.setCreateOption('recreate');
-		// Different pref for RfD target notifications: XXX: handle this better!
-		if (params.venue === 'rfd' && targetNS !== 3) {
+		// XXX: Different pref for RfD target notifications: XXX: handle this better!
+		if (params.venue === 'RfD' && targetNS !== 3) {
 			usertalkpage.setWatchlist(getPref('xfdWatchRelated'));
 		} else {
 			usertalkpage.setWatchlist(getPref('xfdWatchUser'));
@@ -532,7 +532,8 @@ export abstract class XfdMode {
 	addToLog() {
 		let params = this.params;
 
-		if (!getPref('logXfdNominations') || getPref('noLogOnXfdNomination').indexOf(params.venue) !== -1) {
+		// noLogOnXfdNomination contains lowercased venue codes for historical reasons
+		if (!getPref('logXfdNominations') || getPref('noLogOnXfdNomination').indexOf(params.venue.toLowerCase()) !== -1) {
 			return $.Deferred().resolve();
 		}
 
@@ -577,7 +578,7 @@ export abstract class XfdMode {
 			' ' +
 			nominatedLink +
 			' at [[WP:' +
-			params.venue.toUpperCase() +
+			params.venue +
 			'|' +
 			params.venue +
 			']]';
@@ -611,21 +612,4 @@ export function num2order(num: number): string {
 		default:
 			return num + 'th';
 	}
-}
-
-/**
- * Provide Wikipedian TLA style: AfD, RfD, CfDS, RM, SfD, etc.
- * TODO: Remove this
- * @param {string} venue
- * @returns {string}
- */
-export function toTLACase(venue: string): string {
-	return (
-		venue
-			.toString()
-			// Everybody up, including rm and the terminal s in cfds
-			.toUpperCase()
-			// Lowercase the central f in a given TLA and normalize sfd-t and sfr-t
-			.replace(/(.)F(.)(?:-.)?/, '$1f$2')
-	);
 }
