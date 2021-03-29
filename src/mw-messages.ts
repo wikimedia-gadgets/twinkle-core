@@ -4,6 +4,8 @@
 export default [
 	'colon-separator',
 	'word-separator',
+	'comma-separator',
+	'and',
 	'parentheses',
 	'blanknamespace',
 
@@ -13,10 +15,17 @@ export default [
 	'duration-hours',
 	'duration-days',
 	'duration-weeks',
+	// for some reason MW doesn't have a duration-months message, we have to provide that separately
 	'duration-years',
 	'protect-expiry-indefinite',
 	'group-autoconfirmed',
 	'group-sysop',
+	'protectexpiry',
+	'restriction-edit',
+	'restriction-move',
+	'restriction-create',
+	'restriction-level-autoconfirmed',
+	'restriction-level-sysop',
 
 	// Months and days (for morebits)
 	'january',

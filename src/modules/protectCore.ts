@@ -4,7 +4,6 @@ import { Dialog } from '../Dialog';
 import { arr_includes, LogEvent, obj_entries } from '../utils';
 import { getPref } from '../Config';
 import { msg } from '../messenger';
-import { NS_USER_TALK } from '../namespaces';
 // XXX
 import { hatnoteRegex } from '../../../twinkle-enwiki/src/common';
 
@@ -308,31 +307,25 @@ export abstract class ProtectCore extends TwinkleModule {
 			statusLevel = 'info';
 
 		if (currentlyProtected) {
-			// XXX: i18n here is a huge PITA
-
 			$.each(this.currentProtectionLevels, (type, settings) => {
-				var label = type === 'stabilize' ? 'Pending Changes' : Morebits.string.toUpperCaseFirstChar(type);
-
 				if (type === 'cascading') {
-					// Covered by another page
-					// label = 'Cascading protection ';
-					// protectionNode.push($('<b>' + label + '</b>')[0]);
-					// var sourceLink = link(settings.source, settings.source);
-					// protectionNode.push($('<span>from ' + sourceLink + '</span>')[0]);
-
-					protectionNode.push(`<b>Cascading protection</b> <span>from [[${settings.source}]]</span>`);
+					protectionNode.push(msg('protect-cascade-from', settings.source));
+				} else if (type === 'stabilize') {
+					protectionNode.push(msg('protect-current-stable', msg('group-' + settings.level)));
 				} else {
-					// var level = settings.level;
 					// Make cascading protection more prominent
 					if (settings.cascade) {
-						protectionNode.push(`<b>${label}: ${settings.level} (cascading)</b>`);
+						protectionNode.push(
+							msg('protect-current-cascading', msg('restriction-' + type), msg('restriction-level-' + settings.level))
+						);
 					}
-					// protectionNode.push($('<b>' + label + ': ' + level + '</b>')[0]);
-					protectionNode.push(`<b>${label}: ${settings.level}</b>`);
+					protectionNode.push(
+						msg('protect-current', msg('restriction-' + type), msg('restriction-level-' + settings.level))
+					);
 				}
 
 				if (settings.expiry === 'infinity') {
-					protectionNode.push(' (indefinite) ');
+					protectionNode.push(msg('word-separator'), msg('protect-expiry-indefinite'), msg('word-separator'));
 				} else {
 					protectionNode.push(
 						msg('word-separator'),
@@ -341,19 +334,18 @@ export abstract class ProtectCore extends TwinkleModule {
 					);
 				}
 				if (settings.admin) {
-					var adminLink = link(settings.admin, mw.Title.newFromText(settings.admin, NS_USER_TALK).toText());
-					protectionNode.push($('<span>by ' + adminLink + '</span>')[0]);
+					protectionNode.push(msg('by-sysop', settings.admin));
 				}
-				protectionNode.push($('<span> \u2022 </span>')[0]);
+				protectionNode.push(msg('bullet-separator'));
 			});
 
 			protectionNode = protectionNode.slice(0, -1); // remove the trailing bullet
 			statusLevel = 'warn';
 		} else {
-			protectionNode.push($('<b>no protection</b>')[0]);
+			protectionNode.push(msg('protect-current-none'));
 		}
 
-		Morebits.status[statusLevel]('Current protection level', protectionNode);
+		Morebits.status[statusLevel](msg('protect-current-label'), protectionNode);
 	}
 
 	changeAction(e) {
@@ -424,7 +416,7 @@ export abstract class ProtectCore extends TwinkleModule {
 					field2.append({
 						type: 'select',
 						name: 'editexpiry',
-						label: msg('expires-label'),
+						label: msg('protectexpiry'),
 						event: (e) => {
 							if (e.target.value === 'custom') {
 								this.doCustomExpiry(e.target);
@@ -455,7 +447,7 @@ export abstract class ProtectCore extends TwinkleModule {
 					field2.append({
 						type: 'select',
 						name: 'moveexpiry',
-						label: msg('expires-label'),
+						label: msg('protectexpiry'),
 						event: (e) => {
 							if (e.target.value === 'custom') {
 								this.doCustomExpiry(e.target);
@@ -487,7 +479,7 @@ export abstract class ProtectCore extends TwinkleModule {
 						field2.append({
 							type: 'select',
 							name: 'pcexpiry',
-							label: msg('expires-label'),
+							label: msg('protectexpiry'),
 							event: (e) => {
 								if (e.target.value === 'custom') {
 									this.doCustomExpiry(e.target);
@@ -509,7 +501,7 @@ export abstract class ProtectCore extends TwinkleModule {
 					field2.append({
 						type: 'select',
 						name: 'createexpiry',
-						label: msg('expires-label'),
+						label: msg('protectexpiry'),
 						event: (e) => {
 							if (e.target.value === 'custom') {
 								this.doCustomExpiry(e.target);
@@ -592,7 +584,7 @@ export abstract class ProtectCore extends TwinkleModule {
 			case 'request':
 				field_preset = new Morebits.quickForm.element({
 					type: 'field',
-					label: 'Type of protection',
+					label: msg('protect-request-preset-label'),
 					name: 'field_preset',
 				});
 				field_preset.append({
@@ -611,7 +603,7 @@ export abstract class ProtectCore extends TwinkleModule {
 				field1.append({
 					type: 'select',
 					name: 'expiry',
-					label: 'Duration: ',
+					label: msg('duration-label'),
 					list: [
 						{ label: '', selected: true, value: '' },
 						{ label: 'Temporary', value: 'temporary' },
@@ -621,7 +613,7 @@ export abstract class ProtectCore extends TwinkleModule {
 				field1.append({
 					type: 'textarea',
 					name: 'reason',
-					label: 'Reason: ',
+					label: msg('reason'),
 				});
 				break;
 			default:
