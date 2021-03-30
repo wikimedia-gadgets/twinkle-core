@@ -1,0 +1,12 @@
+{
+	"info": "Short label for a informational message",
+	"warn": "Short label for a warning message",
+	"error": "Short label for an error message",
+
+	"link-rollback": "Text for the button which performs a rollback",
+	"link-vandalism": "Text for the button which performs a vandalism rollback, displayed in red",
+	"link-goodfaith-rollback": "Text for the button which performs a rollback of a good-faith edit",
+	"restore-revision": "Text for the button to restore an old revision of the page being currently viewed",
+	"fetching-data": "Temporary text shown while data about earlier versions of the page are being fetched",
+	"saving-reverted": "Text shown while saving reverted version"
+}

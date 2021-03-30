@@ -1,4 +1,10 @@
 {
+	"@metadata": {
+		"authors": [
+			"Siddharth VP"
+		]
+	},
+
 	"info": "Info",
 	"note": "Note",
 	"error": "Error",
@@ -50,6 +56,7 @@
 	"select-all": "Select All",
 	"deselect-all": "Deselect All",
 	"fetching-list": "Grabbing list of pages",
+	"bullet-separator": " \u2022 ",
 
 	"option-delete": "Delete pages",
 	"option-talks": "Delete associated talk pages (except user talk pages)",
@@ -149,12 +156,36 @@
 	"protect-move-modify": "Modify move protection",
 	"protect-move-modify-tooltip": "If this is turned off, the move protection level, and expiry time, will be left as is.",
 	"protect-move-label": "Move protection:",
-	"expires-label": "Expires:",
 	"protect-stable-modify": "Modify pending changes protection",
 	"protect-stable-modify-tooltip": "If this is turned off, the pending changes level, and expiry time, will be left as is.",
 	"protect-stable-label": "Pending changes:",
 	"protect-create-label": "Create protection:",
 	"protect-reason": "Reason (for protection log):",
+	"protect-current-label": "Current protection level",
+	"protect-current-none": "<b>no protection</b>",
+	"protect-current": "<b>$1: $2</b>",
+	"protect-current-cascading": "<b>$1: $2 (cascading)</b>",
+	"protect-current-stable": "<b>Pending changes: $1</b>",
+	"protect-cascade-from": "<b>Cascading protection</b> from [[$1]]",
+	"by-sysop": "by [[{{ns:3}}:$1|$1]]",
+	"duration-label": "Duration: ",
+	"protect-notes-label": "Notes:",
+	"note-requested-label": "$1 request",
+	"note-requested-tooltip": "Add a note to the protection log that this was requested at $1",
+	"note-requested": "requested at $1",
+	"request-revid-label": "RfPP revision ID",
+	"request-revid-tooltip": "Optional revision ID of the RfPP page where protection was requested.",
+	"protect-select-tag": "Choose protection template:",
+	"protect-tag-small-label": "Iconify (small=yes)",
+	"protect-tag-small-tooltip": "Will use the |small=yes feature of the template, and only render it as a keylock",
+	"protect-tag-noinclude-label": "Wrap protection template with <noinclude>",
+	"protect-tag-noinclude-tooltip": "Will wrap the protection template in &lt;noinclude&gt; tags, so that it won't transclude",
+	"protect-request-preset-label": "Type of protection",
+	"protect-request-type-label": "Type and reason:",
+	"temporary": "Temporary",
+	"custom-expiry-prompt": "Enter a custom expiry time.  \nYou can use relative times, like \"1 minute\" or \"19 days\", or absolute timestamps, \"yyyymmddhhmm\" (e.g. \"200602011405\" is Feb 1, 2006, at 14:05 UTC).",
+	"all-users": "All",
+	"custom-expiry-label": "Custom...",
 
 
 	"summary-added": "Added {{list:$1}} {{plural:$2|tag|tags}}",

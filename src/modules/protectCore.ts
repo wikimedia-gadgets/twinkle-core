@@ -6,6 +6,7 @@ import { getPref } from '../Config';
 import { msg } from '../messenger';
 // XXX
 import { hatnoteRegex } from '../../../twinkle-enwiki/src/common';
+import { NS_TEMPLATE } from '../namespaces';
 
 export abstract class ProtectCore extends TwinkleModule {
 	moduleName = 'protect';
@@ -15,6 +16,9 @@ export abstract class ProtectCore extends TwinkleModule {
 	portletId = 'twinkle-protect';
 	portletTooltip = Morebits.userIsSysop ? 'Protect page' : 'Request page protection';
 	windowTitle = Morebits.userIsSysop ? 'Apply, request or tag page protection' : 'Request or tag page protection';
+
+	requestPageName = 'Wikipedia:Requests for page protection';
+	requestPageAcronym = 'RfPP';
 
 	constructor() {
 		super();
@@ -56,7 +60,7 @@ export abstract class ProtectCore extends TwinkleModule {
 					label: msg('protect-tag-label'),
 					value: 'tag',
 					tooltip: msg('protect-tag-tooltip'),
-					disabled: mw.config.get('wgArticleId') === 0 || mw.config.get('wgPageContentModel') === 'Scribunto',
+					disabled: !this.canTag(),
 				},
 			],
 		});
@@ -519,9 +523,9 @@ export abstract class ProtectCore extends TwinkleModule {
 				field2.append({
 					type: 'div',
 					name: 'protectReason_notes',
-					label: 'Notes:',
-					style: 'display:inline-block; margin-top:4px;',
-					tooltip: 'Add a note to the protection log that this was requested at RfPP.',
+					label: msg('protect-notes-label'),
+					style: 'display:inline-block; margin-cd top:4px;',
+					tooltip: msg('note-requested-tooltip', this.requestPageAcronym),
 				});
 				field2.append({
 					type: 'checkbox',
@@ -529,22 +533,21 @@ export abstract class ProtectCore extends TwinkleModule {
 					style: 'display:inline-block; margin-top:4px;',
 					list: [
 						{
-							label: 'RfPP request',
+							label: msg('note-requested-label', this.requestPageAcronym),
 							name: 'protectReason_notes_rfpp',
 							checked: false,
-							value: 'requested at [[WP:RfPP]]',
+							value: msg('note-requested', this.requestPageAcronym),
 						},
 					],
 				});
 				field2.append({
 					type: 'input',
 					event: this.annotateProtectReason.bind(this),
-					label: 'RfPP revision ID',
+					label: msg('request-revid-label'),
 					name: 'protectReason_notes_rfppRevid',
-					value: '',
-					tooltip: 'Optional revision ID of the RfPP page where protection was requested.',
+					tooltip: msg('request-revid-tooltip'),
 				});
-				if (!mw.config.get('wgArticleId') || mw.config.get('wgPageContentModel') === 'Scribunto') {
+				if (!this.canTag()) {
 					// tagging isn't relevant for non-existing or module pages
 					break;
 				}
@@ -558,7 +561,7 @@ export abstract class ProtectCore extends TwinkleModule {
 				field1.append({
 					type: 'select',
 					name: 'tagtype',
-					label: 'Choose protection template:',
+					label: msg('protect-select-tag'),
 					list: this.protectionTags,
 					event: this.formevents.tagtype,
 				});
@@ -567,15 +570,15 @@ export abstract class ProtectCore extends TwinkleModule {
 					list: [
 						{
 							name: 'small',
-							label: 'Iconify (small=yes)',
-							tooltip: 'Will use the |small=yes feature of the template, and only render it as a keylock',
+							label: msg('protect-tag-small-label'),
+							tooltip: msg('protect-tag-small-tooltip'),
 							checked: true,
 						},
 						{
 							name: 'noinclude',
-							label: 'Wrap protection template with <noinclude>',
-							tooltip: "Will wrap the protection template in &lt;noinclude&gt; tags, so that it won't transclude",
-							checked: mw.config.get('wgNamespaceNumber') === 10,
+							label: msg('protect-tag-noinclude-label'),
+							tooltip: msg('protect-tag-noinclude-tooltip'),
+							checked: mw.config.get('wgNamespaceNumber') === NS_TEMPLATE,
 						},
 					],
 				});
@@ -590,7 +593,7 @@ export abstract class ProtectCore extends TwinkleModule {
 				field_preset.append({
 					type: 'select',
 					name: 'category',
-					label: 'Type and reason:',
+					label: msg('protect-request-type-label'),
 					event: this.changePreset.bind(this),
 					list: mw.config.get('wgArticleId') ? protectionTypes : protectionTypesCreate,
 				});
@@ -606,8 +609,8 @@ export abstract class ProtectCore extends TwinkleModule {
 					label: msg('duration-label'),
 					list: [
 						{ label: '', selected: true, value: '' },
-						{ label: 'Temporary', value: 'temporary' },
-						{ label: 'Indefinite', value: 'infinity' },
+						{ label: msg('temporary'), value: 'temporary' },
+						{ label: msg('protect-expiry-indefinite'), value: 'infinity' },
 					],
 				});
 				field1.append({
@@ -617,7 +620,7 @@ export abstract class ProtectCore extends TwinkleModule {
 				});
 				break;
 			default:
-				alert("Something's afoot in twinkleprotect");
+				alert("Something's wrong in twinkleprotect");
 				break;
 		}
 
@@ -715,10 +718,7 @@ export abstract class ProtectCore extends TwinkleModule {
 	};
 
 	doCustomExpiry(target) {
-		var custom = prompt(
-			'Enter a custom expiry time.  \nYou can use relative times, like "1 minute" or "19 days", or absolute timestamps, "yyyymmddhhmm" (e.g. "200602011405" is Feb 1, 2006, at 14:05 UTC).',
-			''
-		);
+		var custom = prompt(msg('custom-expiry-prompt'));
 		if (custom) {
 			var option = document.createElement('option');
 			option.setAttribute('value', custom);
@@ -743,7 +743,7 @@ export abstract class ProtectCore extends TwinkleModule {
 	> {
 		return {
 			all: {
-				label: 'All',
+				label: msg('all-users'),
 				weight: 0,
 				types: ['edit', 'move', 'create', 'stable'],
 			},
@@ -781,7 +781,7 @@ export abstract class ProtectCore extends TwinkleModule {
 			{ label: msg('duration-months', 3), value: '3 months' },
 			{ label: msg('duration-years', 1), value: '1 year' },
 			{ label: msg('protect-expiry-indefinite'), value: 'infinity' },
-			{ label: 'Custom...', value: 'custom' },
+			{ label: msg('custom-expiry-label'), value: 'custom' },
 		];
 	}
 
@@ -875,7 +875,7 @@ export abstract class ProtectCore extends TwinkleModule {
 			this.annotateProtectReason(e);
 
 			// sort out tagging options, disabled if nonexistent or lua
-			if (mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto') {
+			if (this.canTag()) {
 				if (form.category.value === 'unprotect') {
 					form.tagtype.value = 'none';
 				} else {
@@ -886,8 +886,9 @@ export abstract class ProtectCore extends TwinkleModule {
 				// We only have one TE template at the moment, so this
 				// should be expanded if more are added (e.g. pp-semi-template)
 				if (form.category.value === 'pp-template') {
+					// XXX: i18n
 					form.noinclude.checked = true;
-				} else if (mw.config.get('wgNamespaceNumber') !== 10) {
+				} else if (mw.config.get('wgNamespaceNumber') !== NS_TEMPLATE) {
 					form.noinclude.checked = false;
 				}
 			}
@@ -901,6 +902,10 @@ export abstract class ProtectCore extends TwinkleModule {
 				form.expiry.disabled = false;
 			}
 		}
+	}
+
+	canTag() {
+		return mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto';
 	}
 
 	evaluate(e) {
@@ -931,15 +936,11 @@ export abstract class ProtectCore extends TwinkleModule {
 		};
 
 		var tagparams;
-		if (
-			input.actiontype === 'tag' ||
-			(input.actiontype === 'protect' &&
-				mw.config.get('wgArticleId') &&
-				mw.config.get('wgPageContentModel') !== 'Scribunto')
-		) {
+		if (input.actiontype === 'tag' || (input.actiontype === 'protect' && this.canTag())) {
 			tagparams = {
 				tag: input.tagtype,
 				reason:
+					// XXX: i18n
 					(input.tagtype === 'pp-protected' || input.tagtype === 'pp-semi-protected' || input.tagtype === 'pp-move') &&
 					input.protectReason,
 				small: input.small,
@@ -1076,7 +1077,21 @@ export abstract class ProtectCore extends TwinkleModule {
 
 			case 'request':
 				// file request at RFPP
-				var typename, typereason;
+				let [typename, typereason] = this.getTypeNameAndReason(this.getProtectionPresets(), input.category);
+
+				// validation
+				if (input.category === 'unprotect') {
+					var admins = $.map(this.currentProtectionLevels, (pl) => {
+						if (!pl.admin || Twinkle.botUsernameRegex.test(pl.admin)) {
+							return null;
+						}
+						return pl.admin;
+					});
+					if (admins.length && !confirm(msg('sysops-contacted', Morebits.array.uniq(admins)))) {
+						return false;
+					}
+				}
+
 				switch (input.category) {
 					case 'pp-dispute':
 					case 'pp-vandalism':
@@ -1123,15 +1138,7 @@ export abstract class ProtectCore extends TwinkleModule {
 						typename = 'create protection';
 						break;
 					case 'unprotect':
-						var admins = $.map(this.currentProtectionLevels, (pl) => {
-							if (!pl.admin || Twinkle.botUsernameRegex.test(pl.admin)) {
-								return null;
-							}
-							return pl.admin;
-						});
-						if (admins.length && !confirm(msg('sysops-contacted', Morebits.array.uniq(admins)))) {
-							return false;
-						}
+
 					// otherwise falls through
 					default:
 						typename = 'unprotection';
@@ -1219,20 +1226,29 @@ export abstract class ProtectCore extends TwinkleModule {
 				Morebits.simpleWindow.setButtonsEnabled(false);
 				Morebits.status.init(form);
 
-				var rppName = 'Wikipedia:Requests for page protection';
-
 				// Updating data for the action completed event
-				Morebits.wiki.actionCompleted.redirect = rppName;
+				Morebits.wiki.actionCompleted.redirect = this.requestPageName;
 				Morebits.wiki.actionCompleted.notice = 'Nomination completed, redirecting now to the discussion page';
 
-				var rppPage = new Morebits.wiki.page(rppName, 'Requesting protection of page');
+				var rppPage = new Morebits.wiki.page(this.requestPageName, 'Requesting protection of page');
 				rppPage.setFollowRedirect(true);
 				rppPage.setCallbackParameters(rppparams);
 				rppPage.load(() => this.fileRequest(rppPage));
 				break;
+
 			default:
 				alert('twinkleprotect: unknown kind of action');
 				break;
+		}
+	}
+
+	private getTypeNameAndReason(list, selection): [string, string] {
+		for (let i of list) {
+			if (i.list) {
+				return this.getTypeNameAndReason(i.list, selection);
+			} else if (i.value === selection) {
+				return [i.label, i.reason];
+			}
 		}
 	}
 

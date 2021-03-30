@@ -27,6 +27,10 @@ export default [
 	'restriction-level-autoconfirmed',
 	'restriction-level-sysop',
 
+	// BlockCore
+	'block-expiration',
+	'blocklogpage',
+
 	// Months and days (for morebits)
 	'january',
 	'jan',
