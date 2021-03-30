@@ -113,14 +113,6 @@ export function makeTemplate(name: string, parameters: Record<string | number, s
 	return '{{' + name + parameterText + '}}';
 }
 
-export function objectFromEntries<T>(entries: [string, T][]): Record<string, T> {
-	let obj = {};
-	for (let [key, val] of entries) {
-		obj[key] = val;
-	}
-	return obj;
-}
-
 // Non-polluting shims for common ES6 functions
 
 export function obj_values<T>(obj: { [s: string]: T } | ArrayLike<T>): T[] {
@@ -133,13 +125,35 @@ export function obj_entries<T>(obj: { [s: string]: T } | ArrayLike<T>): [string,
 	return Object.entries ? Object.entries(obj) : Object.keys(obj).map((k) => [k, obj[k]]);
 }
 
+export function obj_fromEntries<T>(entries: [string, T][]): Record<string, T> {
+	// @ts-ignore
+	if (Object.fromEntries) {
+		// @ts-ignore
+		return Object.fromEntries(entries);
+	}
+	let obj = {};
+	for (let [key, val] of entries) {
+		obj[key] = val;
+	}
+	return obj;
+}
+
 export function arr_includes<T>(arr: Array<T>, item: T): boolean {
 	return arr.indexOf(item) !== -1;
 }
 
-export function arr_find<T>(arr: Array<T>, predicate: (item: T) => boolean) {
-	// @ts-ignore
+export function arr_find<T>(arr: Array<T>, predicate: (value: T, index: number, obj: T[]) => boolean) {
 	return Array.prototype.find ? arr.find(predicate) : arr.filter(predicate)[0];
+}
+
+export function arr_flatMap<T>(
+	arr: Array<T>,
+	callbackfn: (value: T, index: number, array: T[]) => T | ReadonlyArray<T>
+) {
+	if (Array.prototype.flatMap) {
+		return arr.flatMap(callbackfn);
+	}
+	return arr.map(callbackfn).reduce((previousValue, currentValue) => previousValue.concat(currentValue), []);
 }
 
 export function str_includes(str: string, item: string): boolean {
