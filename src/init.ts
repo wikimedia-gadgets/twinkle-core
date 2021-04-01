@@ -3,7 +3,7 @@ import { initMessaging } from './messenger';
 import { Twinkle } from './twinkle';
 import { Config, getPref, loadUserConfig } from './Config';
 import { setPortletConfig } from './portlet';
-import { TwinkleModule } from './twinkleModule';
+import { registerModule } from './twinkleModule';
 
 /**
  * List of names of modules disabled by user. Populated in init()
@@ -57,7 +57,7 @@ export function init() {
 		mw.hook('twinkle.preModuleInit').fire();
 
 		for (let module of Twinkle.registeredModules) {
-			TwinkleModule.register(module);
+			registerModule(module);
 		}
 
 		// Hide the lingering space if the TW menu is empty
