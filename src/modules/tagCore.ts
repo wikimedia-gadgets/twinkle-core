@@ -1,10 +1,10 @@
+import { TwinkleModule } from '../twinkleModule';
 import { makeArray, obj_entries, obj_values, stripNs } from '../utils';
 import { msg } from '../messenger';
 import { Api } from '../Api';
 import { Page } from '../Page';
 import { Config, Preference, getPref } from '../Config';
 import { Dialog } from '../Dialog';
-import { TwinkleModule } from '../twinkleModule';
 
 export interface tagData {
 	// name of the tag template, without namespace prefix (required)
@@ -175,7 +175,7 @@ export abstract class TagMode {
 	removalSupported = false; // Override to true for modes that support untagging
 
 	/**
-	 * Grouping
+	 * Name of grouping template.
 	 *
 	 * A group template is a template container that takes the form
 	 *
@@ -194,10 +194,6 @@ export abstract class TagMode {
 	 * Grouping can also be disabled depending on user input or other factors by
 	 * setting this.params.disableGrouping = true in the preprocessParams() hook.
 	 *
-	 */
-
-	/**
-	 * Name of grouping template.
 	 * Default: null, which indicates no grouping template for the mode.
 	 */
 	groupTemplateName: string = null;
@@ -258,7 +254,7 @@ export abstract class TagMode {
 
 		this.form.append({
 			type: 'input',
-			label: 'Filter tag list: ',
+			label: msg('search-tags'),
 			name: 'quickfilter',
 			size: '30px',
 			event: QuickFilter.onInputChange,
@@ -651,10 +647,13 @@ export abstract class TagMode {
 		}
 
 		// Remove tags which appear in page text as redirects
-		let statusMessage = `Getting redirects for ${mw.language.listToText(
-			tagsToRemoveAsync.map((t) => '{{' + t + '}}')
-		)}`;
-		let api = new Api(statusMessage, this.getRedirectsQuery(tagsToRemoveAsync));
+		let api = new Api(
+			msg(
+				'tag-fetching-redirects',
+				tagsToRemoveAsync.map((t) => '{{' + t + '}}')
+			),
+			this.getRedirectsQuery(tagsToRemoveAsync)
+		);
 		return api.post().then((apiobj) => {
 			let pages = apiobj.getResponse().query.pages.filter((p) => {
 				return (!p.missing && !!p.linkshere) || Morebits.status.warn(msg('info'), msg('cant-remove', stripNs(p.title)));

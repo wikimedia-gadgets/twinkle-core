@@ -198,6 +198,7 @@
 	"custom-expiry-label": "Custom...",
 
 
+	"search-tags": "Filter tag list: ",
 	"summary-added": "Added {{list:$1}} {{plural:$2|tag|tags}}",
 	"summary-removed": "Removed {{list:$1}} {{plural:$2|tag|tags}}",
 	"summary-added-removed": "Added {{list:$1}}; and removed {{list:$2}} {{plural:$3|tag|tags}}",
@@ -216,6 +217,7 @@
 	"removing": "Already present tags: removing de-selected tags",
 	"resolved-redirect": "Resolved template redirect {{$1}} to {{$2}}",
 	"tagging-status": "Tagging $1",
+	"tag-fetching-redirects": "Getting redirects for {{list:$1}}",
 
 	"xfd-venue-label": "Deletion discussion venue:",
 	"xfd-venue-tooltip": "When activated, a default choice is made, based on what namespace you are in. This default should be the most appropriate.",
