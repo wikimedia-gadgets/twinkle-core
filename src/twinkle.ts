@@ -61,16 +61,4 @@ export namespace Twinkle {
 	export let activeSpecialPages = ['Block', 'Contributions', 'Recentchanges', 'Recentchangeslinked'].concat(
 		Morebits.userIsSysop ? ['DeletedContributions', 'Prefixindex'] : []
 	);
-
-	/**
-	 * Regex expression to check if a username is likely to be a bot.
-	 */
-	export let botUsernameRegex = /bot\b/i;
-
-	/**
-	 * Namespaces where FlaggedRevs (pending changes protection) is enabled.
-	 * Needs to put in unless phab:T218479 happens
-	 * Used in protect module.
-	 */
-	export let flaggedRevsNamespaces = [0, 4];
 }

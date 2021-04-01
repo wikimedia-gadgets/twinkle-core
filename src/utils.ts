@@ -1,3 +1,5 @@
+import { SiteConfig } from './siteConfig';
+
 export type LogEvent = {
 	logid: number;
 	ns: number;
@@ -26,6 +28,16 @@ export function makeArray<T>(obj: T | Array<T> | undefined | null): Array<T> {
 		return obj;
 	}
 	return [obj];
+}
+
+export function isTextRedirect(text: string): boolean {
+	return SiteConfig.redirectTagAliases
+		.map((str) => {
+			return new RegExp('^\\s*' + str, 'i');
+		})
+		.some((regex) => {
+			return regex.test(text);
+		});
 }
 
 /**
@@ -150,7 +162,9 @@ export function arr_flatMap<T>(
 	arr: Array<T>,
 	callbackfn: (value: T, index: number, array: T[]) => T | ReadonlyArray<T>
 ) {
+	// @ts-ignore
 	if (Array.prototype.flatMap) {
+		// @ts-ignore
 		return arr.flatMap(callbackfn);
 	}
 	return arr.map(callbackfn).reduce((previousValue, currentValue) => previousValue.concat(currentValue), []);

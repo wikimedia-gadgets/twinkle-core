@@ -17,6 +17,7 @@ export * from './Config';
 export * from './namespaces';
 export * from './portlet';
 export * from './init';
+export * from './siteConfig';
 
 // Twinkle modules
 export * from './modules/diffCore';
