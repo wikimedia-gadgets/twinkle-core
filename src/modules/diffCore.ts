@@ -1,6 +1,7 @@
 import { Api } from '../Api';
 import { TwinkleModule } from '../twinkleModule';
 import { addPortletLink } from '../portlet';
+import { msg } from '../messenger';
 
 export class DiffCore extends TwinkleModule {
 	static moduleName = 'Diff';
@@ -16,9 +17,9 @@ export class DiffCore extends TwinkleModule {
 				diff: 'cur',
 				oldid: 'prev',
 			}),
-			'Last',
-			'tw-lastdiff',
-			'Show most recent diff'
+			msg('diff-last'),
+			'twinkle-lastdiff',
+			msg('diff-last-tooltip')
 		);
 
 		// Show additional tabs only on diff pages
@@ -26,32 +27,22 @@ export class DiffCore extends TwinkleModule {
 			return;
 		}
 
-		addPortletLink(
-			() => this.evaluate(false),
-			'Since',
-			'tw-since',
-			'Show difference between last diff and the revision made by previous user'
-		);
+		addPortletLink(() => this.evaluate(false), msg('diff-since'), 'tw-since', msg('diff-since-tooltip'));
 
-		addPortletLink(
-			() => this.evaluate(true),
-			'Since mine',
-			'tw-sincemine',
-			'Show difference between last diff and my last revision'
-		);
+		addPortletLink(() => this.evaluate(true), msg('diff-sincemine'), 'tw-sincemine', msg('diff-sincemine-tooltip'));
 
 		addPortletLink(
 			mw.util.getUrl(mw.config.get('wgPageName'), {
 				diff: 'cur',
 				oldid: /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr('href'))[1],
 			}),
-			'Current',
+			msg('diff-current'),
 			'tw-curdiff',
-			'Show difference to current revision'
+			msg('diff-current-tooltip')
 		);
 	}
 
-	evaluate(me) {
+	evaluate(me: boolean) {
 		var user;
 		if (me) {
 			user = mw.config.get('wgUserName');
@@ -79,9 +70,7 @@ export class DiffCore extends TwinkleModule {
 			var revid = rev && rev[0].revid;
 
 			if (!revid) {
-				apiobj
-					.getStatusElement()
-					.error('no suitable earlier revision found, or ' + user + ' is the only contributor. Aborting.');
+				apiobj.getStatusElement().error(msg('diff-error', user));
 				return;
 			}
 			window.location.href = mw.util.getUrl(mw.config.get('wgPageName'), {

@@ -50,6 +50,16 @@
 	"pcreview-comment": "Automatically reviewing reversion",
 	"pcreview-accepting": "Automatically accepting your changes",
 
+	"diff-last": "Last",
+	"diff-last-tooltip": "Show most recent diff",
+	"diff-since": "Since",
+	"diff-since-tooltip": "Show difference between last diff and the revision made by previous user",
+	"diff-sincemine": "Since mine",
+	"diff-sincemine-tooltip": "Show difference between last diff and my last revision",
+	"diff-current": "Current",
+	"diff-current-tooltip": "Show difference to current revision",
+	"diff-error": "no suitable earlier revision found, or $1 is the only contributor. Aborting.",
+
 	"reason": "Reason: ",
 	"reason-tooltip": "You can use wikimarkup in your reason. Twinkle will automatically sign your post.",
 	"loading": "Loading... ",
