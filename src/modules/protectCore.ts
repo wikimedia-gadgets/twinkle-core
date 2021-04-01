@@ -1,12 +1,21 @@
 import { Twinkle } from '../twinkle';
 import { TwinkleModule } from '../twinkleModule';
 import { Dialog } from '../Dialog';
-import { arr_includes, LogEvent, obj_entries } from '../utils';
+import {
+	arr_includes,
+	isTextRedirect,
+	LogEvent,
+	makeTemplate,
+	obj_entries,
+	str_endsWith,
+	str_startsWith,
+} from '../utils';
 import { getPref } from '../Config';
 import { msg } from '../messenger';
-// XXX
-import { hatnoteRegex } from '../../../twinkle-enwiki/src/common';
 import { NS_TEMPLATE } from '../namespaces';
+import { Page } from '../Page';
+import { Api } from '../Api';
+import { SiteConfig } from '../siteConfig';
 
 export abstract class ProtectCore extends TwinkleModule {
 	moduleName = 'protect';
@@ -86,7 +95,7 @@ export abstract class ProtectCore extends TwinkleModule {
 	// Check if FlaggedRevs extension is enabled
 	hasFlaggedRevs =
 		mw.loader.getState('ext.flaggedRevs.review') &&
-		arr_includes(Twinkle.flaggedRevsNamespaces, mw.config.get('wgNamespaceNumber'));
+		arr_includes(SiteConfig.flaggedRevsNamespaces, mw.config.get('wgNamespaceNumber'));
 
 	// Limit template editor; a Twinkle restriction, not a site setting
 	isTemplate = mw.config.get('wgNamespaceNumber') === 10 || mw.config.get('wgNamespaceNumber') === 828;
@@ -141,28 +150,30 @@ export abstract class ProtectCore extends TwinkleModule {
 
 	fetchProtectionLevel() {
 		var api = new mw.Api();
-		var protectDeferred = api.get({
-			format: 'json',
-			indexpageids: true,
-			action: 'query',
-			list: 'logevents',
-			letype: 'protect',
-			letitle: mw.config.get('wgPageName'),
-			prop: this.hasFlaggedRevs ? 'info|flagged' : 'info',
-			inprop: 'protection|watched',
-			titles: mw.config.get('wgPageName'),
-		});
-		var stableDeferred = api.get({
-			format: 'json',
-			action: 'query',
-			list: 'logevents',
-			letype: 'stable',
-			letitle: mw.config.get('wgPageName'),
-		});
 
-		var earlyDecision = [protectDeferred];
+		var earlyDecision = [
+			api.get({
+				format: 'json',
+				indexpageids: true,
+				action: 'query',
+				list: 'logevents',
+				letype: 'protect',
+				letitle: mw.config.get('wgPageName'),
+				prop: this.hasFlaggedRevs ? 'info|flagged' : 'info',
+				inprop: 'protection|watched',
+				titles: mw.config.get('wgPageName'),
+			}),
+		];
 		if (this.hasFlaggedRevs) {
-			earlyDecision.push(stableDeferred);
+			earlyDecision.push(
+				api.get({
+					format: 'json',
+					action: 'query',
+					list: 'logevents',
+					letype: 'stable',
+					letitle: mw.config.get('wgPageName'),
+				})
+			);
 		}
 
 		$.when.apply($, earlyDecision).done((protectData, stableData) => {
@@ -204,7 +215,7 @@ export abstract class ProtectCore extends TwinkleModule {
 				}
 			});
 
-			if (page.flagged) {
+			if (page.flagged && page.flagged.protection_level) {
 				current.stabilize = {
 					level: page.flagged.protection_level,
 					expiry: page.flagged.protection_expiry,
@@ -272,7 +283,7 @@ export abstract class ProtectCore extends TwinkleModule {
 						);
 					}
 				}
-				$linkMarkup.append(this.hasStableLog ? $('<span> &bull; </span>') : null);
+				$linkMarkup.append(this.hasStableLog ? msg('bullet-separator') : null);
 			}
 
 			if (this.hasStableLog) {
@@ -609,8 +620,8 @@ export abstract class ProtectCore extends TwinkleModule {
 					label: msg('duration-label'),
 					list: [
 						{ label: '', selected: true, value: '' },
-						{ label: msg('temporary'), value: 'temporary' },
-						{ label: msg('protect-expiry-indefinite'), value: 'infinity' },
+						{ label: msg('temporary'), value: 'Temporary' },
+						{ label: msg('protect-expiry-indefinite'), value: 'Indefinite' },
 					],
 				});
 				field1.append({
@@ -904,6 +915,50 @@ export abstract class ProtectCore extends TwinkleModule {
 		}
 	}
 
+	protectReasonAnnotations = [];
+
+	annotateProtectReason(e) {
+		var form = e.target.form;
+		var checkbox = e.target;
+		var protectReason = form.protectReason.value.replace(
+			new RegExp(
+				'(?:' +
+					msg('semicolon-separator') +
+					')?' +
+					mw.util.escapeRegExp(this.protectReasonAnnotations.join(msg('colon-separator')))
+			),
+			''
+		);
+
+		if (checkbox.name === 'protectReason_notes_rfpp') {
+			if (checkbox.checked) {
+				this.protectReasonAnnotations.push(checkbox.value);
+				$(form.protectReason_notes_rfppRevid).parent().show();
+			} else {
+				this.protectReasonAnnotations = [];
+				form.protectReason_notes_rfppRevid.value = '';
+				$(form.protectReason_notes_rfppRevid).parent().hide();
+			}
+		} else if (checkbox.name === 'protectReason_notes_rfppRevid') {
+			this.protectReasonAnnotations = this.protectReasonAnnotations.filter(
+				(el) => !str_startsWith(el, '[[' + SiteConfig.permalinkSpecialPageName)
+			);
+			if (e.target.value.length) {
+				var permalink =
+					'[[' + SiteConfig.permalinkSpecialPageName + '/' + e.target.value + '#' + Morebits.pageNameNorm + ']]';
+				this.protectReasonAnnotations.push(permalink);
+			}
+		}
+
+		if (!this.protectReasonAnnotations.length) {
+			form.protectReason.value = protectReason;
+		} else {
+			form.protectReason.value =
+				(protectReason ? protectReason + msg('semicolon-separator') : '') +
+				this.protectReasonAnnotations.join(msg('colon-separator'));
+		}
+	}
+
 	canTag() {
 		return mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto';
 	}
@@ -962,7 +1017,7 @@ export abstract class ProtectCore extends TwinkleModule {
 						thispage.getStatusElement().info('done');
 					}
 					if (tagparams) {
-						this.taggingPageInitial(tagparams);
+						this.taggingPage(tagparams);
 					}
 				};
 
@@ -1072,17 +1127,16 @@ export abstract class ProtectCore extends TwinkleModule {
 				Morebits.wiki.actionCompleted.followRedirect = false;
 				Morebits.wiki.actionCompleted.notice = 'Tagging complete';
 
-				this.taggingPageInitial(tagparams);
+				this.taggingPage(tagparams);
 				break;
 
 			case 'request':
 				// file request at RFPP
-				let [typename, typereason] = this.getTypeNameAndReason(this.getProtectionPresets(), input.category);
 
 				// validation
 				if (input.category === 'unprotect') {
 					var admins = $.map(this.currentProtectionLevels, (pl) => {
-						if (!pl.admin || Twinkle.botUsernameRegex.test(pl.admin)) {
+						if (!pl.admin || SiteConfig.botUsernameRegex.test(pl.admin)) {
 							return null;
 						}
 						return pl.admin;
@@ -1092,137 +1146,6 @@ export abstract class ProtectCore extends TwinkleModule {
 					}
 				}
 
-				switch (input.category) {
-					case 'pp-dispute':
-					case 'pp-vandalism':
-					case 'pp-usertalk':
-					case 'pp-protected':
-						typename = 'full protection';
-						break;
-					case 'pp-template':
-						typename = 'template protection';
-						break;
-					case 'pp-30-500-arb':
-					case 'pp-30-500-vandalism':
-					case 'pp-30-500-disruptive':
-					case 'pp-30-500-blp':
-					case 'pp-30-500-sock':
-						typename = 'extended confirmed protection';
-						break;
-					case 'pp-semi-vandalism':
-					case 'pp-semi-disruptive':
-					case 'pp-semi-unsourced':
-					case 'pp-semi-usertalk':
-					case 'pp-semi-sock':
-					case 'pp-semi-blp':
-					case 'pp-semi-protected':
-						typename = 'semi-protection';
-						break;
-					case 'pp-pc-vandalism':
-					case 'pp-pc-blp':
-					case 'pp-pc-protected':
-					case 'pp-pc-unsourced':
-					case 'pp-pc-disruptive':
-						typename = 'pending changes';
-						break;
-					case 'pp-move':
-					case 'pp-move-dispute':
-					case 'pp-move-indef':
-					case 'pp-move-vandalism':
-						typename = 'move protection';
-						break;
-					case 'pp-create':
-					case 'pp-create-offensive':
-					case 'pp-create-blp':
-					case 'pp-create-salt':
-						typename = 'create protection';
-						break;
-					case 'unprotect':
-
-					// otherwise falls through
-					default:
-						typename = 'unprotection';
-						break;
-				}
-				switch (input.category) {
-					case 'pp-dispute':
-						typereason = 'Content dispute/edit warring';
-						break;
-					case 'pp-vandalism':
-					case 'pp-semi-vandalism':
-					case 'pp-pc-vandalism':
-					case 'pp-30-500-vandalism':
-						typereason = 'Persistent [[WP:VAND|vandalism]]';
-						break;
-					case 'pp-semi-disruptive':
-					case 'pp-pc-disruptive':
-					case 'pp-30-500-disruptive':
-						typereason = 'Persistent [[Wikipedia:Disruptive editing|disruptive editing]]';
-						break;
-					case 'pp-semi-unsourced':
-					case 'pp-pc-unsourced':
-						typereason = 'Persistent addition of [[WP:INTREF|unsourced or poorly sourced content]]';
-						break;
-					case 'pp-template':
-						typereason = '[[WP:HIGHRISK|High-risk template]]';
-						break;
-					case 'pp-30-500-arb':
-						typereason = '[[WP:30/500|Arbitration enforcement]]';
-						break;
-					case 'pp-usertalk':
-					case 'pp-semi-usertalk':
-						typereason = 'Inappropriate use of user talk page while blocked';
-						break;
-					case 'pp-semi-sock':
-					case 'pp-30-500-sock':
-						typereason = 'Persistent [[WP:SOCK|sockpuppetry]]';
-						break;
-					case 'pp-semi-blp':
-					case 'pp-pc-blp':
-					case 'pp-30-500-blp':
-						typereason = '[[WP:BLP|BLP]] policy violations';
-						break;
-					case 'pp-move-dispute':
-						typereason = 'Page title dispute/move warring';
-						break;
-					case 'pp-move-vandalism':
-						typereason = 'Page-move vandalism';
-						break;
-					case 'pp-move-indef':
-						typereason = 'Highly visible page';
-						break;
-					case 'pp-create-offensive':
-						typereason = 'Offensive name';
-						break;
-					case 'pp-create-blp':
-						typereason = 'Recently deleted [[WP:BLP|BLP]]';
-						break;
-					case 'pp-create-salt':
-						typereason = 'Repeatedly recreated';
-						break;
-					default:
-						typereason = '';
-						break;
-				}
-
-				var reason = typereason;
-				if (input.reason !== '') {
-					if (typereason !== '') {
-						reason += '\u00A0\u2013 '; // U+00A0 NO-BREAK SPACE; U+2013 EN RULE
-					}
-					reason += input.reason;
-				}
-				if (reason !== '' && reason.charAt(reason.length - 1) !== '.') {
-					reason += '.';
-				}
-
-				var rppparams = {
-					reason: reason,
-					typename: typename,
-					category: input.category,
-					expiry: input.expiry,
-				};
-
 				Morebits.simpleWindow.setButtonsEnabled(false);
 				Morebits.status.init(form);
 
@@ -1230,10 +1153,9 @@ export abstract class ProtectCore extends TwinkleModule {
 				Morebits.wiki.actionCompleted.redirect = this.requestPageName;
 				Morebits.wiki.actionCompleted.notice = 'Nomination completed, redirecting now to the discussion page';
 
-				var rppPage = new Morebits.wiki.page(this.requestPageName, 'Requesting protection of page');
+				var rppPage = new Page(this.requestPageName, 'Requesting protection of page');
 				rppPage.setFollowRedirect(true);
-				rppPage.setCallbackParameters(rppparams);
-				rppPage.load(() => this.fileRequest(rppPage));
+				rppPage.load().then(() => this.fileRequest(rppPage, input));
 				break;
 
 			default:
@@ -1242,176 +1164,158 @@ export abstract class ProtectCore extends TwinkleModule {
 		}
 	}
 
-	private getTypeNameAndReason(list, selection): [string, string] {
+	private getTypeNameAndReason(list, selection, parentLabel?): [string, string] {
 		for (let i of list) {
 			if (i.list) {
-				return this.getTypeNameAndReason(i.list, selection);
+				let result = this.getTypeNameAndReason(i.list, selection, i.label);
+				if (result) {
+					return result;
+				}
 			} else if (i.value === selection) {
-				return [i.label, i.reason];
+				return [parentLabel || i.label, i.reason];
 			}
 		}
 	}
 
-	protectReasonAnnotations = [];
+	/**
+	 * Regex that matches protection tags already existing on the page.
+	 * Leaving this as null (default) means that no existing tag detection takes place.
+	 */
+	existingTagRegex: RegExp | null = null;
 
-	annotateProtectReason(e) {
-		var form = e.target.form;
-		var checkbox = e.target;
-		var protectReason = form.protectReason.value.replace(
-			new RegExp('(?:; )?' + mw.util.escapeRegExp(this.protectReasonAnnotations.join(': '))),
-			''
-		);
+	/**
+	 * Regex matching the redirect category shell template whose existence removes the need
+	 * to add a protection template to the redirect since the shell auto-detects it.
+	 * This should be null if the wiki has no such template.
+	 */
+	disableTaggingOnRedirectTemplateRegex: RegExp | null = null;
 
-		if (checkbox.name === 'protectReason_notes_rfpp') {
-			if (checkbox.checked) {
-				this.protectReasonAnnotations.push(checkbox.value);
-				$(form.protectReason_notes_rfppRevid).parent().show();
-			} else {
-				this.protectReasonAnnotations = [];
-				form.protectReason_notes_rfppRevid.value = '';
-				$(form.protectReason_notes_rfppRevid).parent().hide();
-			}
-		} else if (checkbox.name === 'protectReason_notes_rfppRevid') {
-			this.protectReasonAnnotations = this.protectReasonAnnotations.filter((el) => {
-				return el.indexOf('[[Special:Permalink') === -1;
-			});
-			if (e.target.value.length) {
-				var permalink = '[[Special:Permalink/' + e.target.value + '#' + Morebits.pageNameNorm + ']]';
-				this.protectReasonAnnotations.push(permalink);
-			}
-		}
-
-		if (!this.protectReasonAnnotations.length) {
-			form.protectReason.value = protectReason;
-		} else {
-			form.protectReason.value = (protectReason ? protectReason + '; ' : '') + this.protectReasonAnnotations.join(': ');
-		}
-	}
-
-	taggingPageInitial(tagparams) {
-		if (tagparams.tag === 'noop') {
-			Morebits.status.info('Applying protection template', 'nothing to do');
+	taggingPage(params) {
+		if (params.tag === 'noop') {
+			Morebits.status.info(msg('protect-tag-adding'), msg('protect-tag-none-status'));
 			return;
 		}
 
-		var protectedPage = new Morebits.wiki.page(mw.config.get('wgPageName'), 'Tagging page');
-		protectedPage.setCallbackParameters(tagparams);
-		protectedPage.load(this.taggingPage);
-	}
+		var protectedPage = new Page(mw.config.get('wgPageName'), msg('protect-tag-adding'));
+		return protectedPage.load().then(() => {
+			var text = protectedPage.getPageText();
+			var summary;
 
-	taggingPage(protectedPage) {
-		var params = protectedPage.getCallbackParameters();
-		var text = protectedPage.getPageText();
-		var tag, summary;
-
-		var oldtag_re = /\s*(?:<noinclude>)?\s*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
-		var re_result = oldtag_re.exec(text);
-		if (re_result) {
-			if (
-				params.tag === 'none' ||
-				confirm(
-					'{{' + re_result[1] + '}} was found on the page. \nClick OK to remove it, or click Cancel to leave it there.'
-				)
-			) {
-				text = text.replace(oldtag_re, '');
-			}
-		}
-
-		if (params.tag === 'none') {
-			summary = 'Removing protection template';
-		} else {
-			tag = params.tag;
-			if (params.reason) {
-				tag += '|reason=' + params.reason;
-			}
-			if (params.small) {
-				tag += '|small=yes';
-			}
-
-			if (/^\s*#redirect/i.test(text)) {
-				// redirect page
-				// Only tag if no {{rcat shell}} is found
-				if (!text.match(/{{(?:redr|this is a redirect|r(?:edirect)?(?:.?cat.*)?[ _]?sh)/i)) {
-					text = text.replace(/#REDIRECT ?(\[\[.*?\]\])(.*)/i, '#REDIRECT $1$2\n\n{{' + tag + '}}');
-				} else {
-					Morebits.status.info('Redirect category shell present', 'nothing to do');
-					return;
+			if (this.existingTagRegex) {
+				var re_result = this.existingTagRegex.exec(text);
+				if (re_result) {
+					if (params.tag === 'none' || confirm(msg('protect-tag-exists-prompt', re_result[1]))) {
+						text = text.replace(this.existingTagRegex, '');
+					}
 				}
+			}
+
+			if (params.tag === 'none') {
+				summary = msg('protect-tag-removing');
 			} else {
-				if (params.noinclude) {
-					tag = '<noinclude>{{' + tag + '}}</noinclude>';
+				let tag = makeTemplate(params.tag, {
+					reason: params.reason,
+					small: params.small ? 'yes' : null,
+				});
+
+				if (isTextRedirect(text)) {
+					// redirect page
+					// Only tag if no {{rcat shell}} is found
+					if (!this.disableTaggingOnRedirectTemplateRegex || !text.match(this.disableTaggingOnRedirectTemplateRegex)) {
+						text = text.replace(/^\s*#(\w+) ?(\[\[.*?\]\])(.*)/i, '#$1 $2$3\n\n' + tag);
+					} else {
+						Morebits.status.info(msg('protect-tag-abort'), msg('nothing-to-do'));
+						return $.Deferred().resolve();
+					}
 				} else {
-					tag = '{{' + tag + '}}\n';
+					if (params.noinclude) {
+						tag = '<noinclude>' + tag + '</noinclude>';
+					} else {
+						tag = tag + '\n';
+					}
+
+					text = this.insertTagIntoPage(text, tag);
 				}
-
-				// Insert tag after short description or any hatnotes
-				var wikipage = new Morebits.wikitext.page(text);
-				text = wikipage.insertAfterTemplates(tag, hatnoteRegex).getText();
+				summary = 'Adding {{' + params.tag + '}}';
 			}
-			summary = 'Adding {{' + params.tag + '}}';
-		}
 
-		protectedPage.setEditSummary(summary);
-		protectedPage.setChangeTags(Twinkle.changeTags);
-		protectedPage.setWatchlist(getPref('watchPPTaggedPages'));
-		protectedPage.setPageText(text);
-		protectedPage.setCreateOption('nocreate');
-		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
-		protectedPage.save();
+			protectedPage.setEditSummary(summary);
+			protectedPage.setWatchlist(getPref('watchPPTaggedPages'));
+			protectedPage.setPageText(text);
+			protectedPage.setCreateOption('nocreate');
+			protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
+			return protectedPage.save();
+		});
 	}
 
-	fileRequest(rppPage) {
-		var params = rppPage.getCallbackParameters();
+	/**
+	 * Insert tag into the page.
+	 * You may want to override this to have the tag inserted after short description or hatnotes
+	 * @param text
+	 * @param tag
+	 */
+	insertTagIntoPage(text: string, tag: string) {
+		return tag + '\n' + text;
+	}
+
+	/**
+	 * Regex expression to search for an existing request on the request page, and abort if
+	 * found. Leaving this null (default) means that no check for existing request is performed.
+	 */
+	existingRequestRegex: RegExp | null = null;
+
+	/**
+	 * Returns the request text and edit summary.
+	 * @param input
+	 * @returns {string[]} - the first string is the request text, second string is the edit
+	 * summary
+	 */
+	getRequestTextAndSummary(input): [string, string] {
+		let [typename, typereason] = this.getTypeNameAndReason(this.getProtectionPresets(), input.category);
+		var reason = typereason;
+		if (input.reason) {
+			if (typereason) {
+				reason += '\u00A0\u2013 '; // U+00A0 NO-BREAK SPACE; U+2013 EN RULE
+			}
+			reason += input.reason;
+		}
+		if (reason && !str_endsWith(reason, '.')) {
+			reason += '.';
+		}
+
+		var text = '=== [[:' + Morebits.pageNameNorm + ']] ===\n';
+		text += '* {{pagelinks|1=' + Morebits.pageNameNorm + '}}\n\n';
+
+		var words = input.expiry ? input.expiry + ' ' : '' + typename;
+
+		text +=
+			"'''" +
+			Morebits.string.toUpperCaseFirstChar(words) +
+			(reason ? ":''' " + Morebits.string.formatReasonText(reason) : ".'''") +
+			' ~~~~';
+
+		let summary = `/* ${Morebits.pageNameNorm} */ Requesting ${typename}${
+			typename === 'pending changes' ? ' on [[:' : ' of [[:'
+		}${Morebits.pageNameNorm}]].`;
+
+		return [text, summary];
+	}
+
+	fileRequest(rppPage: Page, input: { category: string; reason: string; expiry: string }) {
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
 
-		var rppRe = new RegExp(
-			'===\\s*(\\[\\[)?\\s*:?\\s*' + Morebits.string.escapeRegExp(Morebits.pageNameNorm) + '\\s*(\\]\\])?\\s*===',
-			'm'
-		);
-		var tag = rppRe.exec(text);
-
-		var rppLink = document.createElement('a');
-		rppLink.setAttribute('href', mw.util.getUrl(rppPage.getPageName()));
-		rppLink.appendChild(document.createTextNode(rppPage.getPageName()));
-
-		if (tag) {
-			statusElement.error(['There is already a protection request for this page at ', rppLink, ', aborting.']);
+		if (this.existingRequestRegex && this.existingRequestRegex.exec(text)) {
+			statusElement.error(msg('protect-request-exists', rppPage.getPageName()));
 			return;
 		}
 
-		var newtag = '=== [[:' + Morebits.pageNameNorm + ']] ===\n';
-		if (new RegExp('^' + mw.util.escapeRegExp(newtag).replace(/\s+/g, '\\s*'), 'm').test(text)) {
-			statusElement.error(['There is already a protection request for this page at ', rppLink, ', aborting.']);
-			return;
-		}
-		newtag += '* {{pagelinks|1=' + Morebits.pageNameNorm + '}}\n\n';
-
-		var words;
-		switch (params.expiry) {
-			case 'temporary':
-				words = 'Temporary ';
-				break;
-			case 'infinity':
-				words = 'Indefinite ';
-				break;
-			default:
-				words = '';
-				break;
-		}
-
-		words += params.typename;
-
-		newtag +=
-			"'''" +
-			Morebits.string.toUpperCaseFirstChar(words) +
-			(params.reason !== '' ? ":''' " + Morebits.string.formatReasonText(params.reason) : ".'''") +
-			' ~~~~';
+		let [requestText, summary] = this.getRequestTextAndSummary(input);
 
 		// If either protection type results in a increased status, then post it under increase
 		// else we post it under decrease
 		var increase = false;
-		var protInfo = this.protectionPresetsInfo[params.category];
+		var protInfo = this.protectionPresetsInfo[input.category];
 
 		// function to compute protection weights (see comment at this.protectionWeight)
 		let protectionLevels = this.getProtectionLevels();
@@ -1450,32 +1354,18 @@ export abstract class ProtectCore extends TwinkleModule {
 		}
 
 		var originalTextLength = text.length;
-		text = text.replace(reg, '\n' + newtag + '\n$1');
+		text = text.replace(reg, '\n' + requestText + '\n$1');
 		if (text.length === originalTextLength) {
-			var linknode = document.createElement('a');
-			linknode.setAttribute('href', mw.util.getUrl('Wikipedia:Twinkle/Fixing RPP'));
-			linknode.appendChild(document.createTextNode('How to fix RPP'));
-			statusElement.error([
-				'Could not find relevant heading on WP:RPP. To fix this problem, please see ',
-				linknode,
-				'.',
-			]);
+			statusElement.error(
+				'Could not find relevant heading on WP:RPP. To fix this problem, please see [[Wikipedia:Twinkle/Fixing RPP|How to fix RPP]].'
+			);
 			return;
 		}
 		statusElement.status('Adding new request...');
-		rppPage.setEditSummary(
-			'/* ' +
-				Morebits.pageNameNorm +
-				' */ Requesting ' +
-				params.typename +
-				(params.typename === 'pending changes' ? ' on [[:' : ' of [[:') +
-				Morebits.pageNameNorm +
-				']].'
-		);
-		rppPage.setChangeTags(Twinkle.changeTags);
+		rppPage.setEditSummary(summary);
 		rppPage.setPageText(text);
 		rppPage.setCreateOption('recreate');
-		rppPage.save(() => {
+		return rppPage.save().then(() => {
 			// Watch the page being requested
 			var watchPref = getPref('watchRequestedPages');
 			// action=watch has no way to rely on user preferences (T262912), so we do it manually.
@@ -1491,7 +1381,7 @@ export abstract class ProtectCore extends TwinkleModule {
 					// Only add the expiry if page is unwatched or already temporarily watched
 					expiry: this.watched !== true && watchPref !== 'default' && watchPref !== 'yes' ? watchPref : undefined,
 				};
-				new Morebits.wiki.api('Adding requested page to watchlist', watch_query).post();
+				return new Api('Adding requested page to watchlist', watch_query).post();
 			}
 		});
 	}

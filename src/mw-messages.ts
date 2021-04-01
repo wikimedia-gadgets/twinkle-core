@@ -3,10 +3,12 @@
 
 export default [
 	'colon-separator',
+	'semicolon-separator',
 	'word-separator',
 	'comma-separator',
 	'and',
 	'parentheses',
+	'percent',
 	'blanknamespace',
 
 	// ProtectCore
@@ -28,7 +30,7 @@ export default [
 	'restriction-level-sysop',
 
 	// BlockCore
-	'block-expiration',
+	'block-expiry',
 	'blocklogpage',
 
 	// Months and days (for morebits)

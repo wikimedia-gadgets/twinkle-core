@@ -196,6 +196,13 @@
 	"custom-expiry-prompt": "Enter a custom expiry time.  \nYou can use relative times, like \"1 minute\" or \"19 days\", or absolute timestamps, \"yyyymmddhhmm\" (e.g. \"200602011405\" is Feb 1, 2006, at 14:05 UTC).",
 	"all-users": "All",
 	"custom-expiry-label": "Custom...",
+	"protect-request-exists": "There is already a protection request for this page at [[$1]], aborting.",
+	"protect-tag-adding": "Applying protection template",
+	"protect-tag-none-status": "nothing to do",
+	"protect-tag-exists-prompt": "{{$1}} was found on the page. \nClick OK to remove it, or click Cancel to leave it there.",
+	"protect-tag-removing": "Removing protection template",
+	"protect-tag-abort": "Redirect category shell present",
+	"nothing-to-do": "nothing to do",
 
 
 	"search-tags": "Filter tag list: ",
