@@ -4,6 +4,7 @@ import { LogEvent } from '../utils';
 import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
+import { User } from '../User';
 
 export type BlockPresetInfo = {
 	expiry?: string;
@@ -39,6 +40,7 @@ export class BlockCore extends TwinkleModule {
 	portletId = 'twinkle-block';
 	portletName = 'Block';
 	portletTooltip = 'Block relevant user';
+	windowTitle: string;
 
 	blockPresetsInfo: Record<string, BlockPresetInfo>;
 	blockGroups: quickFormElementData[];
@@ -48,6 +50,10 @@ export class BlockCore extends TwinkleModule {
 	constructor() {
 		super();
 		this.relevantUserName = mw.config.get('wgRelevantUserName');
+
+		// need to be verbose about who we're blocking
+		this.windowTitle = 'Block or issue block template to ' + this.relevantUserName;
+
 		// should show on Contributions or Block pages, anywhere there's a relevant user
 		// Ignore ranges wider than the CIDR limit
 		if (
@@ -58,6 +64,25 @@ export class BlockCore extends TwinkleModule {
 			this.addMenu();
 		}
 	}
+
+	field_block_options: {
+		disabletalk?: boolean;
+		nocreate?: boolean;
+		noemail?: boolean;
+		hardblock?: boolean;
+		reason?: string;
+		autoblock?: boolean;
+		watchuser?: string;
+	};
+	field_template_options: {
+		block_reason?: string;
+		notalk?: boolean;
+		noemail_template?: boolean;
+		nocreate_template?: boolean;
+	};
+	currentBlockInfo: any;
+
+	Window: Morebits.simpleWindow;
 
 	makeWindow() {
 		if (
@@ -72,8 +97,7 @@ export class BlockCore extends TwinkleModule {
 		this.field_template_options = {};
 
 		var Window = new Dialog(650, 530);
-		// need to be verbose about who we're blocking
-		Window.setTitle('Block or issue block template to ' + this.relevantUserName);
+		Window.setTitle(this.windowTitle);
 		Window.setFooterLinks(this.footerlinks);
 
 		// Always added, hidden later if actual user not blocked
@@ -86,12 +110,12 @@ export class BlockCore extends TwinkleModule {
 		});
 		actionfield.append({
 			type: 'checkbox',
-			name: 'actiontype',
 			event: this.change_action.bind(this),
 			list: [
 				{
 					label: 'Block user',
 					value: 'block',
+					name: 'block',
 					tooltip:
 						'Block the relevant user with the given options. If partial block is unchecked, this will be a sitewide block.',
 					checked: true,
@@ -99,12 +123,14 @@ export class BlockCore extends TwinkleModule {
 				{
 					label: 'Partial block',
 					value: 'partial',
+					name: 'partial',
 					tooltip: 'Enable partial blocks and partial block templates.',
 					checked: getPref('defaultToPartialBlocks'), // Overridden if already blocked
 				},
 				{
 					label: 'Add block template to user talk page',
-					value: 'template',
+					value: 'tag',
+					name: 'tag',
 					tooltip:
 						'If the blocking admin forgot to issue a block template, or you have just blocked the user without templating them, you can use this to issue the appropriate template. Check the partial block box for partial block templates.',
 					// Disallow when viewing the block dialog on an IP range
@@ -126,8 +152,8 @@ export class BlockCore extends TwinkleModule {
 		  (mis)treated as separate by MediaWiki's logging ([[phab:T146628]]),
 		  using Morebits.ip.get64 provides a modicum of relief in this case.
 		*/
-		var sixtyFour = Morebits.ip.get64(mw.config.get('wgRelevantUserName'));
-		if (sixtyFour && sixtyFour !== mw.config.get('wgRelevantUserName')) {
+		var subnet64 = Morebits.ip.get64(mw.config.get('wgRelevantUserName'));
+		if (subnet64 && subnet64 !== mw.config.get('wgRelevantUserName')) {
 			var block64field = form.append({
 				type: 'field',
 				label: 'Convert to /64 rangeblock',
@@ -136,21 +162,8 @@ export class BlockCore extends TwinkleModule {
 			block64field.append({
 				type: 'div',
 				style: 'margin-bottom: 0.5em',
-				label: [
-					"It's usually fine, if not better, to ",
-					$.parseHTML(
-						'<a target="_blank" href="' + mw.util.getUrl('WP:/64') + '">just block the /64</a>'
-					)[0] as HTMLElement,
-					' range (',
-					$.parseHTML(
-						'<a target="_blank" href="' +
-							mw.util.getUrl('Special:Contributions/' + sixtyFour) +
-							'">' +
-							sixtyFour +
-							'</a>)'
-					)[0] as HTMLElement,
-					').',
-				],
+				label:
+					"It's usually fine, if not better, to [[WP:/64|just block the /64]] range ([[Special:Contributions/$1|$1]]).",
 			});
 			block64field.append({
 				type: 'checkbox',
@@ -180,27 +193,28 @@ export class BlockCore extends TwinkleModule {
 		Window.display();
 		result.root = result;
 
-		new Morebits.wiki.user(this.relevantUserName, 'Fetching user information').load(
-			(userobj) => {
-				this.processUserInfo(userobj, () => {
-					// Toggle initial partial state depending on prior block type,
-					// will override the defaultToPartialBlocks pref
-					if (this.blockedUserName === this.relevantUserName) {
-						$(result).find('[name=actiontype][value=partial]').prop('checked', this.currentBlockInfo.partial);
-					}
+		var userobj = new User(this.relevantUserName, 'Fetching user information');
+		userobj.load().then(
+			() => {
+				this.processUserInfo(userobj);
 
-					// clean up preset data (defaults, etc.), done exactly once, must be before this.change_action is called
-					this.transformBlockPresets();
+				// Toggle initial partial state depending on prior block type,
+				// will override the defaultToPartialBlocks pref
+				if (this.blockedUserName === this.relevantUserName) {
+					$(result.partial).prop('checked', this.currentBlockInfo.partial);
+				}
 
-					// init the controls after user and block info have been fetched
-					var evt = document.createEvent('Event');
-					evt.initEvent('change', true, true);
-					result.actiontype[0].dispatchEvent(evt);
-				});
+				// clean up preset data (defaults, etc.), done exactly once, must be before this.change_action is called
+				this.transformBlockPresets();
+
+				// init the controls after user and block info have been fetched
+				var evt = document.createEvent('Event');
+				evt.initEvent('change', true, true);
+				result.block.dispatchEvent(evt);
 			},
-			function () {
+			() => {
 				Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-				Morebits.status.warn('Error fetching user info');
+				Morebits.status.warn(msg('error'), 'Error fetching user info');
 			}
 		);
 	}
@@ -212,9 +226,8 @@ export class BlockCore extends TwinkleModule {
 	lastBlockLogId: number | false;
 
 	fetchedData = {};
-	currentBlockInfo: any;
 
-	processUserInfo(userobj: Morebits.wiki.user, fn: Function) {
+	processUserInfo(userobj: User) {
 		var blockinfo = userobj.getBlockInfo();
 		// Cache response, used when toggling /64 blocks
 		this.fetchedData[userobj.getUserName()] = userobj;
@@ -252,10 +265,6 @@ export class BlockCore extends TwinkleModule {
 		this.lastBlockLogEntry = userobj.getLastBlockLogEntry();
 		// Used later to check if block status changed while filling out the form
 		this.lastBlockLogId = this.hasBlockLog ? this.lastBlockLogEntry.logid : false;
-
-		if (typeof fn === 'function') {
-			return fn();
-		}
 	}
 
 	saveFieldset(fieldset: HTMLFieldSetElement | JQuery) {
@@ -270,7 +279,8 @@ export class BlockCore extends TwinkleModule {
 	}
 
 	change_block64(e) {
-		var $form = $(e.target.form),
+		var form = e.target.form,
+			$form = $(e.target.form),
 			$block64 = $form.find('[name=block64]');
 
 		// Show/hide block64 button
@@ -284,15 +294,14 @@ export class BlockCore extends TwinkleModule {
 		// No templates for ranges, but if the original user is a single IP, offer the option
 		// (done separately in this.issue_template)
 		var originalIsRange = Morebits.ip.isRange(mw.config.get('wgRelevantUserName'));
-		$form.find('[name=actiontype][value=template]').prop('disabled', originalIsRange).prop('checked', !originalIsRange);
+		$(form.tag).prop('disabled', originalIsRange).prop('checked', !originalIsRange);
 
 		// Refetch/reprocess user info then regenerate the main content
 		var regenerateForm = () => {
-			// Tweak titlebar text.  In theory, we could save the dialog
-			// at initialization and then use `.setTitle` or
-			// `dialog('option', 'title')`, but in practice that swallows
-			// the scriptName and requires `.display`ing, which jumps the
-			// window.  It's just a line of text, so this is fine.
+			// Tweak titlebar text. We could save the dialog
+			// at initialization and then use `.setTitle`, but that
+			// swallows the scriptName and requires `.display`ing, which jumps the
+			// window.
 			var titleBar = document.querySelector('.ui-dialog-title').firstChild.nextSibling;
 			titleBar.nodeValue = titleBar.nodeValue.replace(priorName, this.relevantUserName);
 			// Tweak unblock link
@@ -301,9 +310,9 @@ export class BlockCore extends TwinkleModule {
 			unblockLink.title = unblockLink.title.replace(priorName, this.relevantUserName);
 
 			// Correct partial state
-			$form.find('[name=actiontype][value=partial]').prop('checked', getPref('defaultToPartialBlocks'));
+			$(form.partial).prop('checked', getPref('defaultToPartialBlocks'));
 			if (this.blockedUserName === this.relevantUserName) {
-				$form.find('[name=actiontype][value=partial]').prop('checked', this.currentBlockInfo.partial);
+				$(form.partial).prop('checked', this.currentBlockInfo.partial);
 			}
 
 			// Set content appropriately
@@ -311,15 +320,17 @@ export class BlockCore extends TwinkleModule {
 		};
 
 		if (this.fetchedData[this.relevantUserName]) {
-			this.processUserInfo(this.fetchedData[this.relevantUserName], regenerateForm);
+			this.processUserInfo(this.fetchedData[this.relevantUserName]);
+			regenerateForm();
 		} else {
 			new Morebits.wiki.user(this.relevantUserName, 'Fetching user information').load(
 				(userobj) => {
-					this.processUserInfo(userobj, regenerateForm);
+					this.processUserInfo(userobj);
+					regenerateForm();
 				},
-				function () {
+				() => {
 					Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-					Morebits.status.warn('Error fetching user info');
+					Morebits.status.warn(msg('error'), 'Error fetching user info');
 				}
 			);
 		}
@@ -329,11 +340,12 @@ export class BlockCore extends TwinkleModule {
 		var field_preset,
 			field_template_options,
 			field_block_options,
+			form = e.target.form,
 			$form = $(e.target.form);
 		// Make ifs shorter
-		var blockBox = $form.find('[name=actiontype][value=block]').is(':checked');
-		var templateBox = $form.find('[name=actiontype][value=template]').is(':checked');
-		var $partial = $form.find('[name=actiontype][value=partial]');
+		var blockBox = form.block.checked;
+		var templateBox = form.tag.checked;
+		var $partial = $(form.partial);
 		var partialBox = $partial.is(':checked');
 		var blockGroup = partialBox ? this.blockGroupsPartial : this.blockGroups;
 
@@ -398,7 +410,7 @@ export class BlockCore extends TwinkleModule {
 			field_block_options.append({
 				type: 'select',
 				name: 'expiry_preset',
-				label: msg('block-expiration'),
+				label: msg('block-expiry'),
 				event: this.change_expiry.bind(this),
 				list: [
 					{ label: 'custom', value: 'custom', selected: true },
@@ -448,7 +460,7 @@ export class BlockCore extends TwinkleModule {
 					value: '',
 					tooltip: 'Block from editing these namespaces.',
 				});
-				$.each(menuFormattedNamespaces, function (number, name) {
+				$.each(menuFormattedNamespaces, (number, name) => {
 					// Ignore -1: Special; -2: Media; and 2300-2303: Gadget (talk) and Gadget definition (talk)
 					if (number >= 0 && number < 830) {
 						ns.append({ type: 'option', label: name, value: number });
@@ -478,30 +490,26 @@ export class BlockCore extends TwinkleModule {
 						? 'If issuing a partial block, this MUST remain unchecked unless you are also preventing them from editing User talk space'
 						: '',
 				},
+				this.isRegistered
+					? {
+							checked: this.field_block_options.autoblock,
+							label: 'Autoblock any IP addresses used (hardblock)',
+							name: 'autoblock',
+							value: '1',
+					  }
+					: {
+							checked: this.field_block_options.hardblock,
+							label: 'Block logged-in users from using this IP address (hardblock)',
+							name: 'hardblock',
+							value: '1',
+					  },
+				{
+					checked: this.field_block_options.watchuser,
+					label: 'Watch user and user talk pages',
+					name: 'watchuser',
+					value: '1',
+				},
 			];
-
-			if (this.isRegistered) {
-				blockoptions.push({
-					checked: this.field_block_options.autoblock,
-					label: 'Autoblock any IP addresses used (hardblock)',
-					name: 'autoblock',
-					value: '1',
-				});
-			} else {
-				blockoptions.push({
-					checked: this.field_block_options.hardblock,
-					label: 'Block logged-in users from using this IP address (hardblock)',
-					name: 'hardblock',
-					value: '1',
-				});
-			}
-
-			blockoptions.push({
-				checked: this.field_block_options.watchuser,
-				label: 'Watch user and user talk pages',
-				name: 'watchuser',
-				value: '1',
-			});
 
 			field_block_options.append({
 				type: 'checkbox',
@@ -526,26 +534,24 @@ export class BlockCore extends TwinkleModule {
 			});
 			field_block_options.append({
 				type: 'checkbox',
-				name: 'filter_see_also',
 				event: this.toggle_see_alsos.bind(this),
 				style: 'display:inline-block; margin-right:5px',
 				list: [
 					{
 						label: 'Filter log',
-						checked: false,
+						name: 'filter_see_also',
 						value: 'filter log',
 					},
 				],
 			});
 			field_block_options.append({
 				type: 'checkbox',
-				name: 'deleted_see_also',
 				event: this.toggle_see_alsos.bind(this),
 				style: 'display:inline-block',
 				list: [
 					{
 						label: 'Deleted contribs',
-						checked: false,
+						name: 'deleted_see_also',
 						value: 'deleted contribs',
 					},
 				],
@@ -566,10 +572,11 @@ export class BlockCore extends TwinkleModule {
 			value: '',
 			tooltip: 'If selected, it will inform the template and may be added to the blocking message',
 			event: this.toggle_ds_reason,
-			list: $.map(this.dsinfo, function (info, label) {
+			list: $.map(this.dsinfo, (info, label) => {
 				return { label: label, value: info.code };
 			}),
 		};
+
 		if (templateBox) {
 			field_template_options = new Morebits.quickForm.element({
 				type: 'field',
@@ -693,7 +700,7 @@ export class BlockCore extends TwinkleModule {
 				width: '100%',
 				placeholder: 'Select pages to block user from',
 				language: {
-					errorLoading: function () {
+					errorLoading: () => {
 						return 'Incomplete or invalid search term';
 					},
 				},
@@ -703,7 +710,7 @@ export class BlockCore extends TwinkleModule {
 					url: mw.util.wikiScript('api'),
 					dataType: 'json',
 					delay: 100,
-					data: function (params) {
+					data: (params) => {
 						var title = mw.Title.newFromText(params.term);
 						if (!title) {
 							return;
@@ -717,9 +724,9 @@ export class BlockCore extends TwinkleModule {
 							aplimit: '10',
 						};
 					},
-					processResults: function (data) {
+					processResults: (data) => {
 						return {
-							results: data.query.allpages.map(function (page) {
+							results: data.query.allpages.map((page) => {
 								var title = mw.Title.newFromText(page.title, page.ns).toText();
 								return {
 									id: title,
@@ -729,7 +736,7 @@ export class BlockCore extends TwinkleModule {
 						};
 					},
 				},
-				templateSelection: function (choice) {
+				templateSelection: (choice) => {
 					return $('<a>')
 						.text(choice.text)
 						.attr({
@@ -842,40 +849,51 @@ export class BlockCore extends TwinkleModule {
 		// only return the correct block log if wgRelevantUserName is the
 		// exact range, not merely a funtional equivalent
 		if (this.hasBlockLog) {
-			var $blockloglink = $('<span>').append(
-				$(
-					'<a target="_blank" href="' +
-						mw.util.getUrl('Special:Log', {
-							action: 'view',
-							page: this.relevantUserName,
-							type: 'block',
-						}) +
-						'">block log</a>)'
-				)
+			var blockLogLink = [];
+			blockLogLink.push(
+				`<a target="_blank" href="${mw.util.getUrl('Special:Log', {
+					action: 'view',
+					page: this.relevantUserName,
+					type: 'block',
+				})}">${msg('blocklogpage')}</a>`
 			);
+			// var $blockloglink = $('<span>').append(
+			// 	$(
+			// 		'<a target="_blank" href="' +
+			// 			mw.util.getUrl('Special:Log', {
+			// 				action: 'view',
+			// 				page: this.relevantUserName,
+			// 				type: 'block',
+			// 			}) +
+			// 			'">block log</a>)'
+			// 	)
+			// );
 			if (!this.currentBlockInfo) {
 				if (this.lastBlockLogEntry.action === 'unblock') {
-					$blockloglink.append(
-						' (unblocked ' + new Morebits.date(this.lastBlockLogEntry.timestamp).calendar('utc') + ')'
-					);
+					blockLogLink.push(msg(` (unblocked {{date:$1|relative|utc}})`, this.lastBlockLogEntry.timestamp));
 				} else {
 					// block or reblock
-					$blockloglink.append(
-						' (' +
-							this.lastBlockLogEntry.params.duration +
-							', expired ' +
-							new Morebits.date(this.lastBlockLogEntry.params.expiry).calendar('utc') +
-							')'
+					blockLogLink.push(
+						` ($1, expired {{date:$2|relative|utc}})`,
+						this.lastBlockLogEntry.params.duration,
+						this.lastBlockLogEntry.params.expiry
 					);
+					// $blockloglink.append(
+					// 	' (' +
+					// 		this.lastBlockLogEntry.params.duration +
+					// 		', expired ' +
+					// 		new Morebits.date(this.lastBlockLogEntry.params.expiry).calendar('utc') +
+					// 		')'
+					// );
 				}
 			}
 
 			Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
 			Morebits.status.warn(
 				this.currentBlockInfo
-					? 'Previous blocks'
-					: 'This ' + (Morebits.ip.isRange(this.relevantUserName) ? 'range' : 'user') + ' has been blocked in the past',
-				$blockloglink[0]
+					? msg('Previous blocks')
+					: msg('This $1 has been blocked in the past', Morebits.ip.isRange(this.relevantUserName) ? 'range' : 'user'),
+				blockLogLink
 			);
 		}
 
@@ -1025,7 +1043,7 @@ export class BlockCore extends TwinkleModule {
 		$(form)
 			.find('[name=field_block_options]')
 			.find(':checkbox')
-			.each(function (i, el: HTMLInputElement) {
+			.each((i, el: HTMLInputElement) => {
 				// don't override original options if useInitialOptions is set
 				if (data.useInitialOptions && data[el.name] === undefined) {
 					return;
@@ -1056,12 +1074,12 @@ export class BlockCore extends TwinkleModule {
 			// Add any preset options; in practice, just used for prior block settings
 			if (data.restrictions) {
 				if (data.restrictions.pages && !$pageSelect.val().length) {
-					var pages = data.restrictions.pages.map(function (pr) {
+					var pages = data.restrictions.pages.map((pr) => {
 						return pr.title;
 					});
 					// since page restrictions use an ajax source, we
 					// short-circuit that and just add a new option
-					pages.forEach(function (page) {
+					pages.forEach((page) => {
 						if (!$pageSelect.find("option[value='" + $.escapeSelector(page) + "']").length) {
 							var newOption = new Option(page, page, true, true);
 							$pageSelect.append(newOption);
@@ -1079,14 +1097,15 @@ export class BlockCore extends TwinkleModule {
 	change_template(e) {
 		var form = e.target.form,
 			value = form.template.value,
-			settings = this.blockPresetsInfo[value];
-
-		var blockBox = $(form).find('[name=actiontype][value=block]').is(':checked');
-		var partialBox = $(form).find('[name=actiontype][value=partial]').is(':checked');
-		var templateBox = $(form).find('[name=actiontype][value=template]').is(':checked');
+			settings = this.blockPresetsInfo[value],
+			input = Morebits.quickForm.getInputData(form) as {
+				block: boolean;
+				partial: boolean;
+				tag: boolean;
+			};
 
 		// Block form is not present
-		if (!blockBox) {
+		if (!input.block) {
 			if (settings.indefinite || settings.nonstandard) {
 				if (this.prev_template_expiry === null) {
 					this.prev_template_expiry = form.template_expiry.value || '';
@@ -1105,9 +1124,9 @@ export class BlockCore extends TwinkleModule {
 			}
 			Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
 			// Partial
-			Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, partialBox);
-			Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, partialBox);
-		} else if (templateBox) {
+			Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, input.partial);
+			Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, input.partial);
+		} else if (input.tag) {
 			// Only present if block && template forms both visible
 			Morebits.quickForm.setElementVisibility(
 				form.blank_duration.parentNode,
@@ -1122,7 +1141,7 @@ export class BlockCore extends TwinkleModule {
 		Morebits.quickForm.setElementVisibility(form.block_reason.parentNode, settings && !!settings.reasonParam);
 
 		// Partial block
-		Morebits.quickForm.setElementVisibility(form.area.parentNode, partialBox && !blockBox);
+		Morebits.quickForm.setElementVisibility(form.area.parentNode, input.partial && !input.block);
 
 		form.root.previewer.closePreview();
 	}
@@ -1130,23 +1149,40 @@ export class BlockCore extends TwinkleModule {
 	prev_template_expiry = null;
 
 	preview(form: HTMLFormElement) {
-		var params = {
-			article: form.article.value,
-			blank_duration: form.blank_duration ? form.blank_duration.checked : false,
-			disabletalk: form.disabletalk.checked || (form.notalk ? form.notalk.checked : false),
-			expiry: form.template_expiry ? form.template_expiry.value : form.expiry.value,
-			hardblock: this.isRegistered ? form.autoblock.checked : form.hardblock.checked,
-			indefinite: Morebits.string.isInfinity(form.template_expiry ? form.template_expiry.value : form.expiry.value),
-			reason: form.block_reason.value,
-			template: form.template.value,
-			dstopic: form.dstopic.value,
-			partial: $(form).find('[name=actiontype][value=partial]').is(':checked'),
-			pagerestrictions: $(form.pagerestrictions).val() || [],
-			namespacerestrictions: $(form.namespacerestrictions).val() || [],
-			noemail: form.noemail.checked || (form.noemail_template ? form.noemail_template.checked : false),
-			nocreate: form.nocreate.checked || (form.nocreate_template ? form.nocreate_template.checked : false),
-			area: form.area.value,
+		var params = Morebits.quickForm.getInputData(form) as {
+			article: string;
+			blank_duration: boolean;
+			disabletalk: boolean;
+			notalk?: boolean;
+			indefinite: boolean;
+			reason: string;
+			template: string;
+			dstopic: string;
+			partial: boolean;
+			pagerestrictions: string[];
+			namespacerestrictions: string[];
+			noemail: boolean;
+			nocreate: boolean;
+			area: unknown;
 		};
+		params.disabletalk = params.disabletalk || params.notalk;
+		// var params = {
+		// 	article: form.article.value,
+		// 	blank_duration: form.blank_duration ? form.blank_duration.checked : false,
+		// 	disabletalk: form.disabletalk.checked || (form.notalk ? form.notalk.checked : false),
+		// 	expiry: form.template_expiry ? form.template_expiry.value : form.expiry.value,
+		// 	hardblock: this.isRegistered ? form.autoblock.checked : form.hardblock.checked,
+		// 	indefinite: Morebits.string.isInfinity(form.template_expiry ? form.template_expiry.value : form.expiry.value),
+		// 	reason: form.block_reason.value,
+		// 	template: form.template.value,
+		// 	dstopic: form.dstopic.value,
+		// 	partial: form.partial.checked,
+		// 	pagerestrictions: $(form.pagerestrictions).val() || [],
+		// 	namespacerestrictions: $(form.namespacerestrictions).val() || [],
+		// 	noemail: form.noemail.checked || (form.noemail_template ? form.noemail_template.checked : false),
+		// 	nocreate: form.nocreate.checked || (form.nocreate_template ? form.nocreate_template.checked : false),
+		// 	area: form.area.value,
+		// };
 
 		var templateText = this.getBlockNoticeWikitext(params);
 
@@ -1154,10 +1190,11 @@ export class BlockCore extends TwinkleModule {
 	}
 
 	evaluate(e) {
-		var $form = $(e.target),
-			toBlock = $form.find('[name=actiontype][value=block]').is(':checked'),
-			toWarn = $form.find('[name=actiontype][value=template]').is(':checked'),
-			toPartial = $form.find('[name=actiontype][value=partial]').is(':checked'),
+		var form = e.target,
+			$form = $(e.target),
+			toBlock = form.block.checked,
+			toWarn = form.tag.checked,
+			toPartial = $(form.partial).is(':checked'),
 			blockoptions = {},
 			templateoptions = {};
 
@@ -1269,7 +1306,7 @@ export class BlockCore extends TwinkleModule {
 					'nocreate',
 					'noemail',
 					'reblock',
-				].forEach(function (param) {
+				].forEach((param) => {
 					// e.g. `expiry` -> `user.setExpiry(blockoptions.expiry)`
 					user['set' + Morebits.string.toUpperCaseFirstChar(param)](blockoptions[param]);
 				});
@@ -1342,13 +1379,6 @@ export class BlockCore extends TwinkleModule {
 		}
 	}
 
-	field_template_options: {
-		block_reason: string;
-		notalk: boolean;
-		noemail_template: boolean;
-		nocreate_template: boolean;
-	};
-
 	issue_template(formData) {
 		// Use wgRelevantUserName to ensure the block template goes to a single IP and not to the
 		// "talk page" of an IP range (which does not exist)
@@ -1406,19 +1436,12 @@ export class BlockCore extends TwinkleModule {
 			// Building the template, however, takes a fair bit of logic
 			if (params.partial) {
 				if (params.pagerestrictions.length || params.namespacerestrictions.length) {
-					var makeSentence = function (array) {
-						if (array.length < 3) {
-							return array.join(' and ');
-						}
-						var last = array.pop();
-						return array.join(', ') + ', and ' + last;
-					};
 					text += '|area=' + (params.indefinite ? 'certain ' : 'from certain ');
 					if (params.pagerestrictions.length) {
 						text +=
 							'pages (' +
-							makeSentence(
-								params.pagerestrictions.map(function (p) {
+							mw.language.listToText(
+								params.pagerestrictions.map((p) => {
 									return '[[:' + p + ']]';
 								})
 							);
@@ -1426,10 +1449,10 @@ export class BlockCore extends TwinkleModule {
 					}
 					if (params.namespacerestrictions.length) {
 						// 1 => Talk, 2 => User, etc.
-						var namespaceNames = params.namespacerestrictions.map(function (id) {
+						var namespaceNames = params.namespacerestrictions.map((id) => {
 							return menuFormattedNamespaces[id];
 						});
-						text += '[[Wikipedia:Namespace|namespaces]] (' + makeSentence(namespaceNames) + ')';
+						text += '[[Wikipedia:Namespace|namespaces]] (' + mw.language.listToText(namespaceNames) + ')';
 					}
 				} else if (params.area) {
 					text += '|area=' + params.area;
