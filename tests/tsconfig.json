@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "es2020",
+		"module": "ES2020",
+		"lib": [
+			"es2020",
+			"dom"
+		],
+		"noEmit": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"newLine": "lf",
+	},
+	"include": [
+		"src/**/*",
+		"tests/**/*",
+		"./node_modules/types-mediawiki/index.d.ts",
+		"morebits/index.d.ts"
+	],
+	"compileOnSave": true
+}

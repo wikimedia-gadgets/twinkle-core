@@ -1,6 +1,6 @@
-import { makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
+import { arr_flatMap, isTextRedirect, makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
 
-import {NS_TEMPLATE, NS_USER_TALK} from '../src/namespaces';
+import { NS_TEMPLATE, NS_USER_TALK } from '../src/namespaces';
 
 describe('utils', function () {
 	test('makeArray', function () {
@@ -10,7 +10,7 @@ describe('utils', function () {
 		expect(makeArray([4, 5])).toEqual([4, 5]);
 	});
 
-	test('MW mocking works', function() {
+	test('MW mocking works', function () {
 		expect(mw.util.escapeRegExp('d?')).toBe('d\\?');
 	});
 
@@ -47,12 +47,15 @@ describe('utils', function () {
 	};
 
 	test('obj_values', () => {
-		// @ts-ignore
 		expect(obj_values(testObject)).toEqual(Object.values(testObject));
 	});
 	test('obj_entries', () => {
-		// @ts-ignore
 		expect(obj_entries(testObject)).toEqual(Object.entries(testObject));
+	});
+
+	test('arr_flatMap', () => {
+		expect([1, 2, 3, 4].flatMap((e) => [e * 2])).toEqual(arr_flatMap([1, 2, 3, 4], (e) => [e * 2]));
+		expect([1, 2, 3, 4].flatMap((e) => e * 2)).toEqual(arr_flatMap([1, 2, 3, 4], (e) => e * 2));
 	});
 
 	test('namespaces', function () {
@@ -60,4 +63,9 @@ describe('utils', function () {
 		expect(NS_USER_TALK).toBe(3);
 	});
 
+	test('isTextRedirect', function () {
+		expect(isTextRedirect('#REDIRECT [[pageName]]')).toBe(true);
+		expect(isTextRedirect('\n#rediRecT [[pageName]]')).toBe(true);
+		expect(isTextRedirect('redirect [[pageName]]')).toBe(false);
+	});
 });
