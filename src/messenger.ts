@@ -1,9 +1,21 @@
 import Banana, { Messages } from 'orange-i18n';
 import messages from '../i18n/en.json';
 import MWMessageList from './mw-messages';
-import { obj_entries } from './utils';
+import { obj_entries, obj_fromEntries, urlParamValue } from './utils';
 
-const banana = new Banana(mw.config.get('wgContentLanguage'));
+/**
+ * Orange-i18n object
+ */
+let banana;
+
+/**
+ * The language used for all messages in twinkle-core.
+ * This includes interface messages as well as edits made to the wiki.
+ * Ideally the interface messages should have been in wgUserLanguage
+ * and edits in wgContentLanguage, but this duality is not presently
+ * supported.
+ */
+export let language = urlParamValue('uselang') || mw.config.get('wgContentLanguage');
 
 const i18nParserPlugins = {
 	date(nodes) {
@@ -40,6 +52,14 @@ const i18nParserPlugins = {
 		return ns || '';
 	},
 
+	ucfirst(nodes) {
+		return Morebits.string.toUpperCaseFirstChar(nodes[0]);
+	},
+
+	lcfirst(nodes) {
+		return Morebits.string.toLowerCaseFirstChar(nodes[0]);
+	},
+
 	list(nodes) {
 		let list = nodes[0];
 		let text = '';
@@ -64,8 +84,8 @@ const i18nParserPlugins = {
  * Load messages into the message store.
  * @param messages
  */
-export function loadMessages(messages: Messages) {
-	banana.load(messages, mw.config.get('wgContentLanguage'));
+export function addMessages(messages: Messages) {
+	banana.load(messages, language);
 }
 
 /**
@@ -74,6 +94,11 @@ export function loadMessages(messages: Messages) {
  * @param parameters - the parameters for $1, $2, ... substitutions
  */
 export function msg(msg: string, ...parameters: (string | number | string[])[]) {
+	if (!banana) {
+		// this will come up when msg() is accidentally used at the top level of code
+		// when the messages wouldn't have loaded
+		throw new Error("Can't emit messages before initMessaging() has run!");
+	}
 	return banana.i18n(msg, ...parameters);
 }
 
@@ -81,13 +106,21 @@ export function msg(msg: string, ...parameters: (string | number | string[])[]) 
  * Initialize the message store. Called from init.ts.
  */
 export function initMessaging() {
+	banana = new Banana(language);
+
+	// QQX is a dummy "language" for documenting messages
+	if (language === 'qqx') {
+		// the *names* of the messages within parentheses are populated as the messages
+		addMessages(obj_fromEntries(Object.keys(messages).map((msg) => [msg, '(' + msg + ')'])));
+	} else {
+		// Populate default English messages, XXX: should we do this?
+		addMessages(messages);
+	}
+
 	// Register plugins
 	obj_entries(i18nParserPlugins).forEach(([name, plugin]) => {
 		banana.registerParserPlugin(name, plugin);
 	});
-
-	// Populate default English messages, XXX: should we do this?
-	loadMessages(messages as Messages);
 
 	// Set Morebits i18n
 	Morebits.i18n.setParser({ get: msg });
@@ -109,7 +142,7 @@ function loadMediaWikiMessages(msgList: string[]) {
 			// into account
 			new mw.Api()
 				.getMessages(msgList.slice(i, i + 50), {
-					amlang: mw.config.get('wgContentLanguage'),
+					amlang: language,
 					// cache them, as messages are not going to change that often
 					maxage: 31536000, // 1 year
 					smaxage: 31536000,
@@ -117,7 +150,7 @@ function loadMediaWikiMessages(msgList: string[]) {
 					uselang: 'content',
 				})
 				.then((msgsFromApi) => {
-					loadMessages(msgsFromApi);
+					addMessages(msgsFromApi);
 				})
 		);
 	}
@@ -137,7 +170,7 @@ export function loadAdditionalMediaWikiMessages(messageList: string[]) {
  * @param url
  */
 export function loadMessagesFromWeb(url) {
-	return $.getJSON(url).then((data) => loadMessages(data));
+	return $.getJSON(url).then((data) => addMessages(data));
 	// XXX: this code better handles caching, but is giving CORS issue
 	// $.ajax({
 	// 	url: url,
