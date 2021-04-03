@@ -48,9 +48,7 @@ export class UnlinkCore extends TwinkleModule {
 			style: 'margin-bottom: 0.5em;',
 			// prepend some documentation: files are commented out, while any
 			// display text is preserved for links (otherwise the link itself is used)
-			label: $.parseHTML(
-				fileSpace ? msg('unlink-intro-file', Morebits.pageNameNorm) : msg('unlink-intro', Morebits.pageNameNorm)
-			),
+			label: fileSpace ? msg('unlink-intro-file', Morebits.pageNameNorm) : msg('unlink-intro', Morebits.pageNameNorm),
 		});
 
 		form.append({
