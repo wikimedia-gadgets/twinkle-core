@@ -77,6 +77,10 @@ export function urlParamValue(param: string): string {
 	return mw.util.getParamValue(param);
 }
 
+export function link(displaytext: string, title: string, params?: any) {
+	return `<a target="_blank" href="${mw.util.getUrl(title, params)}">${displaytext}</a>`;
+}
+
 // Used in batch, unlink, and deprod to sort pages by namespace, as
 // json formatversion=2 sorts by pageid instead (#1251)
 export function sortByNamespace(first, second) {
