@@ -16,10 +16,11 @@
 		"morebits:test": "qunit --require ./morebits/tests/mocking/mb_repl.js ./morebits/tests/*",
 		"test": "jest",
 		"build": "tsc || echo",
-		"docs": "typedoc src/index.ts --out docs --ignoreCompilerErrors"
+		"docs": "node scripts/generate-docs.js"
 	},
 	"files": [
 		"src/",
+		"build/",
 		"i18n/",
 		"morebits/"
 	],
@@ -46,7 +47,7 @@
 		"prettier": "^2.2.1",
 		"qunit": "^2.13.0",
 		"ts-jest": "^26.4.4",
-		"typedoc": "^0.19.2",
+		"typedoc": "^0.20.35",
 		"typescript": "^4.1.2"
 	},
 	"husky": {
