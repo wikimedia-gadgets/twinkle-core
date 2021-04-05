@@ -61,4 +61,10 @@ export namespace Twinkle {
 	export let activeSpecialPages = ['Block', 'Contributions', 'Recentchanges', 'Recentchangeslinked'].concat(
 		Morebits.userIsSysop ? ['DeletedContributions', 'Prefixindex'] : []
 	);
+
+	/**
+	 * Override twinkle-core messages - such as for places where the wiki's processes need to be mentioned
+	 * and thus are not suitable to be included as translations.
+	 */
+	export let messageOverrides: Record<string, string> = {};
 }

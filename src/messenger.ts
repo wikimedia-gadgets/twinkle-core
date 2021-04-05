@@ -2,6 +2,7 @@ import Banana, { Messages } from 'orange-i18n';
 import messages from '../i18n/en.json';
 import MWMessageList from './mw-messages';
 import { obj_entries, obj_fromEntries, urlParamValue } from './utils';
+import { Twinkle } from './twinkle';
 
 /**
  * Orange-i18n object
@@ -15,6 +16,7 @@ let banana;
  * and edits in wgContentLanguage, but this duality is not presently
  * supported.
  */
+// I believe this is the only use of mw.* at the top level
 export let language = urlParamValue('uselang') || mw.config.get('wgContentLanguage');
 
 const i18nParserPlugins = {
@@ -108,15 +110,6 @@ export function msg(msg: string, ...parameters: (string | number | string[])[]) 
 export function initMessaging() {
 	banana = new Banana(language);
 
-	// QQX is a dummy "language" for documenting messages
-	if (language === 'qqx') {
-		// the *names* of the messages within parentheses are populated as the messages
-		addMessages(obj_fromEntries(Object.keys(messages).map((msg) => [msg, '(' + msg + ')'])));
-	} else {
-		// Populate default English messages, XXX: should we do this?
-		addMessages(messages);
-	}
-
 	// Register plugins
 	obj_entries(i18nParserPlugins).forEach(([name, plugin]) => {
 		banana.registerParserPlugin(name, plugin);
@@ -125,8 +118,22 @@ export function initMessaging() {
 	// Set Morebits i18n
 	Morebits.i18n.setParser({ get: msg });
 
-	// Load MW messages and return the promise
-	return loadMediaWikiMessages(MWMessageList);
+	// QQX is a dummy "language" for documenting messages
+	if (language === 'qqx') {
+		// the *names* of the messages within parentheses are populated as the messages
+		addMessages(obj_fromEntries(Object.keys(messages).map((msg) => [msg, '(' + msg + ')'])));
+		return Promise.resolve();
+	} else {
+		// Populate default English messages, final fallback
+		addMessages(messages);
+		return Promise.all([loadMediaWikiMessages(MWMessageList), loadTwinkleCoreMessages()])
+			.catch((e) => {
+				mw.notify('Twinkle: failed to load messages');
+			})
+			.finally(() => {
+				addMessages(Twinkle.messageOverrides);
+			});
+	}
 }
 
 /**
@@ -158,28 +165,44 @@ function loadMediaWikiMessages(msgList: string[]) {
 }
 
 /**
+ * Load twinkle-core messages from Gerrit
+ */
+function loadTwinkleCoreMessages() {
+	if (language === 'en') {
+		return Promise.resolve();
+	}
+	$.get({
+		url: `//gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/gadgets/TwinkleCore/+/master/i18n/${language}.json?format=text`,
+		// XXX: fetch fails due to CORS issue if we add the Cache-Control header, WTF?
+		// headers: {
+		// 	'Cache-Control': 'maxage=864000',
+		// },
+	}).then(
+		(base64text) => {
+			// Adapted from https://phabricator.wikimedia.org/diffusion/WGPI/browse/master/proveit.js
+			let json = JSON.parse(
+				decodeURIComponent(
+					window
+						.atob(base64text)
+						.split('')
+						.map(function (character) {
+							return '%' + ('00' + character.charCodeAt(0).toString(16)).slice(-2);
+						})
+						.join('')
+				)
+			);
+			addMessages(json);
+		},
+		(err) => {
+			mw.log.warn('[twinkle-core]: no messages loaded from gerrit.', err);
+		}
+	);
+}
+
+/**
  * Load messages from MediaWiki, in addition to what twinkle-core loads.
  * @param messageList
  */
 export function loadAdditionalMediaWikiMessages(messageList: string[]) {
 	return loadMediaWikiMessages(messageList);
-}
-
-/**
- * Load messages from a web address.
- * @param url
- */
-export function loadMessagesFromWeb(url) {
-	return $.getJSON(url).then((data) => addMessages(data));
-	// XXX: this code better handles caching, but is giving CORS issue
-	// $.ajax({
-	// 	url: url,
-	// 	dataType: 'json',
-	// 	cache: true,
-	// 	headers: {
-	// 		'Cache-Control': 'max-age=864000', // 10 days
-	// 	},
-	// }).then((data) => {
-	// 	loadMessages(JSON.parse(data));
-	// });
 }
