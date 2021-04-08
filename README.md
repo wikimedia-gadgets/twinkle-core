@@ -14,4 +14,7 @@ Documentation for twinkle-core is hosted on Toolforge. Check it out at https://t
 - See [the integrated development workflow](https://github.com/wikimedia/wvui#integrated-development-workflow) to work on twinkle-core while developing or testing a localised twinkle installation. The linked resource is from another repo – replace "WVUI" with "twinkle-core".
 - Please see [twinkle-enwiki](https://github.com/wikimedia-gadgets/twinkle-starter) for more detailed contributing guidelines.
 
-Originally created by @siddharthvp (SD0001) as part of [Grants:Project/Rapid/SD0001/Twinkle localisation](https://meta.wikimedia.org/wiki/Grants:Project/Rapid/SD0001/Twinkle_localisation).
+## Credits
+Thanks to the authors of [wikimedia-gadgets/twinkle](https://github.com/wikimedia-gadgets/twinkle) from which the code is adapted.
+
+This repository was created by siddharthvp (SD0001) as part of [Grants:Project/Rapid/SD0001/Twinkle localisation](https://meta.wikimedia.org/wiki/Grants:Project/Rapid/SD0001/Twinkle_localisation).
