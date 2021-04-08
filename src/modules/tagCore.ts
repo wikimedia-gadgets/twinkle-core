@@ -551,7 +551,6 @@ export abstract class TagMode {
 	 * @param tag
 	 */
 	shiftTag(tag): boolean {
-		// LIFT with spliceGroupableExistingTags
 		let isShifted = false; // Avoid a .test() before the .replace() causing 2 regex searches
 		this.pageText = this.pageText.replace(this.getTagRegex(tag), (tagText) => {
 			isShifted = true;
@@ -567,7 +566,6 @@ export abstract class TagMode {
 	 * the returned promise resolves to.
 	 */
 	spliceGroupableExistingTags(): JQuery.Promise<string> {
-		// LIFT
 		this.params.groupableExistingTagsText = '';
 		let tagsToShiftAsync = this.params.groupableExistingTags.filter((tag) => {
 			return !this.shiftTag(tag);
@@ -604,7 +602,6 @@ export abstract class TagMode {
 	 * @returns true if tag was removed, false otherwise
 	 */
 	removeTemplate(tag): boolean {
-		// LIFT with removeTags
 		let isRemoved = false; // Avoid a .test() before the .replace() causing 2 regex searches
 		this.pageText = this.pageText.replace(this.getTagRegex(tag), () => {
 			isRemoved = true;
@@ -614,7 +611,6 @@ export abstract class TagMode {
 	}
 
 	getRedirectsQuery(tags: string[]) {
-		// LIFT
 		return {
 			action: 'query',
 			prop: 'linkshere',
@@ -631,7 +627,6 @@ export abstract class TagMode {
 	 * Remove tags from pageText
 	 */
 	removeTags(): JQuery.Promise<void> {
-		// LIFT
 		let params = this.params;
 		if (!params.tagsToRemove.length) {
 			return $.Deferred().resolve();

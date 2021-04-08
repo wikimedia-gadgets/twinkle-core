@@ -14,8 +14,8 @@ export namespace SiteConfig {
 
 	/**
 	 * Namespaces where FlaggedRevs (pending changes protection) is enabled.
-	 * Needs to put in unless phab:T218479 happens.
-	 * Copy the $wgFlaggedRevsNamespaces value for your wiki which you can find on
+	 * Needs to put in unless {@link https://phabricator.wikimedia.org/T218479 phab:T218479} happens.
+	 * Copy the `$wgFlaggedRevsNamespaces` value for your wiki which you can find on
 	 * https://noc.wikimedia.org/conf/highlight.php?file=flaggedrevs.php
 	 * Used in protect module.
 	 */
