@@ -1,13 +1,13 @@
 import Banana, { Messages } from 'orange-i18n';
 import messages from '../i18n/en.json';
 import MWMessageList from './mw-messages';
-import { obj_entries, obj_fromEntries, urlParamValue } from './utils';
+import { obj_entries, urlParamValue } from './utils';
 import { Twinkle } from './twinkle';
 
 /**
  * Orange-i18n object
  */
-let banana;
+let banana: Banana;
 
 /**
  * The language used for all messages in twinkle-core.
@@ -18,6 +18,8 @@ let banana;
  */
 // I believe this is the only use of mw.* at the top level
 export let language = urlParamValue('uselang') || mw.config.get('wgContentLanguage');
+
+let qqxMode: boolean;
 
 const i18nParserPlugins = {
 	date(nodes) {
@@ -101,6 +103,9 @@ export function msg(msg: string, ...parameters: (string | number | string[])[]) 
 		// when the messages wouldn't have loaded
 		throw new Error("Can't emit messages before initMessaging() has run!");
 	}
+	if (qqxMode) {
+		return '(' + msg + ')';
+	}
 	return banana.i18n(msg, ...parameters);
 }
 
@@ -119,21 +124,22 @@ export function initMessaging() {
 	Morebits.i18n.setParser({ get: msg });
 
 	// QQX is a dummy "language" for documenting messages
-	if (language === 'qqx') {
-		// the *names* of the messages within parentheses are populated as the messages
-		addMessages(obj_fromEntries(Object.keys(messages).map((msg) => [msg, '(' + msg + ')'])));
+	// No need to do anything when in qqxMode
+	qqxMode = language === 'qqx';
+
+	if (qqxMode) {
 		return Promise.resolve();
-	} else {
-		// Populate default English messages, final fallback
-		addMessages(messages);
-		return Promise.all([loadMediaWikiMessages(MWMessageList), loadTwinkleCoreMessages()])
-			.catch((e) => {
-				mw.notify('Twinkle: failed to load messages');
-			})
-			.finally(() => {
-				addMessages(Twinkle.messageOverrides);
-			});
 	}
+
+	// Populate default English messages, final fallback
+	addMessages(messages);
+	return Promise.all([loadMediaWikiMessages(MWMessageList), loadTwinkleCoreMessages()])
+		.catch((e) => {
+			mw.notify('Failed to load messages needed for Twinkle', { type: 'error' });
+		})
+		.finally(() => {
+			addMessages(Twinkle.messageOverrides);
+		});
 }
 
 /**
@@ -194,7 +200,7 @@ function loadTwinkleCoreMessages() {
 			addMessages(json);
 		},
 		(err) => {
-			mw.log.warn('[twinkle-core]: no messages loaded from gerrit.', err);
+			mw.log.warn('[twinkle]: no messages loaded from gerrit.', err);
 		}
 	);
 }
