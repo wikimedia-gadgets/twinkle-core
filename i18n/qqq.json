@@ -8,5 +8,16 @@
 	"link-goodfaith-rollback": "Text for the button which performs a rollback of a good-faith edit",
 	"restore-revision": "Text for the button to restore an old revision of the page being currently viewed",
 	"fetching-data": "Temporary text shown while data about earlier versions of the page are being fetched",
-	"saving-reverted": "Text shown while saving reverted version"
+	"saving-reverted": "Text shown while saving reverted version",
+	"prompt-reason-restore": "Browser prompt asking the user for reason for reverting to an earlier version of the page.",
+	"reversion-complete": "Message indicating that the page has been successfully reverted to a prior version.",
+	"cant-edit-protected": "Error message indicating that the page can't be edit because it is protected.",
+	"no-revisions": "Error message indicating that revert isn't possible because there is only revision of the page (so there is nothing to revert to)",
+	"bad-revid": "Error message shown in the rare situations described.\n* $1 – Revision ID (number)",
+	"revid-mismatch": "Warning message.\n* $1 - Revision ID of the most recent version of the page.\n* $2 - Expected revision ID",
+	"latest-rev-same-user": "Informational status message.\n* $1 - username or IP address",
+	"latest-rev-same-64": "Informational status message.\n* $1 - IPv6 address",
+	"latest-rev-other-user-goodfaith": "Status message indicating operation abort.\n* $1 - username or IP address",
+	"latest-rev-other-user": "Status message indicating operation abort.\n* $1 - username or IP address",
+	"latest-rev-bot": "Informational status message.\n* $1 - bot username"
 }
