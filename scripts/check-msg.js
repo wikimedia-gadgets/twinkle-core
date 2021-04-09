@@ -1,6 +1,7 @@
 /**
  * Script to check that no messages are used in the code are undefined,
- * and that all defined messages are actually used.
+ * and that all defined messages are actually used. Also flags use of parameters
+ * for messages with no parameters and vice-versa.
  * Requires Node.js v13 or above.
  * Run as:
  * 	node check-msg.js
@@ -10,6 +11,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import { mwn } from 'mwn';
 
 async function readFile(path) {
 	return (await fs.readFile(path)).toString();
@@ -28,19 +30,28 @@ async function getCodes(dir) {
 }
 
 async function parseMwMessages() {
-	let code = await readFile('./src/mw-messages.ts')
+	let code = await readFile('./src/mw-messages.ts');
 	return eval(code.slice(code.indexOf('[')));
 }
 
+let exitCode = 0;
+
+function error(note) {
+	exitCode = 1;
+	console.error('[E] ' + note);
+}
 
 (async () => {
-	let exitCode = 0;
-
 	const messages = JSON.parse(await readFile('./i18n/en.json'));
 	delete messages['@metadata'];
-	const mwMessages = await parseMwMessages();
-	const messageUsages = Object.fromEntries(Object.keys(messages).map(m => [m, 0]));
-	const mwMessageUsages = Object.fromEntries(mwMessages.map(m => [m, 0]));
+	const mwMessageNames = await parseMwMessages();
+	const bot = new mwn({ apiUrl: 'https://en.wikipedia.org/w/api.php' });
+	const mwMessages = {};
+	for (let i = 0; i < mwMessageNames.length; i += 50) {
+		Object.assign(mwMessages, await bot.getMessages(mwMessageNames.slice(i, i + 50)));
+	}
+	const messageUsages = Object.fromEntries(Object.keys(messages).map((m) => [m, 0]));
+	const mwMessageUsages = Object.fromEntries(mwMessageNames.map((m) => [m, 0]));
 
 	const code = (await getCodes('./src')) + (await getCodes('./src/modules'));
 
@@ -51,14 +62,29 @@ async function parseMwMessages() {
 
 	for (let match of code.matchAll(rgx)) {
 		const msgKey = match[2];
+
 		if (messageUsages[msgKey] !== undefined) {
 			messageUsages[msgKey] += 1;
 		} else if (mwMessageUsages[msgKey] !== undefined) {
 			mwMessageUsages[msgKey] += 1;
 		} else {
-			exitCode = 1;
-			console.error(`[E] ${match[0]}: no such message is defined`);
+			error(`${match[0]}: no such message is defined`);
+			continue;
 		}
+
+		const msgVal = messages[msgKey] ?? mwMessages[msgKey];
+		const replacements = msgVal.match(/\$\d+/g) || [];
+		const numParamsMsg = Math.max(...replacements.map((m) => parseInt(m.slice(1))), 0);
+		const paramsUsed = match[3];
+		if (numParamsMsg > 0 && !paramsUsed) {
+			error(`${match[0]}: no parameters used here but message has parameters: "${msgVal}"`);
+			continue;
+		}
+		if (paramsUsed && numParamsMsg === 0) {
+			error(`${match[0]}: parameters used here but not in message: "${msgVal}"`);
+		}
+		// Still possible that number of parameters can be mis-matched, but we can't really check for that
+		// without a full-fledged JS parser
 	}
 
 	for (let [msgKey, count] of Object.entries(messageUsages)) {
@@ -73,5 +99,4 @@ async function parseMwMessages() {
 	}
 
 	process.exit(exitCode);
-
 })();
