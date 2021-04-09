@@ -5,6 +5,17 @@ import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
 
+/**
+ * Module used for batch deletion of pages. Works in different ways on three
+ * types of pages:
+ * 1. If invoked from category, delete pages from the category
+ * 2. If invoked from a regular page, delete pages linked from the page
+ * 3. If invoked from a Special:PrefixIndex query page, delete pages in the result
+ * The user can select which pages to delete in all cases, as well as choose to
+ * delete all the talk pages and subpages, and unlink the pages being deleted.
+ *
+ * Localisation: Should work without any configuration.
+ */
 class BatchDelete extends TwinkleModule {
 	moduleName = 'batchdelete';
 	static moduleName = 'batchdelete';

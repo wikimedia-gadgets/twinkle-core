@@ -3,6 +3,13 @@ import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
 
+/**
+ * "Fluff" module is used for reverting vandalism. It offers several types of
+ * revert modes.
+ *
+ * Localisation: You may wish to customise {@link trustedBots}. Apart from that,
+ * this module should work without any further configuration.
+ */
 class Fluff extends TwinkleModule {
 	moduleName = 'fluff';
 	static moduleName = 'fluff';

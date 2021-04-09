@@ -32,12 +32,34 @@ export interface tagSubgroup extends quickFormElementData {
 
 export type tagListType = tagData[] | Record<string, tagData[] | Record<string, tagData[]>>;
 
+/**
+ * Module for tagging pages. For different types of pages, this module can be
+ * configured to behave differently. The {@link TagMode} class should be extended
+ * for each type of page (usually based on namespace).
+ *
+ * Define the following static field:
+ * - {@link modeList} - which contains the array of classes you define that
+ * extend {@link TagMode}
+ *
+ * Note that since this is a static field, it must be defined as TagCore.modeList
+ * (not Tag.modeList).
+ *
+ * See enwiki localisation at https://github.com/wikimedia-gadgets/twinkle-enwiki/blob/master/src/tag.ts
+ */
 export class TagCore extends TwinkleModule {
 	moduleName = 'Tag';
 	static moduleName = 'Tag';
 
+	/**
+	 * The mode active on this current page.
+	 */
 	mode: TagMode;
+
+	/**
+	 * List of tag modes. Each tag mode is a class extending {@link TagMode}.
+	 */
 	static modeList: typeof TagMode[];
+
 	portletName = 'Tag';
 	portletId = 'twinkle-tag';
 
@@ -114,6 +136,12 @@ export class TagCore extends TwinkleModule {
 		$(checkbox).parent().append('\u00A0', link);
 	}
 
+	/**
+	 * Generate an edit summary for the tagging and/or untagging
+	 * @param addedTags
+	 * @param removedTags
+	 * @param reason
+	 */
 	static makeEditSummary(addedTags: string[], removedTags?: string[], reason?: string): string {
 		let makeTemplateLink = function (tag: string) {
 			let text = '{{[[';
@@ -151,10 +179,23 @@ export class TagCore extends TwinkleModule {
 	}
 }
 
+/**
+ * Abstract class for representing a type of page for the tag module.
+ */
 export abstract class TagMode {
+	/**
+	 * Name of the tag mode
+	 */
 	abstract name: string;
+	/**
+	 * List of tags available for use, grouped by sections.
+	 */
 	abstract tagList: tagListType;
-	static tagList: tagListType; //
+	/**
+	 * Unused. XXX
+	 */
+	static tagList: tagListType;
+
 	flatObject: Record<string, tagData>;
 	existingTags: string[] = [];
 
@@ -237,11 +278,17 @@ export abstract class TagMode {
 		);
 	}
 
-	getMenuTooltip() {
+	/**
+	 * Returns the text used as the tooltip for the portlet
+	 */
+	getMenuTooltip(): string {
 		return 'Add maintenance tags to the page';
 	}
 
-	getWindowTitle() {
+	/**
+	 * Returns the string used as the Twinkle dialog's title
+	 */
+	getWindowTitle(): string {
 		return 'Add maintenance tags';
 	}
 
@@ -280,6 +327,10 @@ export abstract class TagMode {
 		this.makeTagList(this.scrollbox);
 	}
 
+	/**
+	 * Generates the tag list in the GUI.
+	 * @param container
+	 */
 	makeTagList(container: Morebits.quickForm.element) {
 		if (Array.isArray(this.tagList)) {
 			this.makeTagListGroup(this.tagList, container);
@@ -301,7 +352,11 @@ export abstract class TagMode {
 		}
 	}
 
-	// helper function for makeTagList()
+	/**
+	 * Helper function for {@link makeTagList}
+	 * @param list
+	 * @param container
+	 */
 	makeTagListGroup(list: tagData[], container?: Morebits.quickForm.element | Morebits.quickForm) {
 		let excludeTags = new Set(this.existingTags.filter((t) => !this.flatObject[t]?.dupeAllowed));
 		container.append({
@@ -317,6 +372,10 @@ export abstract class TagMode {
 		});
 	}
 
+	/**
+	 * Make the HTML for the existing tags.
+	 * @param container
+	 */
 	makeExistingTagList(container: Morebits.quickForm.element) {
 		if (!this.existingTags.length) {
 			return;
@@ -345,6 +404,9 @@ export abstract class TagMode {
 	 */
 	parseExistingTags() {}
 
+	/**
+	 * Create a flat object for speeding up lookup for the tag properties
+	 */
 	constructFlatObject() {
 		this.flatObject = {};
 
@@ -396,6 +458,9 @@ export abstract class TagMode {
 		this.Window.display();
 	}
 
+	/**
+	 * Actions carried out after the form has been rendered and the Dialog has become visible.
+	 */
 	postRender() {
 		QuickFilter.init(this.result);
 		Morebits.quickForm.getElements(this.result, 'tags').forEach(TagCore.makeArrowLinks);
@@ -433,6 +498,9 @@ export abstract class TagMode {
 		});
 	}
 
+	/**
+	 * Invoked when the form is submitted.
+	 */
 	evaluate() {
 		this.captureFormData();
 		let validationMessage = this.checkInputs();
@@ -450,12 +518,20 @@ export abstract class TagMode {
 		});
 	}
 
+	/**
+	 * Gather the data the user filled into the form.
+	 */
 	captureFormData() {
 		this.params = Morebits.quickForm.getInputData(this.result);
 		this.params.tagsToRemove = this.result.getUnchecked('existingTags'); // XXX: Morebits-defined function
 		this.params.tagsToRetain = this.params.existingTags || [];
 	}
 
+	/**
+	 * Validate input. Return a string in case of issues; this string is used as the message for a browser prompt().
+	 * Return nothing if all inputs are valid. Use {@link validateInput} for customisation.
+	 * @internal
+	 */
 	checkInputs(): string | void {
 		// Check if any tag is selected or if any already present tag is deselected
 		if (this.params.tags.length === 0 && (!this.canRemove() || this.params.tagsToRemove.length === 0)) {
@@ -597,7 +673,7 @@ export abstract class TagMode {
 	}
 
 	/**
-	 * Remove tag from pageText, if it exists.
+	 * Remove tag from {@link pageText}, if it exists.
 	 * @param tag
 	 * @returns true if tag was removed, false otherwise
 	 */
@@ -610,6 +686,10 @@ export abstract class TagMode {
 		return isRemoved;
 	}
 
+	/**
+	 * Get the API query used for querying redirects to the template
+	 * @param tags
+	 */
 	getRedirectsQuery(tags: string[]) {
 		return {
 			action: 'query',
@@ -624,7 +704,7 @@ export abstract class TagMode {
 	}
 
 	/**
-	 * Remove tags from pageText
+	 * Remove tags from {@link pageText}
 	 */
 	removeTags(): JQuery.Promise<void> {
 		let params = this.params;
@@ -671,9 +751,15 @@ export abstract class TagMode {
 		});
 	}
 
+	/**
+	 * Any initial cleanup of the page.
+	 */
 	initialCleanup(): void {}
 
-	shouldAddGroup() {
+	/**
+	 * Returns true if a group template is to be added to the page, otherwise false.
+	 */
+	shouldAddGroup(): boolean {
 		let params = this.params;
 		return (
 			this.groupTemplateName &&
@@ -717,6 +803,9 @@ export abstract class TagMode {
 		return tagText + '\n' + pageText;
 	}
 
+	/**
+	 * Any final cleanup of the page.
+	 */
 	finalCleanup() {
 		if (!this.groupTemplateName || this.params.groupingDisabled) {
 			return;

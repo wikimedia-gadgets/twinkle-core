@@ -8,6 +8,11 @@ import { TwinkleModule } from '../twinkleModule';
 
 // TODO: still quite a bit of enwiki specific logic here
 
+/**
+ * Module for tagging pages for speedy deletion and for admins to delete pages.
+ * Can also delete the talk page, delete redirects, and unlink backlinks while
+ * deleting.
+ */
 export interface criterion extends quickFormElementData {
 	value: string; // made compulsory
 	code: string;

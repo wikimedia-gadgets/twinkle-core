@@ -27,6 +27,9 @@ export interface warningLevel {
 	list: warning[] | Record<string, warning[]>;
 }
 
+/**
+ * Module for sending users warnings and notice messages.
+ */
 export abstract class WarnCore extends TwinkleModule {
 	static moduleName = 'Warn';
 	moduleName = 'Warn';

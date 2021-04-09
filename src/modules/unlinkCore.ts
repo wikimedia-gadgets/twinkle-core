@@ -6,6 +6,11 @@ import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
 
+/**
+ * Module for unlinking backlinks of a given page.
+ *
+ * Localisation: Should work without any configuration.
+ */
 export class UnlinkCore extends TwinkleModule {
 	moduleName = 'unlink';
 	static moduleName = 'unlink';

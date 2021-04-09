@@ -6,6 +6,13 @@ import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
 
+/**
+ * Module for batch page undeletions. Can undelete all non-existing pages linked
+ * from the current page. Optionally their respective talk pages can also be
+ * undeleted.
+ *
+ * Localisation: Should work without any configuration.
+ */
 export class BatchUndeleteCore extends TwinkleModule {
 	moduleName = 'batchundelete';
 	static moduleName = 'batchundelete';

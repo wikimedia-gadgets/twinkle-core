@@ -30,6 +30,24 @@ export type BlockPresetInfo = {
 	requireGroup?: string;
 };
 
+/**
+ * Module used for blocking users and/or issuing block templates.
+ *
+ * **Localisation**: This class is abstract – you need to implement
+ * {@link getBlockNoticeWikitextAndSummary}.
+ * Also, the following fields may need to be customised:
+ * - {@link blockPresetsInfo}
+ * - {@link blockGroups}
+ * - {@link blockGroupsPartial}
+ * - {@link defaultBlockTemplate}
+ * - {@link defaultIndefBlockTemplate}
+ * - {@link defaultPartialBlockTemplate}
+ * - {@link defaultIndefPartialBlockTemplate}
+ * - {@link defaultAnonBlockTemplate}
+ * - {@link disablePartialBlockNamespaces}
+ * - {@link ipBlockExpiryDefault}
+ *
+ */
 export abstract class BlockCore extends TwinkleModule {
 	moduleName = 'block';
 	static moduleName = 'block';

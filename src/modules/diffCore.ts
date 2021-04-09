@@ -7,6 +7,8 @@ import { msg } from '../messenger';
  * Diff module: shows a link to last edit on all pages.
  * On diff pages, shows a link to a diff of edits since your last edit,
  * and a diff of the version compared to the current version.
+ *
+ * Localisation: should work without any configuration.
  */
 export class DiffCore extends TwinkleModule {
 	static moduleName = 'Diff';

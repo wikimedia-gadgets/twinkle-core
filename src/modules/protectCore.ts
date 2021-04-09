@@ -18,6 +18,27 @@ import { Page } from '../Page';
 import { Api } from '../Api';
 import { SiteConfig } from '../siteConfig';
 
+/**
+ * Module used for requesting page protection, for tagging pages with
+ * protection templates and actually applying protection.
+ *
+ * **Localisation**: This is an abstract class. The following abstract methods
+ * must be implemented:
+ * - {@link getProtectionPresets}
+ * - {@link getCreateProtectionPresets}
+ *
+ * In addition, the following methods and fields should be overridden:
+ * - {@link getProtectionLevels}
+ * - {@link requestPageName}
+ * - {@link existingTagRegex}
+ * - {@link disableTaggingOnRedirectTemplateRegex}
+ * - {@link requestPageAcronym}
+ * - {@link protectionPresetsInfo}
+ * - {@link protectionTags}
+ *
+ * See enwiki localisation at https://github.com/wikimedia-gadgets/twinkle-enwiki/blob/master/src/protect.ts
+ *
+ */
 export abstract class ProtectCore extends TwinkleModule {
 	moduleName = 'protect';
 	static moduleName = 'protect';
@@ -27,7 +48,16 @@ export abstract class ProtectCore extends TwinkleModule {
 	portletTooltip = Morebits.userIsSysop ? 'Protect page' : 'Request page protection';
 	windowTitle = Morebits.userIsSysop ? 'Apply, request or tag page protection' : 'Request or tag page protection';
 
+	/**
+	 * Full name of the page where protection requests are placed.
+	 */
 	requestPageName = 'Wikipedia:Requests for page protection';
+
+	/**
+	 * Short form or acronym for the {@link requestPageName}. Used in text.
+	 * Usage is not in form of a link so this doesn't necessarily need to be a
+	 * redirect to the {@link requestPageName}.
+	 */
 	requestPageAcronym = 'RfPP';
 
 	constructor() {
@@ -797,10 +827,19 @@ export abstract class ProtectCore extends TwinkleModule {
 		];
 	}
 
+	/**
+	 * Get protection presets.
+	 */
 	abstract getProtectionPresets(): quickFormElementData[];
 
+	/**
+	 * Get presets for create protection.
+	 */
 	abstract getCreateProtectionPresets(): quickFormElementData[];
 
+	/**
+	 *
+	 */
 	protectionPresetsInfo: Record<
 		string,
 		{
@@ -814,6 +853,9 @@ export abstract class ProtectCore extends TwinkleModule {
 		}
 	> = {};
 
+	/**
+	 *
+	 */
 	protectionTags: quickFormElementData[] = [];
 
 	changePreset(e) {
