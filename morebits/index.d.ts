@@ -231,7 +231,7 @@ declare namespace Morebits {
 			setExpiry(expiry: string | number | string[] | Morebits.date | Date): void;
 			setStatusElement(statusElement: Morebits.status): void;
 			getStatusElement(): Morebits.status;
-			setWatchUser(watchuser: boolean): void;
+			setWatchuser(watchuser: boolean): void;
 			setWatchlistExpiry(watchlistExpiry: string | number | Morebits.date | Date): void;
 			useOriginalBlock(useOriginalBlockParams: boolean): void;
 			setAllowusertalk(allowusertalk: boolean): void;
