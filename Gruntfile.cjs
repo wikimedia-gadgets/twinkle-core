@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
-	grunt.loadNpmTasks('grunt-banana-checker');
 	grunt.loadNpmTasks('grunt-eslint');
+	grunt.loadNpmTasks('grunt-banana-checker');
+	grunt.loadNpmTasks('grunt-exec');
 
 	grunt.initConfig({
 		eslint: {
@@ -12,8 +13,11 @@ module.exports = function (grunt) {
 		},
 		banana: {
 			all: 'i18n/'
+		},
+		exec: {
+			check_msg: "node scripts/check-msg.js"
 		}
 	});
 
-	grunt.registerTask('lint', ['eslint', 'banana']);
+	grunt.registerTask('lint', ['eslint', 'banana', 'exec']);
 };

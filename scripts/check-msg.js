@@ -1,3 +1,13 @@
+/**
+ * Script to check that no messages are used in the code are undefined,
+ * and that all defined messages are actually used.
+ * Requires Node.js v13 or above.
+ * Run as:
+ * 	node check-msg.js
+ * Or via grunt as
+ * 	grunt exec:check_msg
+ */
+
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -24,7 +34,10 @@ async function parseMwMessages() {
 
 
 (async () => {
+	let exitCode = 0;
+
 	const messages = JSON.parse(await readFile('./i18n/en.json'));
+	delete messages['@metadata'];
 	const mwMessages = await parseMwMessages();
 	const messageUsages = Object.fromEntries(Object.keys(messages).map(m => [m, 0]));
 	const mwMessageUsages = Object.fromEntries(mwMessages.map(m => [m, 0]));
@@ -43,19 +56,22 @@ async function parseMwMessages() {
 		} else if (mwMessageUsages[msgKey] !== undefined) {
 			mwMessageUsages[msgKey] += 1;
 		} else {
+			exitCode = 1;
 			console.error(`[E] ${match[0]}: no such message is defined`);
 		}
 	}
 
 	for (let [msgKey, count] of Object.entries(messageUsages)) {
 		if (count === 0) {
-			console.warn(`[W] message ${msgKey} is unused`);
+			console.warn(`[W] message ${msgKey} is possibly unused`);
 		}
 	}
 	for (let [msgKey, count] of Object.entries(mwMessageUsages)) {
 		if (count === 0) {
-			console.warn(`[W] MW message ${msgKey} is unused`);
+			console.warn(`[W] MW message ${msgKey} is possibly unused`);
 		}
 	}
+
+	process.exit(exitCode);
 
 })();
