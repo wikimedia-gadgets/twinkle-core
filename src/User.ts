@@ -1,5 +1,5 @@
 import { Twinkle } from './twinkle';
-import {ApiError} from "./utils";
+import { ApiError } from './utils';
 
 /**
  * Light but immensely hacky wrapper around Morebits.wiki.user that presets the
@@ -22,13 +22,10 @@ export class User extends Morebits.wiki.user {
 
 		// This is ugly, because Morebits.wiki.user uses an implementation pattern
 		// that doesn't define any methods on Morebits.wiki.user.prototype.
-		let functionsToPromisify = [
-			'load',
-			'block',
-			'notify'
-		];
+		let functionsToPromisify = ['load', 'block', 'notify'];
 
 		functionsToPromisify.forEach((func) => {
+			// TODO: check return argument types
 			let origFunc = this[func].bind(this);
 			this[func] = function (onSuccess, onFailure) {
 				let def = $.Deferred();
@@ -43,10 +40,7 @@ export class User extends Morebits.wiki.user {
 						}
 
 						// try to resolve with the api object
-						def.resolve(arg instanceof Morebits.wiki.api
-							? arg
-							: this
-						);
+						def.resolve(arg instanceof Morebits.wiki.api ? arg : this);
 					},
 					(arg) => {
 						if (onFailure) {
@@ -72,6 +66,8 @@ export class User extends Morebits.wiki.user {
 // The non-standard way of overriding the functions means we have to tell TS about it in some way.
 export interface User {
 	load(): JQuery.Promise<Morebits.wiki.api>;
+
 	block(): JQuery.Promise<Morebits.wiki.api>;
+
 	notify(): JQuery.Promise<Morebits.wiki.api>;
 }

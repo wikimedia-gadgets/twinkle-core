@@ -12,6 +12,7 @@ export * from './utils';
 export * from './messenger';
 export * from './Api';
 export * from './Page';
+export * from './User';
 export * from './Dialog';
 export * from './Config';
 export * from './namespaces';

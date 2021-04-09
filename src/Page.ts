@@ -36,6 +36,7 @@ export class Page extends Morebits.wiki.page {
 		];
 
 		functionsToPromisify.forEach((func) => {
+			// TODO: check return argument types
 			let origFunc = this[func].bind(this);
 			this[func] = function (onSuccess, onFailure) {
 				let def = $.Deferred();
