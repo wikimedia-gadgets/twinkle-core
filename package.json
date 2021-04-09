@@ -27,12 +27,12 @@
 	],
 	"license": "CC-BY-SA-3.0",
 	"dependencies": {
+		"@types/select2": "^4.0.53",
 		"orange-i18n": "^1.4.0",
 		"types-mediawiki": "^1.1.0"
 	},
 	"devDependencies": {
 		"@types/jest": "^26.0.19",
-		"@types/select2": "^4.0.53",
 		"@typescript-eslint/eslint-plugin": "^4.11.1",
 		"@typescript-eslint/parser": "^4.11.1",
 		"dompurify": "^2.2.7",
