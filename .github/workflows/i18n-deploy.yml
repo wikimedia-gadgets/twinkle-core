@@ -1,0 +1,45 @@
+name: i18n-deploy
+
+on:
+  # Every day at 2 AM UTC
+  schedule:
+    - 0 2 * * *
+  workflow_dispatch:
+
+jobs:
+  i18n-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Sanitise strings
+      - run: node scripts/build-i18n
+
+      - name: Commit changes in i18n branch
+        run: >-
+          git checkout i18n
+          git config --local user.email "twinkle_bot@github.com"
+          git config --local user.name "twinkle_bot"
+          git add build-i18n
+          git diff-index --quiet HEAD || git commit -m "Building i18n files"
+
+      - name: Push to GitHub
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          github_token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          branch: i18n
+
+      - name: Push to Gerrit
+        run: >-
+          mkdir -p ~/.ssh
+          echo -e "$GERRIT_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          git remote add gerrit "ssh://$GERRIT_USER@gerrit.wikimedia.org:29418/mediawiki/gadgets/TwinkleCore"
+          git push gerrit master
+          rm ~/.ssh/id_rsa
+        env:
+          GERRIT_USER: ${{secrets.GERRIT_USER}}
+          GERRIT_KEY: ${{secrets.GERRIT_KEY}}
