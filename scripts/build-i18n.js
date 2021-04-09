@@ -62,7 +62,7 @@ DOMPurify.addHook("uponSanitizeElement", (currentNode, data, config) => {
 				config.fileName
 			)}: ${code(
 				currentNode.outerHTML || currentNode.textContent
-			)}. See https://translatewiki.net/wiki/Wikimedia:Twinkle-core-${config.stringName}/${config.lang}`
+			)}. See https://translatewiki.net/wiki/Wikimedia:Twinkle-${config.stringName}/${config.lang}`
 		);
 	}
 });
@@ -74,77 +74,73 @@ DOMPurify.addHook("uponSanitizeAttribute", (currentNode, hookEvent, config) => {
 				config.fileName
 			)}: ${code(hookEvent.attrName)} with value "${
 				hookEvent.attrValue
-			}". See https://translatewiki.net/wiki/Wikimedia:Twinkle-core-${config.stringName}/${config.lang}`
+			}". See https://translatewiki.net/wiki/Wikimedia:Twinkle-${config.stringName}/${config.lang}`
 		);
 	}
 });
 
 fs.readdirSync("./i18n/").forEach((fileName) => {
-	if (path.extname(fileName) === ".json" && fileName !== "qqq.json") {
-		const [, lang] = path.basename(fileName).match(/^(.+)\.json$/) || [];
-		const strings = JSON.parse(fs.readFileSync(`./i18n/${fileName}`).toString());
-		Object.keys(strings)
-			.filter((name) => typeof strings[name] === "string")
-			.forEach((stringName) => {
-				const hidden = [];
-				let sanitized = hideText(
-					strings[stringName],
-					/<nowiki(?: [\w ]+(?:=[^<>]+?)?| *)>([^]*?)<\/nowiki *>/g,
-					hidden
-				);
+	if (!(path.extname(fileName) === '.json' && fileName !== 'qqq.json')) {
+		return;
+	}
+	const [, lang] = path.basename(fileName).match(/^(.+)\.json$/) || [];
+	const strings = JSON.parse(fs.readFileSync(`./i18n/${fileName}`).toString());
+	Object.keys(strings)
+		.filter((name) => typeof strings[name] === 'string')
+		.forEach((stringName) => {
+			const hidden = [];
+			let sanitized = hideText(strings[stringName], /<nowiki(?: [\w ]+(?:=[^<>]+?)?| *)>([^]*?)<\/nowiki *>/g, hidden);
 
-				sanitized = DOMPurify.sanitize(sanitized, {
-					ALLOWED_TAGS,
-					ALLOWED_ATTR: ["class", "dir", "href", "target"],
-					ALLOW_DATA_ATTR: false,
-					fileName,
-					stringName,
-					lang,
-				});
+			sanitized = DOMPurify.sanitize(sanitized, {
+				ALLOWED_TAGS,
+				ALLOWED_ATTR: ['class', 'dir', 'href', 'target'],
+				ALLOW_DATA_ATTR: false,
+				fileName,
+				stringName,
+				lang,
+			});
 
-				sanitized = unhideText(sanitized, hidden);
+			sanitized = unhideText(sanitized, hidden);
 
-				// Just in case dompurify or jsdom gets outdated or the repository gets compromised, we will
-				// just manually check that only allowed tags are present.
-				for (const [, tagName] of sanitized.matchAll(/<(\w+)/g)) {
-					if (!ALLOWED_TAGS.includes(tagName.toLowerCase())) {
-						warning(
-							`Disallowed tag ${code(tagName)} found in ${keyword(fileName)} at the late stage: ${keyword(
-								sanitized
-							)}. The string has been removed altogether.`
-						);
-						delete strings[stringName];
-						return;
-					}
-				}
-
-				// The same with suspicious strings containing what seems like the "javascript:" prefix or
-				// one of the "on..." attributes.
-				let test = sanitized.replace(/&\w+;|\s+/g, "");
-				if (/javascript:/i.test(test) || /\bon\w+\s*=/i.test(sanitized)) {
+			// Just in case dompurify or jsdom gets outdated or the repository gets compromised, we will
+			// just manually check that only allowed tags are present.
+			for (const [, tagName] of sanitized.matchAll(/<(\w+)/g)) {
+				if (!ALLOWED_TAGS.includes(tagName.toLowerCase())) {
 					warning(
-						`Suspicious code found in ${keyword(fileName)} at the late stage: ${keyword(
+						`Disallowed tag ${code(tagName)} found in ${keyword(fileName)} at the late stage: ${keyword(
 							sanitized
 						)}. The string has been removed altogether.`
 					);
 					delete strings[stringName];
 					return;
 				}
+			}
 
-				strings[stringName] = sanitized;
-			});
-		let json = JSON.stringify(strings, null, "\t")
-			.replace(/&nbsp;/g, " ")
-			.replace(/&#32;/g, " ");
+			// The same with suspicious strings containing what seems like the "javascript:" prefix or
+			// one of the "on..." attributes.
+			let test = sanitized.replace(/&\w+;|\s+/g, '');
+			if (/javascript:/i.test(test) || /\bon\w+\s*=/i.test(sanitized)) {
+				warning(
+					`Suspicious code found in ${keyword(fileName)} at the late stage: ${keyword(
+						sanitized
+					)}. The string has been removed altogether.`
+				);
+				delete strings[stringName];
+				return;
+			}
 
-		if (lang === "en") {
-			// Prevent creating "</nowiki>" character sequences when building the main script file.
-			json = json.replace(/<\/nowiki>/g, '</" + String("") + "nowiki>');
-		}
-
-		fs.mkdirSync("build/i18n", { recursive: true });
-		fs.writeFileSync(`build/i18n/${lang}.json`, json);
+			strings[stringName] = sanitized;
+		});
+	let json = JSON.stringify(strings, null, '\t')
+		.replace(/&nbsp;/g, ' ')
+		.replace(/&#32;/g, ' ');
+	if (lang === 'en') {
+		// Prevent creating "</nowiki>" character sequences when building the main script file.
+		json = json.replace(/<\/nowiki>/g, '</" + String("") + "nowiki>');
 	}
+
+	fs.mkdirSync('build-i18n', { recursive: true });
+	fs.writeFileSync(`build-i18n/${lang}.json`, json);
 });
 
 console.log("Internationalization files have been built successfully.");
