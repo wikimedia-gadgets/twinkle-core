@@ -1,4 +1,10 @@
 {
+	"@metadata": {
+		"authors": [
+			"Siddharth VP"
+		]
+	},
+
 	"info": "Short label for an informational message",
 	"warn": "Short label for a warning message",
 	"error": "Short label for an error message",

@@ -163,15 +163,15 @@ export class XfdCore extends TwinkleModule {
 			preferences: [
 				{
 					name: 'logXfdNominations',
-					label: msg('pref-logXfdNominations-label'),
-					helptip: msg('pref-logXfdNominations-tooltip'),
+					label: msg('pref-logxfdnominations-label'),
+					helptip: msg('pref-logxfdnominations-tooltip'),
 					type: 'boolean',
 					default: false,
 				},
 				{
 					name: 'xfdLogPageName',
-					label: msg('pref-xfdLogPageName-label'),
-					helptip: msg('pref-xfdLogPageName-tooltip'),
+					label: msg('pref-xfdlogpagename-label'),
+					helptip: msg('pref-xfdlogpagename-tooltip'),
 					type: 'string',
 					default: 'XfD log',
 				},
@@ -180,8 +180,8 @@ export class XfdCore extends TwinkleModule {
 				// The watchlist setting of the page being nominated for XfD.
 				{
 					name: 'xfdWatchPage',
-					label: msg('pref-xfdWatchPage-label'),
-					helptip: msg('pref-xfdWatchPage-tooltip'),
+					label: msg('pref-xfdwatchpage-label'),
+					helptip: msg('pref-xfdwatchpage-tooltip'),
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
 					default: 'default',
@@ -192,8 +192,8 @@ export class XfdCore extends TwinkleModule {
 				// pages for each nomination), or the list page for the other processes.
 				{
 					name: 'xfdWatchDiscussion',
-					label: msg('pref-xfdWatchDiscussion-label'),
-					helptip: msg('pref-xfdWatchDiscussion-tooltip'),
+					label: msg('pref-xfdwatchdiscussion-label'),
+					helptip: msg('pref-xfdwatchdiscussion-tooltip'),
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
 					default: 'default',
@@ -203,8 +203,8 @@ export class XfdCore extends TwinkleModule {
 				// The watchlist setting of the XfD list page, *if* the discussion is on a separate page.
 				{
 					name: 'xfdWatchList',
-					label: msg('pref-xfdWatchList-label'),
-					helptip: msg('pref-xfdWatchList-tooltip'),
+					label: msg('pref-xfdwatchlist-label'),
+					helptip: msg('pref-xfdwatchlist-tooltip'),
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
 					default: 'no',
@@ -214,8 +214,8 @@ export class XfdCore extends TwinkleModule {
 				// The watchlist setting of the user talk page if they receive a notification.
 				{
 					name: 'xfdWatchUser',
-					label: msg('pref-xfdWatchUser-label'),
-					helptip: msg('pref-xfdWatchUser-tooltip'),
+					label: msg('pref-xfdwatchuser-label'),
+					helptip: msg('pref-xfdwatchuser-tooltip'),
 					type: 'enum',
 					enumValues: Config.watchlistEnums,
 					default: 'default',
