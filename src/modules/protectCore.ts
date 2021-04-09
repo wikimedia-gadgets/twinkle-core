@@ -4,6 +4,7 @@ import { Dialog } from '../Dialog';
 import {
 	arr_includes,
 	isTextRedirect,
+	link,
 	LogEvent,
 	makeTemplate,
 	obj_entries,
@@ -1385,8 +1386,4 @@ export abstract class ProtectCore extends TwinkleModule {
 			}
 		});
 	}
-}
-
-function link(displaytext: string, title: string, params?: any) {
-	return `<a target="_blank" href="${mw.util.getUrl(title, params)}">${displaytext}</a>`;
 }
