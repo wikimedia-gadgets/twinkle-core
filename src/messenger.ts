@@ -185,7 +185,7 @@ function loadTwinkleCoreMessages() {
 		return Promise.resolve();
 	}
 	$.get({
-		url: `//gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/gadgets/TwinkleCore/+/master/i18n/${language}.json?format=text`,
+		url: `//gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/gadgets/TwinkleCore/+/i18n/build-i18n/${language}.json?format=text`,
 		// XXX: fetch fails due to CORS issue if we add the Cache-Control header, WTF?
 		// headers: {
 		// 	'Cache-Control': 'maxage=864000',
