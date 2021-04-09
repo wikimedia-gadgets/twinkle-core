@@ -81,13 +81,6 @@ export abstract class WarnCore extends TwinkleModule {
 		}
 	}
 
-	footerlinks = {
-		'Choosing a warning level': 'WP:UWUL#Levels',
-		'Warn prefs': 'WP:TW/PREF#warn',
-		'Twinkle help': 'WP:TW/DOC#warn',
-		'Give feedback': 'WT:TW',
-	};
-
 	makeWindow() {
 		super.makeWindow();
 		if (
@@ -245,7 +238,7 @@ export abstract class WarnCore extends TwinkleModule {
 	getWarningGroups(): Array<quickFormElementData> {
 		const defaultGroupPref = parseInt(getPref('defaultWarningGroup'), 10);
 		return obj_entries(this.warningLevels)
-			.filter(([value, config]) => {
+			.filter(([, config]) => {
 				// if config.visible function is not defined, level should be visible,
 				// if it is defined, level should be visible only if the function returns true
 				return !config.visible || config.visible();
@@ -276,7 +269,7 @@ export abstract class WarnCore extends TwinkleModule {
 			}));
 		} else if (newlevel === 'kitchensink') {
 			list = [];
-			for (let [level, warningList] of obj_entries(this.warnings)) {
+			for (let [, warningList] of obj_entries(this.warnings)) {
 				if (Array.isArray(warningList.list)) {
 					// make list of options
 					list.push({
@@ -432,22 +425,7 @@ export abstract class WarnCore extends TwinkleModule {
 	 * Add some notices for the Twinkle user when they select specific templates to use
 	 */
 	perWarningNotices(template): JQuery {
-		switch (template) {
-			case 'uw-username':
-				return $(
-					"<div style='color: red;' id='tw-warn-red-notice'>{{uw-username}} should <b>not</b> be used for <b>blatant</b> username policy violations. " +
-						"Blatant violations should be reported directly to UAA (via Twinkle's ARV tab). " +
-						'{{uw-username}} should only be used in edge cases in order to engage in discussion with the user.</div>'
-				);
-			case 'uw-coi-username':
-				return $(
-					"<div style='color: red;' id='tw-warn-red-notice'>{{uw-coi-username}} should <b>not</b> be used for <b>blatant</b> username policy violations. " +
-						"Blatant violations should be reported directly to UAA (via Twinkle's ARV tab). " +
-						'{{uw-coi-username}} should only be used in edge cases in order to engage in discussion with the user.</div>'
-				);
-			default:
-				return $();
-		}
+		return $();
 	}
 
 	getWarningWikitext(templateName, article, reason, isCustom) {
