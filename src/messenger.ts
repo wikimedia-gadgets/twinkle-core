@@ -1,8 +1,9 @@
 import Banana, { Messages } from 'orange-i18n';
-import messages from '../i18n/en.json';
-import MWMessageList from './mw-messages';
 import { obj_entries, urlParamValue } from './utils';
 import { Twinkle } from './twinkle';
+
+import MWMessageList from './mw-messages';
+import enMessages from '../i18n/en.json';
 
 /**
  * Orange-i18n object
@@ -50,7 +51,7 @@ const i18nParserPlugins = {
 	ns(nodes) {
 		var ns = String(nodes[0]).trim();
 		if (!/^\d+$/.test(ns)) {
-			ns = mw.config.get('wgNamespaceIds')[ns.replace(/ /g, '_').toLowerCase()];
+			ns = String(mw.config.get('wgNamespaceIds')[ns.replace(/ /g, '_').toLowerCase()]);
 		}
 		ns = mw.config.get('wgFormattedNamespaces')[ns];
 		return ns || '';
@@ -97,6 +98,8 @@ export function addMessages(messages: Messages) {
  * @param msg - the message name
  * @param parameters - the parameters for $1, $2, ... substitutions
  */
+// type of msg must be "string", however switching it to "keyof typeof messages"
+// is convenient during development for IDE tooling
 export function msg(msg: string, ...parameters: (string | number | string[])[]) {
 	if (!banana) {
 		// this will come up when msg() is accidentally used at the top level of code
@@ -132,7 +135,10 @@ export function initMessaging() {
 	}
 
 	// Populate default English messages, final fallback
-	addMessages(messages);
+	// @ts-ignore this can be disabled through a build-stage variable injected by webpack's DefinePlugin
+	if (typeof EXCLUDE_ENGLISH_MESSAGES === 'undefined' || !EXCLUDE_ENGLISH_MESSAGES) {
+		addMessages(enMessages);
+	}
 	return Promise.all([loadMediaWikiMessages(MWMessageList), loadTwinkleCoreMessages()])
 		.catch((e) => {
 			mw.notify('Failed to load messages needed for Twinkle', { type: 'error' });
@@ -175,6 +181,7 @@ function loadMediaWikiMessages(msgList: string[]) {
  */
 function loadTwinkleCoreMessages() {
 	if (language === 'en') {
+		// English messages are already available as the final fallback
 		return Promise.resolve();
 	}
 	$.get({
