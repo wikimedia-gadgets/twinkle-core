@@ -173,7 +173,7 @@ function loadMediaWikiMessages(msgList: string[]) {
 				})
 		);
 	}
-	return $.when.apply(null, promises);
+	return Promise.all(promises);
 }
 
 /**

@@ -48,32 +48,24 @@ export function init() {
 
 				userDisabledModules = userDisabledModules.concat(getPref('disabledModules'), getPref('disabledSysopModules'));
 
-				return $.when.apply(
-					null,
-					Twinkle.preModuleInitHooksWithConfig.map((func) => func())
-				);
+				return Promise.all(Twinkle.preModuleInitHooksWithConfig.map((func) => func()));
 			});
 		}
 	);
 
-	$.when
-		.apply(
-			null,
-			Twinkle.preModuleInitHooks.map((func) => func())
-		)
-		.then(() => {
-			mw.hook('twinkle.preModuleInit').fire();
+	Promise.all(Twinkle.preModuleInitHooks.map((func) => func())).then(() => {
+		mw.hook('twinkle.preModuleInit').fire();
 
-			for (let module of Twinkle.registeredModules) {
-				registerModule(module);
-			}
+		for (let module of Twinkle.registeredModules) {
+			registerModule(module);
+		}
 
-			// Hide the lingering space if the TW menu is empty
-			if (mw.config.get('skin') === 'vector' && getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
-				$('#p-cactions').css('margin-right', 'initial');
-			}
+		// Hide the lingering space if the TW menu is empty
+		if (mw.config.get('skin') === 'vector' && getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
+			$('#p-cactions').css('margin-right', 'initial');
+		}
 
-			// Has any effect only on WP:TWPREF
-			Config.init();
-		});
+		// Has any effect only on WP:TWPREF
+		Config.init();
+	});
 }
