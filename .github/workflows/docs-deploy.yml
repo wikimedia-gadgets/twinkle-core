@@ -39,11 +39,11 @@ jobs:
   versiondocs:
     needs: deploydocs
     runs-on: ubuntu-latest
-    if: ${{github.event_name}} == 'release'
+    if: ${{ github.event_name == 'release' }}
     steps:
       - uses: actions/checkout@v2
       - name: Read package.json version
-        uses: dutscher/read-package-json-endpoint-actions@v1.3.37
+        uses: martinbeentjes/npm-get-version-action@master
         id: get-version
       - name: Save the documentation with version number
         uses: garygrossgarten/github-action-ssh@2b10f41b5a33808f6d24eafd253296766308b7c4
@@ -59,4 +59,4 @@ jobs:
           username: ${{ secrets.TOOLFORGE_USERNAME }}
           privateKey: ${{ secrets.TOOLFORGE_PRIVATE_KEY }}
         env:
-          VERSION: ${{ steps.get-version.outputs.endpoint }}
+          VERSION: ${{ steps.get-version.outputs.current-version }}
