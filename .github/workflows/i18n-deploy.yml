@@ -1,4 +1,4 @@
-name: i18n-deploy
+name: i18n deploy
 
 on:
   # Every day at 2 AM UTC
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  i18n-deploy:
+  deployi18n:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
