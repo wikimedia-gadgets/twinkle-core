@@ -7,27 +7,31 @@ import { getPref } from '../Config';
  * "Fluff" module is used for reverting vandalism. It offers several types of
  * revert modes.
  *
- * Localisation: You may wish to customise {@link trustedBots}. Apart from that,
- * this module should work without any further configuration.
+ * Localisation: You may wish to customise {@link trustedBots} and {@link hiddenName}.
+ * Apart from that, this module should work without any further configuration.
  */
 class Fluff extends TwinkleModule {
 	moduleName = 'fluff';
 	static moduleName = 'fluff';
 
-	// A list of usernames, usually only bots, that vandalism revert is jumped
-	// over; that is, if vandalism revert was chosen on such username, then its
-	// target is on the revision before.  This is for handling quick bots that
-	// makes edits seconds after the original edit is made.  This only affects
-	// vandalism rollback; for good faith rollback, it will stop, indicating a bot
-	// has no faith, and for normal rollback, it will rollback that edit.
+	/**
+	 * A list of usernames, usually only bots, that vandalism revert is jumped
+	 * over; that is, if vandalism revert was chosen on such username, then its
+	 * target is on the revision before. This is for handling quick bots that
+	 * makes edits seconds after the original edit is made. This only affects
+	 * vandalism rollback; for good faith rollback, it will stop, indicating a bot
+	 * has no faith, and for normal rollback, it will rollback that edit.
+	 */
 	trustedBots: string[];
+
+	/**
+	 * String to insert in edit summary in place of the username when the username
+	 * is revdeled or suppressed.
+	 */
+	hiddenName = 'an unknown user';
 
 	skipTalk = null;
 	rollbackInPlace = null;
-
-	// String to insert when a username is hidden
-	hiddenName: string;
-
 	flaggedRevsEnabled = !!mw.loader.moduleRegistry['ext.flaggedRevs.basic'];
 
 	// Consolidated construction of fluff links

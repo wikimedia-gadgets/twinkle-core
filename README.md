@@ -15,7 +15,8 @@ Twinkle-core uses [orange-i18n](https://github.com/wikimedia-gadgets/orange-i18n
 - Set up an IDE or code editor to work with JS/TS. Popular choices include Visual Studio Code or one of the JetBrains IDEs if you have a licence (JetBrains offers free licenses to [MediaWiki contributors](https://www.mediawiki.org/wiki/JetBrains_IDEs) and [students](https://www.jetbrains.com/community/education/#students)). If you are a command line veteran, check out [TypeScript for Vim](https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript/) or [emacs](https://wikemacs.org/wiki/TypeScript)!
 - See [the integrated development workflow](https://github.com/wikimedia/wvui#integrated-development-workflow) to work on twinkle-core while developing or testing a localised twinkle installation. The linked resource is from another repo – replace "WVUI" with "twinkle-core".
   - This method doesn't appear to work reliably. If that's the case, please just clone the two repos and import the core from the other. 
-- Please see [twinkle-enwiki](https://github.com/wikimedia-gadgets/twinkle-starter) for more detailed contributing guidelines.
+- Please see [twinkle-enwiki](https://github.com/wikimedia-gadgets/twinkle-starter) for more detailed development/debugging guidelines.
+- Try to ensure all documentation comments align with the [TSDoc standard](https://tsdoc.org/), and [what Typedoc supports](https://typedoc.org/guides/doccomments/).
 
 ## Workflows
 

@@ -531,6 +531,7 @@ export abstract class TagMode {
 	 * Validate input. Return a string in case of issues; this string is used as the message for a browser prompt().
 	 * Return nothing if all inputs are valid. Use {@link validateInput} for customisation.
 	 * @internal
+	 * @sealed
 	 */
 	checkInputs(): string | void {
 		// Check if any tag is selected or if any already present tag is deselected
