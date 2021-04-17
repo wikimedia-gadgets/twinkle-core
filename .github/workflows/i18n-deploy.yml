@@ -15,7 +15,7 @@ jobs:
           node-version: 14
 
       - name: Sanitise strings
-      - run: node scripts/build-i18n
+        run: node scripts/build-i18n
 
       - name: Commit changes in i18n branch
         run: >-
