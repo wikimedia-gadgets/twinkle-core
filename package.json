@@ -1,13 +1,13 @@
 {
 	"title": "Twinkle core",
 	"name": "twinkle-core",
-	"version": "3.0.4-beta",
+	"version": "3.0.5-beta",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/wikimedia-gadgets/twinkle-core"
 	},
-	"main": "./build/index.js",
-	"types": "./build/index.d.ts",
+	"main": "./build/src/index.js",
+	"types": "./build/src/index.d.ts",
 	"type": "module",
 	"scripts": {
 		"format": "prettier --write .",
