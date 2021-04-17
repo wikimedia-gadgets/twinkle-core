@@ -39,7 +39,7 @@ jobs:
   versiondocs:
     needs: deploydocs
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'release' }}
+    if: ${{github.event_name == 'release'}}
     steps:
       - uses: actions/checkout@v2
       - name: Read package.json version
@@ -50,10 +50,10 @@ jobs:
         with:
           command: >-
             become twinkle bash -c '
-              cd /data/project/twinkle/www/static
-              cp -r core-docs "core-docs-$VERSION"/
-              cd /data/project/twinkle/public_html
-              cp -r core-docs "core-docs-$VERSION"
+              cd /data/project/twinkle/www/static;
+              cp -r core-docs "core-docs-$VERSION";
+              cd /data/project/twinkle/public_html;
+              cp -r core-docs "core-docs-$VERSION";
             '
           host: login.toolforge.org
           username: ${{ secrets.TOOLFORGE_USERNAME }}
