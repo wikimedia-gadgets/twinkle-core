@@ -1,0 +1,6 @@
+{
+	"tsconfig": "./tsconfig.json",
+	"entryPoints": ["./src/index.ts"],
+	"readme": "none",
+	"out": "./docs"
+}

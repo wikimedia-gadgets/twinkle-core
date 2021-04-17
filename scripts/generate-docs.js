@@ -9,35 +9,21 @@
 
 // @ts-check
 
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-const __dirname = dirname(fileURLToPath(import.meta.url))
+import td from 'typedoc';
+import ts from 'typescript';
 
-import td from 'typedoc'
-import ts from 'typescript'
-
-const app = new td.Application()
+const app = new td.Application();
 // For reading typedoc.json - optional
-app.options.addReader(new td.TypeDocReader())
+app.options.addReader(new td.TypeDocReader());
 // For reading tsconfig.json - essential
-app.options.addReader(new td.TSConfigReader())
+app.options.addReader(new td.TSConfigReader());
 
-app.bootstrap({
-	// can put other options here too, or in typedoc.json/tsconfig.json
-	tsconfig: __dirname + '/../tsconfig.json',
-	entryPoints: [__dirname + '/../src/index.ts'],
-})
+app.bootstrap();
 
-const program = ts.createProgram(
-	app.options.getFileNames(),
-	app.options.getCompilerOptions(),
-)
+const program = ts.createProgram(app.options.getFileNames(), app.options.getCompilerOptions());
 
 // Application.convert checks for compiler errors here.
 
-const project = app.converter.convert(
-	app.expandInputFiles(app.options.getValue('entryPoints')),
-	program,
-)
+const project = app.converter.convert(app.expandInputFiles(app.options.getValue('entryPoints')), program);
 
-app.generateDocs(project, __dirname + '/../docs')
+app.generateDocs(project, app.options.getValue('out'));
