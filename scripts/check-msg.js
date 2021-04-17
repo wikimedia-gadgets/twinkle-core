@@ -13,6 +13,12 @@ import fs from 'fs/promises';
 import path from 'path';
 import { mwn } from 'mwn';
 
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const repoRoot = __dirname + '/../';
+
 async function readFile(path) {
 	return (await fs.readFile(path)).toString();
 }
@@ -30,7 +36,7 @@ async function getCodes(dir) {
 }
 
 async function parseMwMessages() {
-	let code = await readFile('./src/mw-messages.ts');
+	let code = await readFile(repoRoot + 'src/mw-messages.ts');
 	return eval(code.slice(code.indexOf('[')));
 }
 
@@ -42,7 +48,7 @@ function error(note) {
 }
 
 (async () => {
-	const messages = JSON.parse(await readFile('./i18n/en.json'));
+	const messages = JSON.parse(await readFile(repoRoot + 'i18n/en.json'));
 	delete messages['@metadata'];
 	const mwMessageNames = await parseMwMessages();
 	const bot = new mwn({ apiUrl: 'https://en.wikipedia.org/w/api.php' });
@@ -53,7 +59,7 @@ function error(note) {
 	const messageUsages = Object.fromEntries(Object.keys(messages).map((m) => [m, 0]));
 	const mwMessageUsages = Object.fromEntries(mwMessageNames.map((m) => [m, 0]));
 
-	const code = (await getCodes('./src')) + (await getCodes('./src/modules'));
+	const code = (await getCodes(repoRoot + 'src')) + (await getCodes(repoRoot + 'src/modules'));
 
 	// this regex relies on the fact that all msg() usages are simple.
 	// use of any logic for coming up with message key inside msg( ... ) parens
