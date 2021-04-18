@@ -325,6 +325,16 @@ export abstract class TagMode {
 		this.parseExistingTags();
 		this.makeExistingTagList(this.scrollbox);
 		this.makeTagList(this.scrollbox);
+
+		const customTags = getPref(this.getCustomTagPrefName());
+		if (customTags && customTags.length) {
+			this.scrollbox.append({ type: 'header', label: 'Custom tags' });
+			this.scrollbox.append({ type: 'checkbox', name: 'tags', list: customTags });
+		}
+	}
+
+	getCustomTagPrefName(): string {
+		return 'custom' + Morebits.string.toUpperCaseFirstChar(this.name) + 'TagList';
 	}
 
 	/**
