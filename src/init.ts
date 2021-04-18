@@ -12,7 +12,8 @@ import { registerModule } from './twinkleModule';
 export let userDisabledModules: string[] = [];
 
 /**
- * Initialise Twinkle
+ * Initialise Twinkle. This must be called AFTER all configurations in
+ * Twinkle.* and SiteConfig.* have been defined.
  */
 export function init() {
 	// Quick bail on special pages where no modules are active
