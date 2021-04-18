@@ -2,21 +2,17 @@
  * Script to check that no messages are used in the code are undefined,
  * and that all defined messages are actually used. Also flags use of parameters
  * for messages with no parameters and vice-versa.
- * Requires Node.js v13 or above.
+ *
  * Run as:
  * 	node check-msg.js
  * Or via grunt as
  * 	grunt exec:check_msg
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { mwn } from 'mwn';
+const fs = require('fs/promises');
+const path = require('path');
+const { mwn } = require('mwn');
 
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = __dirname + '/../';
 
 async function readFile(path) {

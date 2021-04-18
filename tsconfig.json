@@ -8,9 +8,8 @@
       "es2015.collection"
       // Only Map and Set from this are supported in IE 11.
     ],
-    "outDir": "./build",
+    "outDir": "./js",
     "sourceMap": true,
-    "declaration": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "newLine": "lf",

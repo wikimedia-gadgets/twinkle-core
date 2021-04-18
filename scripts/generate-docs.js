@@ -9,8 +9,8 @@
 
 // @ts-check
 
-import td from 'typedoc';
-import ts from 'typescript';
+const td = require('typedoc');
+const ts = require('typescript');
 
 const app = new td.Application();
 // For reading typedoc.json - optional

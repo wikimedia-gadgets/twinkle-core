@@ -6,13 +6,13 @@
  * Licence: MIT
  */
 
-import fs from "fs";
-import path from "path";
-import chalk from "chalk";
-import createDOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+const fs = require('fs');
+const path = require('path');
+const chalk = require('chalk');
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
 
-const window = new JSDOM("").window;
+const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 const warning = (text) => console.log(chalk.yellowBright(text));
@@ -20,30 +20,30 @@ const code = chalk.inverse;
 const keyword = chalk.cyan;
 
 const ALLOWED_TAGS = [
-	"b",
+	'b',
 
 	// Haven't met in practice yet, but perhaps these tags could be helpful for RTL languages?
-	"bdi",
-	"bdo",
+	'bdi',
+	'bdo',
 
-	"code",
-	"em",
-	"i",
-	"kbd",
-	"li",
-	"nowiki",
-	"ol",
-	"p",
-	"pre",
-	"span",
-	"strong",
-	"syntaxhighlight",
-	"ul",
-	"var",
+	'code',
+	'em',
+	'i',
+	'kbd',
+	'li',
+	'nowiki',
+	'ol',
+	'p',
+	'pre',
+	'span',
+	'strong',
+	'syntaxhighlight',
+	'ul',
+	'var',
 ];
 
 function hideText(text, regexp, hidden) {
-	return text.replace(regexp, (s) => "\x01" + hidden.push(s) + "\x02");
+	return text.replace(regexp, (s) => '\x01' + hidden.push(s) + '\x02');
 }
 
 function unhideText(text, hidden) {
@@ -54,8 +54,8 @@ function unhideText(text, hidden) {
 	return text;
 }
 
-DOMPurify.addHook("uponSanitizeElement", (currentNode, data, config) => {
-	if (!Object.keys(data.allowedTags).includes(data.tagName) && data.tagName !== "body") {
+DOMPurify.addHook('uponSanitizeElement', (currentNode, data, config) => {
+	if (!Object.keys(data.allowedTags).includes(data.tagName) && data.tagName !== 'body') {
 		// `< /li>` qualifies as "#comment" and has content available under `currentNode.textContent`.
 		warning(
 			`Disallowed tag found and sanitized in string "${keyword(config.stringName)}" in ${keyword(
@@ -67,7 +67,7 @@ DOMPurify.addHook("uponSanitizeElement", (currentNode, data, config) => {
 	}
 });
 
-DOMPurify.addHook("uponSanitizeAttribute", (currentNode, hookEvent, config) => {
+DOMPurify.addHook('uponSanitizeAttribute', (currentNode, hookEvent, config) => {
 	if (!Object.keys(hookEvent.allowedAttributes).includes(hookEvent.attrName)) {
 		warning(
 			`Disallowed attribute found and sanitized in string "${keyword(config.stringName)}" in ${keyword(
@@ -79,7 +79,7 @@ DOMPurify.addHook("uponSanitizeAttribute", (currentNode, hookEvent, config) => {
 	}
 });
 
-fs.readdirSync("./i18n/").forEach((fileName) => {
+fs.readdirSync('./i18n/').forEach((fileName) => {
 	if (!(path.extname(fileName) === '.json' && fileName !== 'qqq.json')) {
 		return;
 	}
@@ -143,4 +143,4 @@ fs.readdirSync("./i18n/").forEach((fileName) => {
 	fs.writeFileSync(`build-i18n/${lang}.json`, json);
 });
 
-console.log("Internationalization files have been built successfully.");
+console.log('Internationalization files have been built successfully.');
