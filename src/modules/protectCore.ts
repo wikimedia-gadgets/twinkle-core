@@ -585,9 +585,9 @@ export abstract class ProtectCore extends TwinkleModule {
 				field2.append({
 					type: 'input',
 					event: this.annotateProtectReason.bind(this),
-					label: msg('request-revid-label'),
+					label: msg('request-revid-label', this.requestPageAcronym),
 					name: 'protectReason_notes_rfppRevid',
-					tooltip: msg('request-revid-tooltip'),
+					tooltip: msg('request-revid-tooltip', this.requestPageAcronym),
 				});
 				if (!this.canTag()) {
 					// tagging isn't relevant for non-existing or module pages
