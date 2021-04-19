@@ -1,5 +1,9 @@
 import { SiteConfig } from './siteConfig';
 
+/**
+ * Type representing a log event from ApiQueryLogEvents
+ * (action=query&list=logevents)
+ */
 export type LogEvent = {
 	logid: number;
 	ns: number;
@@ -30,6 +34,10 @@ export function makeArray<T>(obj: T | Array<T> | undefined | null): Array<T> {
 	return [obj];
 }
 
+/**
+ * Check if page is a redirect given the page text.
+ * @param text
+ */
 export function isTextRedirect(text: string): boolean {
 	return SiteConfig.redirectTagAliases
 		.map((str) => {
@@ -81,13 +89,17 @@ export function link(displaytext: string, title: string, params?: any) {
 	return `<a target="_blank" href="${mw.util.getUrl(title, params)}">${displaytext}</a>`;
 }
 
-// Used in batch, unlink, and deprod to sort pages by namespace, as
-// json formatversion=2 sorts by pageid instead (#1251)
+/**
+ * Used in batch, unlink, and deprod to sort pages by namespace, as
+ * json formatversion=2 sorts by pageid instead (#1251)
+ */
 export function sortByNamespace(first, second) {
 	return first.ns - second.ns || (first.title > second.title ? 1 : -1);
 }
 
-// Used in batch listings to link to the page in question with >
+/**
+ * Used in batch listings to link to the page in question with >
+ */
 export function generateArrowLinks(checkbox: HTMLInputElement) {
 	var link = Morebits.htmlNode('a', ' >');
 	link.setAttribute('class', 'tw-arrowpage-link');
@@ -96,7 +108,9 @@ export function generateArrowLinks(checkbox: HTMLInputElement) {
 	checkbox.nextElementSibling.append(link);
 }
 
-// Used in deprod and unlink listings to link the page title
+/**
+ * Used in deprod and unlink listings to link the page title
+ */
 export function generateBatchPageLinks(checkbox: HTMLInputElement) {
 	var $checkbox = $(checkbox);
 	var link = Morebits.htmlNode('a', $checkbox.val() as string);
@@ -131,16 +145,28 @@ export function makeTemplate(name: string, parameters: Record<string | number, s
 
 // Non-polluting shims for common ES6 functions
 
+/**
+ * Shim for Object.values
+ * @param obj
+ */
 export function obj_values<T>(obj: { [s: string]: T } | ArrayLike<T>): T[] {
 	// @ts-ignore
 	return Object.values ? Object.values(obj) : Object.keys(obj).map((k) => obj[k]);
 }
 
+/**
+ * Shim for Object.entries
+ * @param obj
+ */
 export function obj_entries<T>(obj: { [s: string]: T } | ArrayLike<T>): [string, T][] {
 	// @ts-ignore
 	return Object.entries ? Object.entries(obj) : Object.keys(obj).map((k) => [k, obj[k]]);
 }
 
+/**
+ * Shim for Object.fromEntries
+ * @param entries
+ */
 export function obj_fromEntries<T>(entries: [string, T][]): Record<string, T> {
 	// @ts-ignore
 	if (Object.fromEntries) {
@@ -154,14 +180,29 @@ export function obj_fromEntries<T>(entries: [string, T][]): Record<string, T> {
 	return obj;
 }
 
+/**
+ * Shim for Array.prototype.includes
+ * @param arr
+ * @param item
+ */
 export function arr_includes<T>(arr: Array<T>, item: T): boolean {
 	return arr.indexOf(item) !== -1;
 }
 
+/**
+ * Shim for Array.prototype.find
+ * @param arr
+ * @param predicate
+ */
 export function arr_find<T>(arr: Array<T>, predicate: (value: T, index: number, obj: T[]) => boolean) {
 	return Array.prototype.find ? arr.find(predicate) : arr.filter(predicate)[0];
 }
 
+/**
+ * Shim for Array.prototype.flatMap
+ * @param arr
+ * @param callbackfn
+ */
 export function arr_flatMap<T>(
 	arr: Array<T>,
 	callbackfn: (value: T, index: number, array: T[]) => T | ReadonlyArray<T>
@@ -174,15 +215,30 @@ export function arr_flatMap<T>(
 	return arr.map(callbackfn).reduce((previousValue, currentValue) => previousValue.concat(currentValue), []);
 }
 
+/**
+ * Shim for String.prototype.includes
+ * @param str
+ * @param item
+ */
 export function str_includes(str: string, item: string): boolean {
 	return str.indexOf(item) !== -1;
 }
 
+/**
+ * Shim for String.prototype.startsWith
+ * @param str
+ * @param text
+ */
 export function str_startsWith(str: string, text: string): boolean {
 	// @ts-ignore
 	return String.prototype.startsWith ? str.startsWith(text) : str.indexOf(text) === 0;
 }
 
+/**
+ * Shim for String.prototype.endsWith
+ * @param str
+ * @param text
+ */
 export function str_endsWith(str: string, text: string): boolean {
 	// @ts-ignore
 	if (String.prototype.endsWith) {
