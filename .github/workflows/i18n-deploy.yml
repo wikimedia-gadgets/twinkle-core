@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 14
 
+      - run: npm ci
       - name: Sanitise strings
         run: node scripts/build-i18n
 
