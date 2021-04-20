@@ -214,7 +214,7 @@
 	"block-tag": "Add block template to user talk page",
 	"block-tag-tooltip": "Add block template to user talk page",
 	"block-64-field-label": "Convert to /64 rangeblock",
-	"block-64-help": "It's usually fine, if not better, to block the /64 range ([[{{ns:special}}:Contributions/$1|$1]]).",
+	"block-64-help": "It's usually fine, if not better, to block the /64 range ([[Special:Contributions/$1|$1]]).",
 	"block-64-label": "Block the /64 instead",
 	"block-64-template": "Any template issued will go to the original IP: $1",
 	"block-tag-options": "Template options",
