@@ -1,8 +1,11 @@
 name: i18n deploy
 
 on:
-  schedule:
-    - cron: "0 2 * * *"  # Every day at 2 AM UTC
+  push:
+    branches: 
+      - master
+    paths:
+      - 'i18n/**'
   workflow_dispatch:
 
 jobs:
@@ -10,10 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
         with:
-          node-version: 14
-
+          fetch-depth: 0   # all branches
       - run: npm ci
       - name: Sanitise strings
         run: node scripts/build-i18n
