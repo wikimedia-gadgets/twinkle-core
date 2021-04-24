@@ -8,7 +8,7 @@ The [twinkle-starter repository](https://github.com/wikimedia-gadgets/twinkle-st
 
 Documentation for twinkle-core is hosted on Toolforge. Check it out at https://tools-static.wmflabs.org/twinkle/core-docs ([alternative link](https://twinkle.toolforge.org/core-docs)).
 
-Twinkle-core uses [orange-i18n](https://github.com/wikimedia-gadgets/orange-i18n) for internationalisation. A fork of [banana-i18n](https://github.com/wikimedia/banana-i18n), it uses the same format for messages as MediaWiki. Translations will be coordinated via [translatewiki.net](https://translatewiki.net/) (see [phab:T278627](https://phabricator.wikimedia.org/T278627)).
+Twinkle-core uses [orange-i18n](https://github.com/wikimedia-gadgets/orange-i18n) for internationalisation. A fork of [banana-i18n](https://github.com/wikimedia/banana-i18n), it uses the same format for messages as MediaWiki. Translations are coordinated via translatewiki.net. See https://translatewiki.net/wiki/Translating:Twinkle for contributing translations.
 
 ## Contributing
 
@@ -20,7 +20,7 @@ Twinkle-core uses [orange-i18n](https://github.com/wikimedia-gadgets/orange-i18n
 ## Workflows
 
 - On every push to the master branch, the [documentation on Toolforge](https://twinkle.toolforge.org/core-docs) is automatically updated by the [docs-deploy workflow](https://github.com/wikimedia-gadgets/twinkle-core/blob/master/.github/workflows/docs-deploy.yml). 
-- A daily cron job ([i18n-deploy.yml](https://github.com/wikimedia-gadgets/twinkle-core/blob/master/.github/workflows/i18n-deploy.yml)) sanitises new i18n messages synced from translatewiki.net using the [build-i18n script](https://github.com/wikimedia-gadgets/twinkle-core/blob/master/scripts/build-i18n.js) and syncs them to the [i18n branch](https://github.com/wikimedia-gadgets/twinkle-core/tree/i18n) which only contains built i18n messages. This branch is mirrored to the [TwinkleCore Gerrit repository](https://gerrit.wikimedia.org/r/admin/repos/mediawiki%2Fgadgets%2FTwinkleCore). Wikis can fetch i18n messages from Gerrit in a CSP-compliant way.
+- Another workflow ([i18n-deploy.yml](https://github.com/wikimedia-gadgets/twinkle-core/blob/master/.github/workflows/i18n-deploy.yml)) sanitises new i18n messages synced from translatewiki.net using the [build-i18n script](https://github.com/wikimedia-gadgets/twinkle-core/blob/master/scripts/build-i18n.js) and syncs them to the [i18n branch](https://github.com/wikimedia-gadgets/twinkle-core/tree/i18n) which only contains built i18n messages. This branch is mirrored to the [TwinkleCore Gerrit repository](https://gerrit.wikimedia.org/r/admin/repos/mediawiki%2Fgadgets%2FTwinkleCore). Wikis can fetch i18n messages from Gerrit in a CSP-compliant way.
 - You can create a new release using the [releases tab in GitHub UI](https://github.com/wikimedia-gadgets/twinkle-core/releases). This triggers the [npm-publish workflow](https://github.com/wikimedia-gadgets/twinkle-core/blob/master/.github/workflows/npm-publish.yml) to publish a new version of the [NPM package](https://www.npmjs.com/package/twinkle-core). Be sure that the version number in package.json was updated before this is done (trying to republish with the same version will not work).
 - On every new release, the docs-deploy workflow also saves the documentation to a permanent link (eg. for v3.0.2-beta at https://twinkle.toolforge.org/core-docs-3.0.2-beta).
 

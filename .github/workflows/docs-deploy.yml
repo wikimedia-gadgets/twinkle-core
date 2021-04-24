@@ -51,12 +51,10 @@ jobs:
           command: >-
             become twinkle bash -c '
               cd /data/project/twinkle/www/static;
-              cp -r core-docs "core-docs-$VERSION";
+              cp -r core-docs "core-docs-${{ steps.get-version.outputs.current-version }}";
               cd /data/project/twinkle/public_html;
-              cp -r core-docs "core-docs-$VERSION";
+              cp -r core-docs "core-docs-${{ steps.get-version.outputs.current-version }}";
             '
           host: login.toolforge.org
           username: ${{ secrets.TOOLFORGE_USERNAME }}
           privateKey: ${{ secrets.TOOLFORGE_PRIVATE_KEY }}
-        env:
-          VERSION: ${{ steps.get-version.outputs.current-version }}
