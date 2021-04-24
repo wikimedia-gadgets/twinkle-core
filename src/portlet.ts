@@ -127,7 +127,8 @@ function addPortlet(navigation: string, id: string, text: string, type: string, 
 				navigation = 'mw-panel';
 			}
 			outerNavClass =
-				'vector-menu vector-menu-' + (navigation === 'mw-panel' ? 'portal' : type === 'menu' ? 'dropdown' : 'tabs');
+				'mw-portlet vector-menu vector-menu-' +
+				(navigation === 'mw-panel' ? 'portal' : type === 'menu' ? 'dropdown' : 'tabs');
 			innerDivClass = 'vector-menu-content';
 			break;
 		case 'modern':
