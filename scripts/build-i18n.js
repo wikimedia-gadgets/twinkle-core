@@ -36,6 +36,7 @@ const ALLOWED_TAGS = [
 	'p',
 	'pre',
 	'span',
+	'sup',
 	'strong',
 	'syntaxhighlight',
 	'ul',
