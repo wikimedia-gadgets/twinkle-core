@@ -140,8 +140,8 @@ fs.readdirSync('./i18n/').forEach((fileName) => {
 		json = json.replace(/<\/nowiki>/g, '</" + String("") + "nowiki>');
 	}
 
-	fs.mkdirSync('build-i18n', { recursive: true });
-	fs.writeFileSync(`build-i18n/${lang}.json`, json);
+	fs.mkdirSync('build-i18n-temp', { recursive: true });
+	fs.writeFileSync(`build-i18n-temp/${lang}.json`, json);
 });
 
 console.log('Internationalization files have been built successfully.');
