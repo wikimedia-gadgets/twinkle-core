@@ -80,14 +80,23 @@ DOMPurify.addHook('uponSanitizeAttribute', (currentNode, hookEvent, config) => {
 	}
 });
 
-fs.readdirSync('./i18n/').forEach((fileName) => {
+const root = __dirname + '/..';
+
+fs.readdirSync(root + '/i18n/').forEach((fileName) => {
 	if (!(path.extname(fileName) === '.json' && fileName !== 'qqq.json')) {
 		return;
 	}
 	const [, lang] = path.basename(fileName).match(/^(.+)\.json$/) || [];
-	const strings = JSON.parse(fs.readFileSync(`./i18n/${fileName}`).toString());
+	const strings = JSON.parse(fs.readFileSync(root + `/i18n/${fileName}`).toString());
 	Object.keys(strings)
-		.filter((name) => typeof strings[name] === 'string')
+		.filter((name) => {
+			if (typeof strings[name] === 'string') {
+				return true;
+			} else {
+				delete strings[name];
+				return false;
+			}
+		})
 		.forEach((stringName) => {
 			const hidden = [];
 			let sanitized = hideText(strings[stringName], /<nowiki(?: [\w ]+(?:=[^<>]+?)?| *)>([^]*?)<\/nowiki *>/g, hidden);
@@ -140,8 +149,8 @@ fs.readdirSync('./i18n/').forEach((fileName) => {
 		json = json.replace(/<\/nowiki>/g, '</" + String("") + "nowiki>');
 	}
 
-	fs.mkdirSync('build-i18n-temp', { recursive: true });
-	fs.writeFileSync(`build-i18n-temp/${lang}.json`, json);
+	fs.mkdirSync(root + '/build-i18n-temp', { recursive: true });
+	fs.writeFileSync(root + `/build-i18n-temp/${lang}.json`, json);
 });
 
 console.log('Internationalization files have been built successfully.');
