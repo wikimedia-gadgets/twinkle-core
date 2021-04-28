@@ -12,10 +12,9 @@
 		"newLine": "lf",
 	},
 	"include": [
-		"src/**/*",
-		"tests/**/*",
-		"./node_modules/types-mediawiki/index.d.ts",
-		"morebits/index.d.ts"
+		"./**/*",
+		"../node_modules/types-mediawiki/index.d.ts",
+		"../morebits/index.d.ts"
 	],
 	"compileOnSave": true
 }

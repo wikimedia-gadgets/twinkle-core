@@ -1,5 +1,4 @@
-require(__dirname + "/../morebits/morebits");
-const Morebits = window.Morebits;
+require('./test_base');
 
 /** Simple helper to render a quickform element */
 function renderElement(data) {

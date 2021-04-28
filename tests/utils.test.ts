@@ -1,5 +1,6 @@
-import { arr_flatMap, isTextRedirect, makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
+import './test_base';
 
+import { arr_flatMap, isTextRedirect, makeArray, makeTemplate, obj_entries, obj_values, stripNs } from '../src/utils';
 import { NS_TEMPLATE, NS_USER_TALK } from '../src/namespaces';
 
 describe('utils', function () {

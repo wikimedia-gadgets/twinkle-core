@@ -1,5 +1,5 @@
+require('./test_base');
 const assert = require('assert');
-require('../morebits/morebits');
 
 describe('createHtml', () => {
 	test('createHtml', () => {

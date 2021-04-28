@@ -1,3 +1,5 @@
+import './test_base';
+
 import { addPortletLink } from '../src/portlet';
 
 jest.mock('../src/Config', () => ({
