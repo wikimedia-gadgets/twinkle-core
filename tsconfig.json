@@ -17,7 +17,7 @@
   },
   "include": [
     "src/**/*",
-    "./node_modules/types-mediawiki/index.d.ts",
+    "node_modules/types-mediawiki/index.d.ts",
     "morebits/index.d.ts"
   ],
   "compileOnSave": true

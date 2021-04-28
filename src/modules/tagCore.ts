@@ -722,7 +722,7 @@ export abstract class TagMode {
 		if (!params.tagsToRemove.length) {
 			return $.Deferred().resolve();
 		}
-		Morebits.status.info(msg('untagging'), msg('removing-deselected'));
+		Morebits.status.info(msg('untagging'), msg('removing'));
 
 		let tagsToRemoveAsync = params.tagsToRemove.filter((tag) => {
 			return !this.removeTemplate(tag);

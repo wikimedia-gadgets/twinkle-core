@@ -100,7 +100,7 @@ export function addMessages(messages: Messages) {
  */
 // type of msg must be "string", however switching it to "keyof typeof messages"
 // is convenient during development for IDE tooling
-export function msg(msg: string, ...parameters: (string | number | string[])[]) {
+export function msg(msg: string, ...parameters: (string | number | string[] | Date)[]) {
 	if (!banana) {
 		// this will come up when msg() is accidentally used at the top level of code
 		// when the messages wouldn't have loaded

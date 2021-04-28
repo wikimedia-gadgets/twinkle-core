@@ -7,6 +7,7 @@ global.Morebits = window.Morebits;
 mw.libs.pluralRuleParser = require('cldrpluralruleparser');
 
 // Stubs:
+// @ts-ignore
 mw.Api = class {
 	// For messenger.test.ts
 	getMessages() {
