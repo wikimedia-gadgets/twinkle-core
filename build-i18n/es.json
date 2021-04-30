@@ -1,10 +1,4 @@
 {
-	"@metadata": {
-		"authors": [
-			"Juan t2905",
-			"McDutchie"
-		]
-	},
 	"info": "Información",
 	"note": "Nota",
 	"link-rollback": "revertir",

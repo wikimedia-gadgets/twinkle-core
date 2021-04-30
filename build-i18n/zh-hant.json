@@ -1,9 +1,4 @@
 {
-	"@metadata": {
-		"authors": [
-			"Xiplus"
-		]
-	},
 	"info": "資訊",
 	"note": "注意",
 	"error": "錯誤",
@@ -322,7 +317,6 @@
 	"pref-xfdlogpagename-tooltip": "在框中輸入子頁面名稱，您將能在User:<b>使用者名稱</b>/<b>子頁面名稱</b>找到您的XfD日誌。僅在您啟用XfD使用者空間日誌有用。",
 	"pref-xfdwatchpage-label": "將提名的頁面加入到監視清單",
 	"pref-xfdwatchdiscussion-label": "將刪除討論頁面加入到監視清單",
-	"pref-xfdwatchdiscussion-tooltip": "這是指刪除討論子頁面（對於AfD和MfD）或每日日誌頁面（對於TfD、CfD、RfD和FfD）",
 	"pref-xfdwatchlist-label": "將每日日誌/列表頁面加入到監視清單（AfD和MfD）",
 	"pref-xfdwatchlist-tooltip": "這僅適用於AfD和MfD，因為討論被嵌入包含在每日日誌頁面（對於AfD）或主要MfD頁面（對於MfD）",
 	"pref-xfdwatchuser-label": "加入建立者的使用者討論頁到監視清單（在通知時）"
