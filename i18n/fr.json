@@ -323,7 +323,6 @@
 	"pref-xfdlogpagename-tooltip": "Entrez un nom de sous-page dans ce champ. Vous trouverez votre journal des Pages en Discussion (PàS / ''XfD'') à « User:<i>Nom d'utilisateur/i>/<i>nom de sous-page</i> ». Ne fonctionne que si vous activez le journal en espace utilisateur des Pages en Discussion.",
 	"pref-xfdwatchpage-label": "Ajouter la page signalée à la liste de suivi",
 	"pref-xfdwatchdiscussion-label": "Ajouter la page de discussion de suppression à la liste de suivi",
-	"pref-xfdwatchdiscussion-tooltip": "Ceci fait référence à la sous-page de discussion (pour les Articles et Divers à Discuter : ''AfD'' et ''MfD'') ou à la page quotidienne du journal (pour les Modèles ou Modules, Catégories, Redirections et Fichiers à Discuter : ''TfD'', ''CfD'', ''RfD'' et ''FfD'')",
 	"pref-xfdwatchlist-label": "Ajouter le journal quotidien ou la page de liste (pour les Articles et Divers à Discuter) à la liste de suivi",
 	"pref-xfdwatchlist-tooltip": "Ceci ne s’applique qu’aux Articles et Divers à Discuter (AfD et MfD), où les discussions sont incluses dans une page quotidienne de journal (pour les Articles à Discuter) ou dans la page principale des Divers à Discuter.",
 	"pref-xfdwatchuser-label": "Ajouter la page de discussion de l’utilisateur du contributeur initial à la liste de suivi (lors de la notification)"

@@ -38,7 +38,7 @@
 	"vandalism-summary": "{{Doc-important|1=Do not translate \"%USER%\"}}",
 	"normal-summary": "{{Doc-important|1=Do not translate \"%USER%\"}}",
 	"reason": "{{identical|Reason}}",
-	"bullet-separator": "Bullet separator (for separating multiple items in a horizontal list). Should ideally begin and end with a space.",
+	"bullet-separator": "Bullet separator (for separating multiple items in a horizontal list). Should ideally begin and end with a space. (Please use &amp;#32; for the final space.)",
 	"fetching-backlinks": "Status message indicating that backlinks (links pointing to the current page) are being retrieved.",
 	"fetching-filelinks": "Status message indicating that file links are being retrieved.",
 	"fetching-redirects": "Status message indicating that the list of redirects to the current page are being retrieved.",
@@ -69,7 +69,7 @@
 	"custom-expiry-prompt": "Displayed in a browser prompt. No markup can be used here.",
 	"all-users": "\"All\" as in \"All users can edit\" - no level of page protection.",
 	"protect-tag-none-status": "Status message indicating that there is nothing to do as no protection tag needs to be added to the page.",
-	"protect-tag-abort": "\"Redirect category shell\" is a tempalte name on your wiki.",
+	"protect-tag-abort": "Indicates that the redirect grouping template is present (so tagging does not need to take place, will be aborted).",
 	"nothing-to-do": "Status message indicating that there is nothing for the script to do (such as because the actions user selected are invalid).",
 	"block-self-warn": "Displayed in a browser prompt",
 	"block-action": "Label for checkbox input field.",
@@ -91,7 +91,7 @@
 	"block-current-in-range": "* $1 - Blocked IP address\n* $2 - Blocked CIDR range size\n* $3 - Link to Block log",
 	"block-expiry-date": "\nHere {{date:$1|relative|utc}} does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
 	"unblocked-ago": "Here <code><nowiki>{{date:$1|relative|utc}}</nowiki></code> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
-	"block-expired": "Here <code><nowiki>{{date:$2|relative|utc}}</nowiki></code> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".\n\n* $1 - Block duration",
+	"block-expired": "Here <code><nowiki>{{date:$2|relative|utc}}</nowiki></code> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".\n\n* $1 - Block duration\n* $2 - Block expiry date-time",
 	"block-conflict": "* $1 - Username or IP address",
 	"block-conflict-block": "Here <code><nowiki>{{date:$3|relative|utc}}</nowiki></code> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
 	"block-conflict-unblock": "Here <code><nowiki>{{date:$3|relative|utc}}</nowiki></code> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
@@ -104,5 +104,5 @@
 	"tags-present-header": "Header for the list of tags already found to be present on the page. This lets the user uncheck the tags on the list to get them removed from the page.",
 	"tag-complete": "* $1 - Tagging mode. For example: article, redirect, or file.",
 	"tagging-status": "* $1 - Tagging mode. For example: article, redirect, or file.",
-	"xfd-editreq-title": "* $1 - XFD venue"
+	"xfd-editreq-title": "* $1 - Name of discussion venue"
 }
