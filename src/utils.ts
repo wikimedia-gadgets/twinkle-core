@@ -184,6 +184,7 @@ export function obj_fromEntries<T>(entries: [string, T][]): Record<string, T> {
  * Shim for Array.prototype.includes
  * @param arr
  * @param item
+ * @deprecated as this is now shimmed in MediaWiki
  */
 export function arr_includes<T>(arr: Array<T>, item: T): boolean {
 	return arr.indexOf(item) !== -1;
@@ -193,6 +194,7 @@ export function arr_includes<T>(arr: Array<T>, item: T): boolean {
  * Shim for Array.prototype.find
  * @param arr
  * @param predicate
+ * @deprecated as this is now shimmed in MediaWiki
  */
 export function arr_find<T>(arr: Array<T>, predicate: (value: T, index: number, obj: T[]) => boolean) {
 	return Array.prototype.find ? arr.find(predicate) : arr.filter(predicate)[0];

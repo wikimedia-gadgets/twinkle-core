@@ -1,4 +1,3 @@
-import { arr_includes } from './utils';
 import { initMessaging } from './messenger';
 import { Twinkle } from './twinkle';
 import { Config, getPref, loadUserConfig } from './Config';
@@ -19,7 +18,7 @@ export function init() {
 	// Quick bail on special pages where no modules are active
 	if (
 		mw.config.get('wgNamespaceNumber') === -1 &&
-		!arr_includes(Twinkle.activeSpecialPages, mw.config.get('wgCanonicalSpecialPageName'))
+		!Twinkle.activeSpecialPages.includes(mw.config.get('wgCanonicalSpecialPageName') as string)
 	) {
 		return;
 	}

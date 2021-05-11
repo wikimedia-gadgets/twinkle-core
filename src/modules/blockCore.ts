@@ -1,6 +1,6 @@
 import { Twinkle } from '../twinkle';
 import { Dialog } from '../Dialog';
-import { arr_includes, link, LogEvent, obj_entries } from '../utils';
+import { link, LogEvent, obj_entries } from '../utils';
 import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
@@ -512,7 +512,7 @@ export abstract class BlockCore extends TwinkleModule {
 					list: obj_entries(this.menuFormattedNamespaces)
 						.filter(([nsNumber]) => {
 							// @ts-ignore // screw it, nsNumber is number, not string
-							return nsNumber >= 0 && !arr_includes(this.disablePartialBlockNamespaces, nsNumber);
+							return nsNumber >= 0 && !this.disablePartialBlockNamespaces.includes(nsNumber);
 						})
 						.map(([nsNumber, nsName]) => {
 							return { type: 'option', label: nsName, value: nsNumber };

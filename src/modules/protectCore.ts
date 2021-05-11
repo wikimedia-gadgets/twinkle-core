@@ -1,16 +1,7 @@
 import { Twinkle } from '../twinkle';
 import { TwinkleModule } from '../twinkleModule';
 import { Dialog } from '../Dialog';
-import {
-	arr_includes,
-	isTextRedirect,
-	link,
-	LogEvent,
-	makeTemplate,
-	obj_entries,
-	str_endsWith,
-	str_startsWith,
-} from '../utils';
+import { isTextRedirect, link, LogEvent, makeTemplate, obj_entries, str_endsWith, str_startsWith } from '../utils';
 import { getPref } from '../Config';
 import { msg } from '../messenger';
 import { NS_TEMPLATE } from '../namespaces';
@@ -126,7 +117,7 @@ export abstract class ProtectCore extends TwinkleModule {
 	// Check if FlaggedRevs extension is enabled
 	hasFlaggedRevs =
 		mw.loader.getState('ext.flaggedRevs.review') &&
-		arr_includes(SiteConfig.flaggedRevsNamespaces, mw.config.get('wgNamespaceNumber'));
+		SiteConfig.flaggedRevsNamespaces.includes(mw.config.get('wgNamespaceNumber'));
 
 	// Limit template editor; a Twinkle restriction, not a site setting
 	isTemplate = mw.config.get('wgNamespaceNumber') === 10 || mw.config.get('wgNamespaceNumber') === 828;
@@ -405,7 +396,7 @@ export abstract class ProtectCore extends TwinkleModule {
 			obj_entries(levels)
 				.filter(([, data]) => {
 					return (
-						arr_includes(data.types, type) &&
+						data.types.includes(type) &&
 						(data.applicable === undefined ||
 							(typeof data.applicable === 'boolean' && data.applicable) ||
 							(typeof data.applicable === 'function' && data.applicable(type)))

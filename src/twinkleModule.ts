@@ -1,6 +1,5 @@
 import { Config, PreferenceGroup, setDefaultConfig } from './Config';
 import { addPortletLink } from './portlet';
-import { arr_includes } from './utils';
 import { userDisabledModules } from './init';
 import { Twinkle } from './twinkle';
 
@@ -88,7 +87,7 @@ export function registerModule(module: typeof TwinkleModule) {
 		);
 	}
 
-	if (!arr_includes(userDisabledModules, module.moduleName)) {
+	if (!userDisabledModules.includes(module.moduleName)) {
 		// new module() inits the module, which usually means adding the portlet link
 		// the result is assigned to Twinkle object only for debugging purposes
 		Twinkle[module.moduleName.toLowerCase()] = new module();
