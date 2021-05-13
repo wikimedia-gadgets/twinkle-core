@@ -8,11 +8,6 @@ import { TwinkleModule } from '../twinkleModule';
 
 // TODO: still quite a bit of enwiki specific logic here
 
-/**
- * Module for tagging pages for speedy deletion and for admins to delete pages.
- * Can also delete the talk page, delete redirects, and unlink backlinks while
- * deleting.
- */
 export interface criterion extends quickFormElementData {
 	value: string; // made compulsory
 	code: string;
@@ -41,6 +36,11 @@ export interface criteriaSubgroup extends quickFormElementData {
 	log?: string | null;
 }
 
+/**
+ * Module for tagging pages for speedy deletion and for admins to delete pages.
+ * Can also delete the talk page, delete redirects, and unlink backlinks while
+ * deleting.
+ */
 export abstract class SpeedyCore extends TwinkleModule {
 	static moduleName = 'CSD';
 
