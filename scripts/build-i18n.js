@@ -11,6 +11,7 @@ const path = require('path');
 const chalk = require('chalk');
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
+const langFallbacks = require('./language-fallbacks.json');
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -82,11 +83,17 @@ DOMPurify.addHook('uponSanitizeAttribute', (currentNode, hookEvent, config) => {
 
 const root = __dirname + '/..';
 
+const existingNames = [];
+const existingLangs = [];
+const allStrings = [];
+
+// Sanitize existing i18n files
 fs.readdirSync(root + '/i18n/').forEach((fileName) => {
 	if (!(path.extname(fileName) === '.json' && fileName !== 'qqq.json')) {
 		return;
 	}
 	const [, lang] = path.basename(fileName).match(/^(.+)\.json$/) || [];
+	existingLangs.push(lang);
 	const strings = JSON.parse(fs.readFileSync(root + `/i18n/${fileName}`).toString());
 	Object.keys(strings)
 		.filter((name) => {
@@ -140,7 +147,32 @@ fs.readdirSync(root + '/i18n/').forEach((fileName) => {
 			}
 
 			strings[stringName] = sanitized;
+
+			if (lang === 'en') {
+				existingNames.push(stringName);
+			}
 		});
+	allStrings[lang] = strings;
+});
+
+fs.mkdirSync(root + '/build-i18n-temp', { recursive: true });
+
+// Generate existing i18n files
+existingLangs.forEach((lang) => {
+	const strings = {};
+	const fallbacks = [lang].concat(langFallbacks[lang] || []).concat(['en']) // Current lang, fallbacks, English
+		.filter((langFallback) => {return langFallback in allStrings}); // Remove non-existing language
+
+	existingNames.forEach((stringName) => {
+		for (const key in fallbacks) {
+			const fallbackLang = fallbacks[key];
+			if (stringName in allStrings[fallbackLang]) {
+				strings[stringName] = allStrings[fallbackLang][stringName];
+				break;
+			}
+		};
+	});
+
 	let json = JSON.stringify(strings, null, '\t')
 		.replace(/&nbsp;/g, ' ')
 		.replace(/&#32;/g, ' ');
@@ -148,9 +180,25 @@ fs.readdirSync(root + '/i18n/').forEach((fileName) => {
 		// Prevent creating "</nowiki>" character sequences when building the main script file.
 		json = json.replace(/<\/nowiki>/g, '</" + String("") + "nowiki>');
 	}
-
-	fs.mkdirSync(root + '/build-i18n-temp', { recursive: true });
 	fs.writeFileSync(root + `/build-i18n-temp/${lang}.json`, json);
 });
+
+// Generate fallback languages files
+for (const lang in langFallbacks) {
+	if (!(lang in existingLangs)) {
+		const fallbacks = (langFallbacks[lang] || []).filter((langFallback) => {return langFallback in allStrings});
+		if (fallbacks.length > 0) {
+			fs.copyFile(
+				root + `/build-i18n-temp/${fallbacks[0]}.json`,
+				root + `/build-i18n-temp/${lang}.json`,
+				(err) => {
+					if (err) {
+						throw err;
+					}
+				}
+			);
+		}
+	}
+};
 
 console.log('Internationalization files have been built successfully.');
