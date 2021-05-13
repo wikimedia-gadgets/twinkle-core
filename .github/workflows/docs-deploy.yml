@@ -15,17 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - run: npm ci
       - run: npm run docs
-      - name: Copy docs to Toolforge (twinkle.toolforge.org)
-        uses: garygrossgarten/github-action-scp@dba89d858413133b6e35da91a3c989cc8cde3ad4
-        with:
-          local: /home/runner/work/twinkle-core/twinkle-core/docs
-          remote: /data/project/twinkle/public_html/core-docs
-          host: login.toolforge.org
-          username: ${{ secrets.TOOLFORGE_USERNAME }}
-          privateKey: ${{ secrets.TOOLFORGE_PRIVATE_KEY }}
-          rmRemote: true
-          dotfiles: true
-      - name: Copy docs to Toolforge (tools-static.wmflabs.org/twinkle)
+      - name: Upload docs to Toolforge
         uses: garygrossgarten/github-action-scp@dba89d858413133b6e35da91a3c989cc8cde3ad4
         with:
           local: /home/runner/work/twinkle-core/twinkle-core/docs
@@ -51,8 +41,6 @@ jobs:
           command: >-
             become twinkle bash -c '
               cd /data/project/twinkle/www/static;
-              cp -r core-docs "core-docs-${{ steps.get-version.outputs.current-version }}";
-              cd /data/project/twinkle/public_html;
               cp -r core-docs "core-docs-${{ steps.get-version.outputs.current-version }}";
             '
           host: login.toolforge.org
