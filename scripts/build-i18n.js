@@ -157,7 +157,7 @@ const listOfLanguages = [...new Set([...existingLangs, ...Object.entries(langFal
 
 // Generate processed i18n files
 listOfLanguages.forEach((lang) => {
-	let messagesIncluded = allStrings[lang] || {}; // tracks which messages have been included so far
+	let messagesIncluded = Object.assign({}, allStrings[lang]); // tracks which messages have been included so far
 	let output = {
 		[lang]: Object.assign({}, messagesIncluded)
 	};

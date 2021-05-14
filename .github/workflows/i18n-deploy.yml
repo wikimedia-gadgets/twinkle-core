@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0   # all branches
       - run: npm ci
-      - name: Sanitise strings
+      - name: Sanitise strings and resolve fallback messages
         run: node scripts/build-i18n
 
       - name: Commit changes in i18n branch
