@@ -83,7 +83,6 @@ DOMPurify.addHook('uponSanitizeAttribute', (currentNode, hookEvent, config) => {
 
 const root = __dirname + '/..';
 
-const existingNames = [];
 const existingLangs = [];
 const allStrings = [];
 
@@ -147,58 +146,41 @@ fs.readdirSync(root + '/i18n/').forEach((fileName) => {
 			}
 
 			strings[stringName] = sanitized;
-
-			if (lang === 'en') {
-				existingNames.push(stringName);
-			}
 		});
 	allStrings[lang] = strings;
 });
 
 fs.mkdirSync(root + '/build-i18n-temp', { recursive: true });
 
-// Generate existing i18n files
-existingLangs.forEach((lang) => {
-	const strings = {};
-	const fallbacks = [lang].concat(langFallbacks[lang] || []).concat(['en']) // Current lang, fallbacks, English
-		.filter((langFallback) => {return langFallback in allStrings}); // Remove non-existing language
+// list of all known languages: all languages mentioned in the fallbacks file + original i18n files we have
+const listOfLanguages = [...new Set([...existingLangs, ...Object.entries(langFallbacks).flat(2)])];
 
-	existingNames.forEach((stringName) => {
-		for (const key in fallbacks) {
-			const fallbackLang = fallbacks[key];
-			if (stringName in allStrings[fallbackLang]) {
-				strings[stringName] = allStrings[fallbackLang][stringName];
-				break;
-			}
-		};
-	});
+// Generate processed i18n files
+listOfLanguages.forEach((lang) => {
+	let messagesIncluded = allStrings[lang] || {}; // tracks which messages have been included so far
+	let output = {
+		[lang]: Object.assign({}, messagesIncluded)
+	};
+	const fallbacks = langFallbacks[lang] || [];
+	for (let fallbackLang of fallbacks) {
+		let fallbackMessages = allStrings[fallbackLang] || {};
+		if (fallbackLang === 'en') {
+			output['en'] = {};  // en messages are already available along with code
+			Object.assign(messagesIncluded, allStrings['en']);
+			continue;
+		}
+		output[fallbackLang] = Object.fromEntries(
+			Object.entries(fallbackMessages).filter(([key, value]) => {
+				return !messagesIncluded[key];
+			})
+		);
+		Object.assign(messagesIncluded, output[fallbackLang]);
+	}
 
-	let json = JSON.stringify(strings, null, '\t')
+	let json = JSON.stringify(output, null, '\t')
 		.replace(/&nbsp;/g, ' ')
 		.replace(/&#32;/g, ' ');
-	if (lang === 'en') {
-		// Prevent creating "</nowiki>" character sequences when building the main script file.
-		json = json.replace(/<\/nowiki>/g, '</" + String("") + "nowiki>');
-	}
 	fs.writeFileSync(root + `/build-i18n-temp/${lang}.json`, json);
 });
-
-// Generate fallback languages files
-for (const lang in langFallbacks) {
-	if (!(lang in existingLangs)) {
-		const fallbacks = (langFallbacks[lang] || []).filter((langFallback) => {return langFallback in allStrings});
-		if (fallbacks.length > 0) {
-			fs.copyFile(
-				root + `/build-i18n-temp/${fallbacks[0]}.json`,
-				root + `/build-i18n-temp/${lang}.json`,
-				(err) => {
-					if (err) {
-						throw err;
-					}
-				}
-			);
-		}
-	}
-};
 
 console.log('Internationalization files have been built successfully.');
