@@ -137,7 +137,7 @@ export function initMessaging() {
 	// Populate default English messages, final fallback
 	// @ts-ignore this can be disabled through a build-stage variable injected by webpack's DefinePlugin
 	if (typeof EXCLUDE_ENGLISH_MESSAGES === 'undefined' || !EXCLUDE_ENGLISH_MESSAGES) {
-		addMessages(enMessages);
+		banana.load(enMessages, 'en');
 	}
 	return Promise.all([loadMediaWikiMessages(MWMessageList), loadTwinkleCoreMessages()])
 		.catch((e) => {
