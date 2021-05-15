@@ -33,7 +33,10 @@ export default [
 	'block-expiry',
 	'blocklogpage',
 
-	// Months and days (for morebits)
+	// Morebits.date
+	'period-am',
+	'period-pm',
+
 	'january',
 	'jan',
 	'february',
@@ -58,6 +61,7 @@ export default [
 	'nov',
 	'december',
 	'dec',
+
 	'sunday',
 	'sun',
 	'monday',
