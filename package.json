@@ -23,6 +23,7 @@
 		"morebits/",
 		"lib/"
 	],
+	"sideEffects": false,
 	"license": "CC-BY-SA-3.0",
 	"dependencies": {
 		"@types/select2": "^4.0.53",
