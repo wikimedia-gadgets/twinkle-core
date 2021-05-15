@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"mrj",
+		"ru"
+	],
 	"mhr": {},
 	"mrj": {},
 	"ru": {}

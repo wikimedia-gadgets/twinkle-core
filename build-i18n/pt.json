@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"pt-br"
+	],
 	"pt": {},
 	"pt-br": {}
 }

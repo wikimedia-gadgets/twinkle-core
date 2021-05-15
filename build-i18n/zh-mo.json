@@ -1,4 +1,9 @@
 {
+	"fallbacks": [
+		"zh-hk",
+		"zh-hant",
+		"zh-hans"
+	],
 	"zh-mo": {},
 	"zh-hk": {},
 	"zh-hant": {

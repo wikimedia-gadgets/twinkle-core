@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"ksh": {},
 	"de": {
 		"info": "Information",

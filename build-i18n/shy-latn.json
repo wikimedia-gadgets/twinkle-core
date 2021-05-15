@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"fr"
+	],
 	"shy-latn": {},
 	"fr": {
 		"info": "Infos",

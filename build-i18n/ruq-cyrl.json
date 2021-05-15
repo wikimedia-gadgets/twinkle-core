@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"mk"
+	],
 	"ruq-cyrl": {},
 	"mk": {
 		"info": "Инфо",

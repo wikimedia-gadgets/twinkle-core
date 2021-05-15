@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"kk-arab",
+		"kk-cyrl"
+	],
 	"kk-cn": {},
 	"kk-arab": {},
 	"kk-cyrl": {}

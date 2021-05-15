@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ike-cans"
+	],
 	"iu": {},
 	"ike-cans": {}
 }

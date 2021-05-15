@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"es"
+	],
 	"guc": {},
 	"es": {
 		"info": "Información",

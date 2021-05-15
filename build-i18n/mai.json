@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"hi"
+	],
 	"mai": {},
 	"hi": {}
 }

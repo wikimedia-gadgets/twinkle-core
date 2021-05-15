@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ko"
+	],
 	"ko-kp": {},
 	"ko": {}
 }

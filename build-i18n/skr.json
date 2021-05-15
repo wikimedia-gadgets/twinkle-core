@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"skr-arab"
+	],
 	"skr": {},
 	"skr-arab": {}
 }

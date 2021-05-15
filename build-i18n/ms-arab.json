@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ms"
+	],
 	"ms-arab": {},
 	"ms": {}
 }

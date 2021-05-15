@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"de-formal": {},
 	"de": {
 		"info": "Information",

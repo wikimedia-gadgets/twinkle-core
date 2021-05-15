@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ru"
+	],
 	"crh-cyrl": {},
 	"ru": {}
 }

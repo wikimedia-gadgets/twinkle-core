@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ro"
+	],
 	"rmy": {},
 	"ro": {}
 }

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ru"
+	],
 	"sah": {},
 	"ru": {}
 }

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"hy"
+	],
 	"hyw": {},
 	"hy": {}
 }

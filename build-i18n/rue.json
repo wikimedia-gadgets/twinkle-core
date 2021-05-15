@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"uk",
+		"ru"
+	],
 	"rue": {},
 	"uk": {},
 	"ru": {}

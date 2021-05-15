@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"fr"
+	],
 	"frc": {},
 	"fr": {
 		"info": "Infos",

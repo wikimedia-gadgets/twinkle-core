@@ -1,4 +1,9 @@
 {
+	"fallbacks": [
+		"bs",
+		"sr-el",
+		"hr"
+	],
 	"sh": {},
 	"bs": {},
 	"sr-el": {},

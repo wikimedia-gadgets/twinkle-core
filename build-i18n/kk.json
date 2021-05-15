@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"kk-cyrl"
+	],
 	"kk": {},
 	"kk-cyrl": {}
 }

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"pl"
+	],
 	"csb": {},
 	"pl": {}
 }

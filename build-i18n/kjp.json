@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"my"
+	],
 	"kjp": {},
 	"my": {}
 }

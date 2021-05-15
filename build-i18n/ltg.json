@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"lv"
+	],
 	"ltg": {},
 	"lv": {}
 }

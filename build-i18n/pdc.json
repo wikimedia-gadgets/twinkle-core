@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"pdc": {},
 	"de": {
 		"info": "Information",

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ar"
+	],
 	"aeb-arab": {},
 	"ar": {
 		"info": "معلومات",

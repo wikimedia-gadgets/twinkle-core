@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"crh-latn"
+	],
 	"crh": {},
 	"crh-latn": {}
 }

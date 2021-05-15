@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"fr"
+	],
 	"kbp": {},
 	"fr": {
 		"info": "Infos",

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"en"
+	],
 	"pih": {},
 	"en": {}
 }

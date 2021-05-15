@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"nl"
+	],
 	"zea": {},
 	"nl": {}
 }

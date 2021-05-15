@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"gsw": {},
 	"de": {
 		"info": "Information",

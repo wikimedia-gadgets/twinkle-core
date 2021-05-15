@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"en"
+	],
 	"sco": {},
 	"en": {}
 }

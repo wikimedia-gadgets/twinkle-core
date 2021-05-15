@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"nds": {},
 	"de": {
 		"info": "Information",

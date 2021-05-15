@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"it"
+	],
 	"nap": {},
 	"it": {}
 }

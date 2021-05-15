@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ru"
+	],
 	"alt": {},
 	"ru": {}
 }

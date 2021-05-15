@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"kbd-cyrl"
+	],
 	"kbd": {},
 	"kbd-cyrl": {}
 }

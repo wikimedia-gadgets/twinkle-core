@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"mdf",
+		"ru"
+	],
 	"myv": {},
 	"mdf": {},
 	"ru": {}

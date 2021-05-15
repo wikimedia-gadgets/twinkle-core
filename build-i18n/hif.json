@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"hif-latn"
+	],
 	"hif": {},
 	"hif-latn": {}
 }

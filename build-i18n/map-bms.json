@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"jv",
+		"id"
+	],
 	"map-bms": {},
 	"jv": {},
 	"id": {}

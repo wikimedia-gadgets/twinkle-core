@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ady-cyrl"
+	],
 	"ady": {},
 	"ady-cyrl": {}
 }

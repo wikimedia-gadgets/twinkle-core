@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"ur",
+		"pnb"
+	],
 	"skr-arab": {},
 	"ur": {},
 	"pnb": {}

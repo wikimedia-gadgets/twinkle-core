@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"it"
+	],
 	"fur": {},
 	"it": {}
 }

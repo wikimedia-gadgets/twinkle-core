@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"dsb",
+		"de"
+	],
 	"hsb": {},
 	"dsb": {},
 	"de": {

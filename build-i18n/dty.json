@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ne"
+	],
 	"dty": {},
 	"ne": {}
 }

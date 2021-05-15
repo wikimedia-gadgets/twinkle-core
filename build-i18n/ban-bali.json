@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ban"
+	],
 	"ban-bali": {},
 	"ban": {}
 }

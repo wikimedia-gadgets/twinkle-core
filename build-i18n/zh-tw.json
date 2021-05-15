@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"zh-hant",
+		"zh-hans"
+	],
 	"zh-tw": {},
 	"zh-hant": {
 		"info": "資訊",

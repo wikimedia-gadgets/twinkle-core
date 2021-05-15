@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"cbk",
+		"fa"
+	],
 	"sdh": {},
 	"cbk": {},
 	"fa": {

@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"ruq-latn",
+		"ro"
+	],
 	"ruq": {},
 	"ruq-latn": {},
 	"ro": {}

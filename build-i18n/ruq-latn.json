@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ro"
+	],
 	"ruq-latn": {},
 	"ro": {}
 }

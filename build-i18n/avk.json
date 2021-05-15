@@ -1,4 +1,9 @@
 {
+	"fallbacks": [
+		"fr",
+		"es",
+		"ru"
+	],
 	"avk": {},
 	"fr": {
 		"info": "Infos",

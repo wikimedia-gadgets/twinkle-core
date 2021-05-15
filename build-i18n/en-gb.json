@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"en"
+	],
 	"en-gb": {},
 	"en": {}
 }

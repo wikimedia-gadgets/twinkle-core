@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ur"
+	],
 	"khw": {},
 	"ur": {}
 }

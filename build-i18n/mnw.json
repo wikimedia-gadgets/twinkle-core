@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"my"
+	],
 	"mnw": {},
 	"my": {}
 }

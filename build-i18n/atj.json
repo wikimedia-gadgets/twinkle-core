@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"fr"
+	],
 	"atj": {},
 	"fr": {
 		"info": "Infos",

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"hrx": {},
 	"de": {
 		"info": "Information",

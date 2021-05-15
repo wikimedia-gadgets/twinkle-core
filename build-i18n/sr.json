@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"sr-ec"
+	],
 	"sr": {},
 	"sr-ec": {}
 }

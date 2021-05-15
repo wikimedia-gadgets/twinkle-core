@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"it"
+	],
 	"eml": {},
 	"it": {}
 }

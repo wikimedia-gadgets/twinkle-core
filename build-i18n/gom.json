@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"gom-deva"
+	],
 	"gom": {},
 	"gom-deva": {}
 }

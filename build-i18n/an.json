@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"es"
+	],
 	"an": {},
 	"es": {
 		"info": "Información",

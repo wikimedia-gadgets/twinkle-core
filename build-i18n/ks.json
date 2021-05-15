@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ks-arab"
+	],
 	"ks": {},
 	"ks-arab": {}
 }

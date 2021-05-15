@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"qu",
+		"es"
+	],
 	"qug": {},
 	"qu": {},
 	"es": {

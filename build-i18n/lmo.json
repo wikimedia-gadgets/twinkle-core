@@ -1,4 +1,11 @@
 {
+	"fallbacks": [
+		"pms",
+		"eml",
+		"lij",
+		"vec",
+		"it"
+	],
 	"lmo": {},
 	"pms": {},
 	"eml": {},

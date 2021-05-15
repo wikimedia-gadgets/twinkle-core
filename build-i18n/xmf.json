@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ka"
+	],
 	"xmf": {},
 	"ka": {}
 }

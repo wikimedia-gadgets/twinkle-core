@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"be"
+	],
 	"be-tarask": {},
 	"be": {}
 }

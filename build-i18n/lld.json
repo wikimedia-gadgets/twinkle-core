@@ -1,4 +1,9 @@
 {
+	"fallbacks": [
+		"it",
+		"rm",
+		"fur"
+	],
 	"lld": {},
 	"it": {},
 	"rm": {},

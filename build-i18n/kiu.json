@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"tr"
+	],
 	"kiu": {},
 	"tr": {}
 }

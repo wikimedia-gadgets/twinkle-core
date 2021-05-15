@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"kab"
+	],
 	"zgh": {},
 	"kab": {}
 }

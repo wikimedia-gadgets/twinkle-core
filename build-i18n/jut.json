@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"da"
+	],
 	"jut": {},
 	"da": {}
 }

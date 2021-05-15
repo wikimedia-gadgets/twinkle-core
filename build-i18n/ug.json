@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"ug-arab"
+	],
 	"ug": {},
 	"ug-arab": {}
 }

@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"es"
+	],
 	"cbk-zam": {},
 	"es": {
 		"info": "Información",

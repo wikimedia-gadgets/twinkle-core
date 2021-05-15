@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"zh-hans"
+	],
 	"wuu": {},
 	"zh-hans": {
 		"info": "信息",

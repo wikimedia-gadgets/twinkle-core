@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"de"
+	],
 	"stq": {},
 	"de": {
 		"info": "Information",

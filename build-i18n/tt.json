@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"tt-cyrl",
+		"ru"
+	],
 	"tt": {},
 	"tt-cyrl": {},
 	"ru": {}

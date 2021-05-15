@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"shy-latn"
+	],
 	"shy": {},
 	"shy-latn": {}
 }

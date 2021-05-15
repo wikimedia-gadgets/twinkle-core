@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"sq"
+	],
 	"aln": {},
 	"sq": {}
 }

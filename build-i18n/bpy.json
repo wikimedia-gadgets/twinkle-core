@@ -1,4 +1,7 @@
 {
+	"fallbacks": [
+		"bn"
+	],
 	"bpy": {},
 	"bn": {}
 }

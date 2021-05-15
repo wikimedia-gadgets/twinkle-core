@@ -1,4 +1,8 @@
 {
+	"fallbacks": [
+		"nan",
+		"zh-hant"
+	],
 	"cdo": {},
 	"nan": {},
 	"zh-hant": {
