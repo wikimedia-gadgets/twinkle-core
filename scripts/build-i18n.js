@@ -159,6 +159,10 @@ const listOfLanguages = [...new Set([...existingLangs, ...Object.entries(langFal
 listOfLanguages.forEach((lang) => {
 	let messagesIncluded = Object.assign({}, allStrings[lang]); // tracks which messages have been included so far
 	let output = {
+		// Put list of fallback languages here. This should be same as the order of keys in the
+		// object. But can't rely on that since object property order is a hazy subject in javascript:
+		// https://stackoverflow.com/questions/5525795/does-javascript-guarantee-object-property-order/38218582#38218582
+		fallbacks: langFallbacks[lang] || [],
 		[lang]: Object.assign({}, messagesIncluded)
 	};
 	const fallbacks = langFallbacks[lang] || [];

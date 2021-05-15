@@ -204,6 +204,8 @@ function loadTwinkleCoreMessages() {
 						.join('')
 				)
 			);
+			banana.setFallbackLocales(json.fallbacks);
+			delete json.fallbacks;
 			addMessages(json);
 		},
 		(err) => {
