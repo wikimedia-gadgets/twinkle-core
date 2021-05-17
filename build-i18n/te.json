@@ -1,6 +1,7 @@
 {
 	"fallbacks": [],
 	"te": {
+		"bullet-separator": " • ",
 		"info": "సమాచారం",
 		"note": "గమనిక",
 		"error": "లోపం",
@@ -59,7 +60,6 @@
 		"select-all": "అన్నీ ఎంచుకో",
 		"deselect-all": "అన్నీ వదిలేయ్",
 		"fetching-list": "పేజీల జాబితా తెస్తోంది",
-		"bullet-separator": " • ",
 		"option-delete": "పేజీలను తొలగించడం",
 		"option-talks": "సంబంధిత చర్చ పేజీలను తొలగించు (వాడుకరి చర్చ పేజీలను మినహాయించి)",
 		"option-redirects": "తొలగించిన పేజీలకు ఉన్న దారిమార్పులను తొలగించు",

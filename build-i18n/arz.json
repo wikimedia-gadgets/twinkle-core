@@ -4,6 +4,7 @@
 	],
 	"arz": {},
 	"ar": {
+		"bullet-separator": " •",
 		"info": "معلومات",
 		"note": "ملاحظة",
 		"error": "خطأ",
@@ -62,7 +63,6 @@
 		"select-all": "تحديد الكل",
 		"deselect-all": "أزل اختيار الكل",
 		"fetching-list": "جلب قائمة الصفحات",
-		"bullet-separator": " •",
 		"option-delete": "حذف الصفحات",
 		"option-talks": "حذف صفحات النقاش المرتبطة (باستثناء صفحات نقاش المستخدم)",
 		"option-redirects": "حذف صفحات التحويل للصفحات المحذوفة",
