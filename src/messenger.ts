@@ -2,7 +2,7 @@ import Banana, { Messages } from 'orange-i18n';
 import { obj_entries, urlParamValue } from './utils';
 import { Twinkle } from './twinkle';
 
-import MWMessageList from './mw-messages';
+import coreMwMessages from './mw-messages';
 import enMessages from '../i18n/en.json';
 
 /**
@@ -139,7 +139,8 @@ export function initMessaging() {
 	if (typeof EXCLUDE_ENGLISH_MESSAGES === 'undefined' || !EXCLUDE_ENGLISH_MESSAGES) {
 		banana.load(enMessages, 'en');
 	}
-	return Promise.all([loadMediaWikiMessages(MWMessageList), loadTwinkleCoreMessages()])
+	const mwMessageList = coreMwMessages.concat(Twinkle.extraMwMessages);
+	return Promise.all([loadMediaWikiMessages(mwMessageList), loadTwinkleCoreMessages()])
 		.catch((e) => {
 			mw.notify('Failed to load messages needed for Twinkle', { type: 'error' });
 		})
@@ -153,7 +154,7 @@ export function initMessaging() {
  * These will include generic items such as month/day names, etc.
  * See mw-messages.ts for the list of keys.
  */
-function loadMediaWikiMessages(msgList: string[]) {
+function loadMediaWikiMessages(msgList: string[]): Promise<void> {
 	let promises = [];
 	for (let i = 0; i < msgList.length; i += 50) {
 		promises.push(
@@ -173,6 +174,7 @@ function loadMediaWikiMessages(msgList: string[]) {
 				})
 		);
 	}
+	// @ts-ignore
 	return Promise.all(promises);
 }
 
@@ -234,7 +236,10 @@ function initBanana(json) {
 
 /**
  * Load messages from MediaWiki, in addition to what twinkle-core loads.
+ * Deprecated: Instead of using this, set extra messages in Twinkle.extraMwMessages
+ * array, and init() would fetch those too.
  * @param messageList
+ * @deprecated
  */
 export function loadAdditionalMediaWikiMessages(messageList: string[]) {
 	return loadMediaWikiMessages(messageList);
