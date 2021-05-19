@@ -16,6 +16,8 @@ Twinkle-core uses [orange-i18n](https://github.com/wikimedia-gadgets/orange-i18n
 - Work on twinkle-core is usually done while developing or testing a localised twinkle installation (such as [twinkle-enwiki](https://github.com/wikimedia-gadgets/twinkle-enwiki)). In twinkle-enwiki, all imports from twinkle-core are used through the gateway file [core.ts file](https://github.com/wikimedia-gadgets/twinkle-enwiki/blob/master/src/core.ts). Change `export * from 'twinkle-core';`there to `export * from '../../twinkle-core/src/index';`. (Assuming that you have twinkle-core and twinkle-enwiki cloned as sibling directories).
   - Some other projects such as WVUI follow a somewhat [more systematic workflow](https://github.com/wikimedia/wvui#integrated-development-workflow). You can also try this method though it wasn't working reliably for me. 
 - Try to ensure all documentation comments align with the [TSDoc standard](https://tsdoc.org/), and [what Typedoc supports](https://typedoc.org/guides/doccomments/).
+- Ensure that code at the top level (that is, code at 0 level of indentation as well as class property initialisations) don't have usages of `msg()` as `msg` will only work once `initMessaging()` is run.
+- This library has no [side effects](https://sgom.es/posts/2020-06-15-everything-you-never-wanted-to-know-about-side-effects/). Never do anything at the top level that impacts the DOM or changes the state of any globally available variable, as that affects [tree-shaking](https://webpack.js.org/guides/tree-shaking/). All such code must be within a function that is exported and called only by the client twinkle installation.
 
 ## Workflows
 
