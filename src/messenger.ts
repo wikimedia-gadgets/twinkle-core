@@ -112,6 +112,10 @@ export function msg(msg: string, ...parameters: (string | number | string[] | Da
 	return banana.i18n(msg, ...parameters);
 }
 
+// Populate default English messages, final fallback
+// @ts-ignore this can be disabled through a build-stage variable injected by webpack's DefinePlugin
+let EnglishMessagesAvailable = typeof EXCLUDE_ENGLISH_MESSAGES === 'undefined' || !EXCLUDE_ENGLISH_MESSAGES;
+
 /**
  * Initialize the message store. Called from init.ts.
  */
@@ -127,16 +131,14 @@ export function initMessaging() {
 	Morebits.i18n.setParser({ get: msg });
 
 	// QQX is a dummy "language" for documenting messages
-	// No need to do anything when in qqxMode
+	// No need to load anything when in qqxMode
 	qqxMode = language === 'qqx';
 
 	if (qqxMode) {
 		return Promise.resolve();
 	}
 
-	// Populate default English messages, final fallback
-	// @ts-ignore this can be disabled through a build-stage variable injected by webpack's DefinePlugin
-	if (typeof EXCLUDE_ENGLISH_MESSAGES === 'undefined' || !EXCLUDE_ENGLISH_MESSAGES) {
+	if (EnglishMessagesAvailable) {
 		banana.load(enMessages, 'en');
 	}
 	const mwMessageList = coreMwMessages.concat(Twinkle.extraMwMessages);
@@ -185,7 +187,7 @@ function loadMediaWikiMessages(msgList: string[]): Promise<void> {
  * is synchronous.
  */
 function loadTwinkleCoreMessages() {
-	if (language === 'en') {
+	if (language === 'en' && EnglishMessagesAvailable) {
 		// English messages are already available as the final fallback
 		return Promise.resolve();
 	}
