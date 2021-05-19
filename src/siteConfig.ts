@@ -36,4 +36,14 @@ export namespace SiteConfig {
 	 * /w/api.php?action=query&format=json&meta=siteinfo&formatversion=2&siprop=magicwords
 	 */
 	export let redirectTagAliases = ['#REDIRECT'];
+
+	/**
+	 * Function to parse the signature timestamp format. This should be a function
+	 * that takes a string as input and returns an array of 5 numbers - the year,
+	 * month (0-indexed), date, hour and minute, all of them ACCORDING TO UTC
+	 * (even if your wiki doesn't use UTC as the default time zone!)
+	 * This can be skipped if your wiki's signature timestamp format is same as the
+	 * MediaWiki default - used on en.wikipedia, commons, meta, etc.
+	 */
+	export let signatureTimestampFormat = null;
 }

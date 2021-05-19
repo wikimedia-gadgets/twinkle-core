@@ -7,6 +7,11 @@ declare namespace Morebits {
 		function setParser(parser: {get: ((...args: any[]) => string)})
 	}
 
+	namespace l10n {
+		let redirectTagAliases: string[];
+		let signatureTimestampFormat: ((str: string) => [number, number, number, number, number]);
+	}
+
 	function userIsInGroup(group: string): boolean;
 	const userIsSysop: boolean;
 

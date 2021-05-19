@@ -3,6 +3,7 @@ import { Twinkle } from './twinkle';
 import { Config, getPref, loadUserConfig } from './Config';
 import { setPortletConfig } from './portlet';
 import { registerModule } from './twinkleModule';
+import { SiteConfig } from './siteConfig';
 
 /**
  * List of names of modules disabled by user. Populated in init()
@@ -30,6 +31,12 @@ export function init() {
 
 	// Set skin-specific configuration
 	setPortletConfig();
+
+	// Set Morebits.l10n
+	Morebits.l10n.redirectTagAliases = SiteConfig.redirectTagAliases;
+	if (typeof SiteConfig.signatureTimestampFormat === 'function') {
+		Morebits.l10n.signatureTimestampFormat = SiteConfig.signatureTimestampFormat;
+	}
 
 	Twinkle.preModuleInitHooks.push(
 		// Get messages
