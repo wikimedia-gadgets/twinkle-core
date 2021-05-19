@@ -107,6 +107,7 @@ exports[`quickform input element 1`] = `
 >
   <label
     for="node_0"
+    style="margin-right: 3px;"
   >
     Label
   </label>
@@ -161,6 +162,7 @@ exports[`quickform select element 1`] = `
 >
   <label
     for="node_1"
+    style="margin-right: 3px;"
   >
     Select label
   </label>

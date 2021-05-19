@@ -20,13 +20,6 @@ describe('createHtml', () => {
 		expect(fragment.childNodes.length).toBe(1);
 		expect(fragment.childNodes[0].nodeName).toBe('#text');
 
-		fragment = Morebits.createHtml('Hi <a onclick="alert();" href="">text</a>');
-		expect(fragment.childNodes.length).toBe(2);
-		expect(fragment.childNodes[1].nodeName).toBe('A');
-		// the onclick should have been scrubbed
-		expect(fragment.childNodes[1].attributes.length).toBe(1);
-		expect(fragment.childNodes[1].attributes[0].name).toBe('href');
-
 	});
 
 	test('renderWikilinks', () => {
