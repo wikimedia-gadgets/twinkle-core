@@ -177,20 +177,29 @@ function loadMediaWikiMessages(msgList: string[]) {
 }
 
 /**
- * Load twinkle-core messages from Gerrit
+ * Load twinkle-core messages from Gerrit. Gerrit is quite slow. Also, it doesn't set any Cache-Control header.
+ * So we use client-side storage instead to prevent repeated slow fetches.
+ * Note: getting and setting data to/from localStorage (which mw.storage uses under the hood)
+ * is synchronous.
  */
 function loadTwinkleCoreMessages() {
 	if (language === 'en') {
 		// English messages are already available as the final fallback
 		return Promise.resolve();
 	}
-	$.get({
-		url: `//gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/gadgets/TwinkleCore/+/i18n/build-i18n/${language}.json?format=text`,
-		// XXX: fetch fails due to CORS issue if we add the Cache-Control header, WTF?
-		// headers: {
-		// 	'Cache-Control': 'maxage=864000',
-		// },
-	}).then(
+
+	const storageKey = `tw-i18n-${language}`;
+	const json = mw.storage.getObject(storageKey);
+	// Don't use data stale by more than 2 days
+	if (json && new Morebits.date(json.timestamp).add(2, 'days').isAfter(new Date())) {
+		initBanana(json);
+		return Promise.resolve();
+	}
+	$.get(
+		'https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/gadgets/TwinkleCore/+/i18n/build-i18n/' +
+			language +
+			'.json?format=text'
+	).then(
 		(base64text) => {
 			// Adapted from https://phabricator.wikimedia.org/diffusion/WGPI/browse/master/proveit.js
 			let json = JSON.parse(
@@ -204,14 +213,23 @@ function loadTwinkleCoreMessages() {
 						.join('')
 				)
 			);
-			banana.setFallbackLocales(json.fallbacks);
-			delete json.fallbacks;
-			addMessages(json);
+			json.timestamp = new Date().toISOString();
+			mw.storage.setObject(storageKey, json);
+			initBanana(json);
 		},
+		// If messages are requested for a language for which we don't have an i18n file,
+		// Gerrit raises a CORS error due to some reason.
 		(err) => {
 			mw.log.warn('[twinkle]: no messages loaded from gerrit.', err);
 		}
 	);
+}
+
+function initBanana(json) {
+	banana.setFallbackLocales(json.fallbacks);
+	delete json.fallbacks;
+	delete json.timestamp;
+	banana.load(json);
 }
 
 /**
