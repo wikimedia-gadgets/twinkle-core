@@ -1,5 +1,5 @@
 {
-	"fallbacks": [],
+	"@fallbacks": [],
 	"en": {
 		"tooltip-mark": "?",
 		"relative-today": "[Today at] h:mm A",

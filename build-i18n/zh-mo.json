@@ -1,5 +1,5 @@
 {
-	"fallbacks": [
+	"@fallbacks": [
 		"zh-hk",
 		"zh-hant",
 		"zh-hans"

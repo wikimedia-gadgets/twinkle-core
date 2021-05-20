@@ -1,5 +1,5 @@
 {
-	"fallbacks": [],
+	"@fallbacks": [],
 	"zh-hans": {
 		"tooltip-mark": "？",
 		"relative-today": "[今天]A hh:mm",
