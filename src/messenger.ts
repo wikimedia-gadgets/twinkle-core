@@ -195,7 +195,7 @@ function loadTwinkleCoreMessages() {
 	const storageKey = `tw-i18n-${language}`;
 	const json = mw.storage.getObject(storageKey);
 	// Don't use data stale by more than 2 days
-	if (json && new Morebits.date(json.timestamp).add(2, 'days').isAfter(new Date())) {
+	if (json && new Morebits.date(json['@timestamp']).add(2, 'days').isAfter(new Date())) {
 		initBanana(json);
 		return Promise.resolve();
 	}
@@ -217,7 +217,7 @@ function loadTwinkleCoreMessages() {
 						.join('')
 				)
 			);
-			json.timestamp = new Date().toISOString();
+			json['@timestamp'] = new Date().toISOString();
 			mw.storage.setObject(storageKey, json);
 			initBanana(json);
 		},
@@ -230,9 +230,9 @@ function loadTwinkleCoreMessages() {
 }
 
 function initBanana(json) {
-	banana.setFallbackLocales(json.fallbacks);
-	delete json.fallbacks;
-	delete json.timestamp;
+	banana.setFallbackLocales(json['@fallbacks']);
+	delete json['@fallbacks'];
+	delete json['@timestamp'];
 	banana.load(json);
 }
 
