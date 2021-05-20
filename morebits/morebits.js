@@ -2802,7 +2802,7 @@ Morebits.wiki.page = function(pageName, status) {
 					?  msg('protected-indef-edit-warning', ctx.pageName,
 					'You are about to make an edit to the fully protected page "' + ctx.pageName + '" (protected indefinitely).  \n\nClick OK to proceed with the edit, or Cancel to skip this edit.'
 					)
-					: msg('protected-edit-warning', ctx.pageName, new Morebits.date(ctx.fullyProtected).calendar('utc'),
+					: msg('protected-edit-warning', ctx.pageName, ctx.fullyProtected,
 					'You are about to make an edit to the fully protected page "' + ctx.pageName +
 					'" (protection expiring ' + new Morebits.date(ctx.fullyProtected).calendar('utc') + ' (UTC)).  \n\nClick OK to proceed with the edit, or Cancel to skip this edit.'
 					)
