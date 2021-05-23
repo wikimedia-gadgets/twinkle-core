@@ -4,6 +4,10 @@
 	],
 	"bqi": {},
 	"fa": {
+		"@pluralrules": {
+			"one": "i = 0 or n = 1"
+		},
+		"@digittransforms": "۰۱۲۳۴۵۶۷۸۹",
 		"info": "اطلاعات",
 		"note": "یادداشت",
 		"error": "خطا",

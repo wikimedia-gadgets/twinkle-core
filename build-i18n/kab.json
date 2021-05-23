@@ -4,6 +4,9 @@
 	],
 	"kab": {},
 	"fr": {
+		"@pluralrules": {
+			"one": "i = 0,1"
+		},
 		"tooltip-mark": "?",
 		"relative-today": "[Aujourd’hui à] h:mm A",
 		"relative-prevday": "[Hier à] h:mm A",

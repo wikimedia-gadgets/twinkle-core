@@ -4,6 +4,14 @@
 	],
 	"arz": {},
 	"ar": {
+		"@pluralrules": {
+			"zero": "n = 0",
+			"one": "n = 1",
+			"two": "n = 2",
+			"few": "n % 100 = 3..10",
+			"many": "n % 100 = 11..99"
+		},
+		"@digittransforms": "٠١٢٣٤٥٦٧٨٩",
 		"bullet-separator": " •",
 		"info": "معلومات",
 		"note": "ملاحظة",

@@ -1,6 +1,9 @@
 {
 	"@fallbacks": [],
 	"mk": {
+		"@pluralrules": {
+			"one": "v = 0 and i % 10 = 1 or f % 10 = 1"
+		},
 		"info": "Инфо",
 		"note": "Напомена",
 		"error": "Грешка",

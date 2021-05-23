@@ -1,6 +1,7 @@
 {
 	"@fallbacks": [],
 	"te": {
+		"@digittransforms": "౦౧౨౩౪౫౬౭౮౯",
 		"bullet-separator": " • ",
 		"info": "సమాచారం",
 		"note": "గమనిక",
