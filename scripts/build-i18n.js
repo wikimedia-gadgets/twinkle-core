@@ -11,7 +11,7 @@ const path = require('path');
 const chalk = require('chalk');
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const langFallbacks = require('./language-fallbacks.json');
+const langFallbacks = require('orange-i18n/data/fallbacks.json');
 const langPluralRules = require('orange-i18n/data/plural-rules.json');
 const langDigitTransforms = require('orange-i18n/data/digit-transforms.json');
 
