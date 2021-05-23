@@ -31,6 +31,10 @@
 	"batch-progress": "* $1 - number of actions successful\n* $2 - total number of actions",
 	"submit": "Used as the default label for the submit button on forms.",
 	"bullet-separator": "Bullet separator (for separating multiple items in a horizontal list). Should ideally begin and end with a space. (Please use &amp;#32; for the final space.)",
+
+	"revert-summary": "Restored revision $1 by $2",
+	"hidden-user": "Placeholder for the username for a revision whose username has been revision-deleted or suppressed. This message should be able to fit into other messages that expect a username as parameter, for example the 2nd param ($2) of {{msg|revert-summary}}.",
+
 	"info": "Short label for an informational message",
 	"error": "Short label for an error message",
 	"link-rollback": "Text for the button which performs a rollback",

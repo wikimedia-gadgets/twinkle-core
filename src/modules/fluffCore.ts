@@ -7,7 +7,7 @@ import { getPref } from '../Config';
  * "Fluff" module is used for reverting vandalism. It offers several types of
  * revert modes.
  *
- * Localisation: You may wish to customise {@link trustedBots} and {@link hiddenName}.
+ * **Localisation**: You may wish to customise {@link trustedBots}.
  * Apart from that, this module should work without any further configuration.
  */
 class Fluff extends TwinkleModule {
@@ -23,12 +23,6 @@ class Fluff extends TwinkleModule {
 	 * has no faith, and for normal rollback, it will rollback that edit.
 	 */
 	trustedBots: string[];
-
-	/**
-	 * String to insert in edit summary in place of the username when the username
-	 * is revdeled or suppressed.
-	 */
-	hiddenName = 'an unknown user';
 
 	skipTalk = null;
 	rollbackInPlace = null;
@@ -421,7 +415,7 @@ class Fluff extends TwinkleModule {
 			}
 
 			// Used for user-facing alerts, messages, etc., not edits or summaries
-			var userNorm = params.user || this.hiddenName;
+			var userNorm = params.user || msg('hidden-user');
 			var index = 1;
 			if (params.revid !== lastrevid) {
 				Morebits.status.warn('Warning', msg('revid-mismatch', lastrevid, params.revid));
@@ -463,7 +457,7 @@ class Fluff extends TwinkleModule {
 				// Expected revision is the same, so the users must match;
 				// this allows sysops to know whether the users are the same
 				params.user = lastuser;
-				userNorm = params.user || this.hiddenName;
+				userNorm = params.user || msg('hidden-user');
 			}
 
 			if (this.trustedBots.indexOf(params.user) !== -1) {
@@ -486,7 +480,7 @@ class Fluff extends TwinkleModule {
 							index = 2;
 							params.user = revs[1].user;
 							params.userHidden = !!revs[1].userhidden;
-							userNorm = params.user || this.hiddenName;
+							userNorm = params.user || msg('hidden-user');
 						} else {
 							Morebits.status.warn('Notice', msg('bot-revert-selected', userNorm));
 						}
@@ -543,7 +537,7 @@ class Fluff extends TwinkleModule {
 			params.gooduserHidden = !!good_revision.userhidden;
 
 			statelem.status(
-				msg('revision-age', params.goodid, count, params.gooduserHidden ? this.hiddenName : params.gooduser)
+				msg('revision-age', params.goodid, count, params.gooduserHidden ? msg('hidden-user') : params.gooduser)
 			);
 
 			var summary, extra_summary;
@@ -565,7 +559,7 @@ class Fluff extends TwinkleModule {
 
 				case 'vand':
 					summary = this.formatSummary(
-						msg('vandalism-summary', params.count, params.gooduserHidden ? this.hiddenName : params.gooduser),
+						msg('vandalism-summary', params.count, params.gooduserHidden ? msg('hidden-user') : params.gooduser),
 						params.userHidden ? null : params.user
 					);
 					break;
@@ -735,7 +729,7 @@ class Fluff extends TwinkleModule {
 					result = Morebits.string.safeReplace(result, '%USER%', userName);
 				}
 			} else {
-				result = Morebits.string.safeReplace(result, '%USER%', this.hiddenName);
+				result = Morebits.string.safeReplace(result, '%USER%', msg('hidden-user'));
 			}
 		}
 

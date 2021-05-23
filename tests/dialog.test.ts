@@ -1,7 +1,7 @@
 import './test_base';
 import 'jquery-ui-dist/jquery-ui';
 
-import { Dialog } from '../src';
+import { Dialog } from '../src/Dialog';
 
 describe('dialog', () => {
 	test('dialog', () => {

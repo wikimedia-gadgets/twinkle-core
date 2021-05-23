@@ -40,6 +40,12 @@
 	"submit": "Submit Query",
 	"bullet-separator": " \u2022 ",
 
+	"revert-mismatch": "The retrieved revision does not match the requested revision.",
+	"revert-curid-fail": "Failed to retrieve current revision ID.",
+	"revert-user-fail": "Failed to retrieve user who made the revision.",
+	"revert-summary": "Restored revision $1 by $2",
+	"hidden-user": "an unknown user",
+
 	"querying-user": "Querying user \"$1\"",
 	"fetching-userinfo": "Retrieving user information...",
 	"failed-timestamp": "Failed to retrieve current timestamp.",
