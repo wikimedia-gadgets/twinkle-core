@@ -2,7 +2,7 @@
  * Build i18n files
  *
  * Adapted from
- * https://github.com/jwbth/convenient-discussions/blob/0908468075b0acbde3425ab947f191d92535aa62/buildI18n.js
+ * https://github.com/jwbth/convenient-discussions/blob/master/buildI18n.js
  * Licence: MIT
  */
 
@@ -12,6 +12,8 @@ const chalk = require('chalk');
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const langFallbacks = require('./language-fallbacks.json');
+const langPluralRules = require('orange-i18n/data/plural-rules.json');
+const langDigitTransforms = require('orange-i18n/data/digit-transforms.json');
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -150,6 +152,7 @@ fs.readdirSync(root + '/i18n/').forEach((fileName) => {
 	allStrings[lang] = strings;
 });
 
+fs.rmSync(root + '/build-i18n-temp', { force: true, recursive: true });
 fs.mkdirSync(root + '/build-i18n-temp', { recursive: true });
 
 // list of all known languages: all languages mentioned in the fallbacks file + original i18n files we have
@@ -157,28 +160,40 @@ const listOfLanguages = [...new Set([...existingLangs, ...Object.entries(langFal
 
 // Generate processed i18n files
 listOfLanguages.forEach((lang) => {
-	let messagesIncluded = Object.assign({}, allStrings[lang]); // tracks which messages have been included so far
+	let messagesIncluded = {}; // tracks which messages have been included so far
 	let output = {
 		// Put list of fallback languages here. This should be same as the order of keys in the
 		// object. But can't rely on that since object property order is a hazy subject in javascript:
 		// https://stackoverflow.com/questions/5525795/does-javascript-guarantee-object-property-order/38218582#38218582
-		['@fallbacks']: langFallbacks[lang] || [],
-		[lang]: Object.assign({}, messagesIncluded)
+		'@fallbacks': langFallbacks[lang] || [],
 	};
-	const fallbacks = langFallbacks[lang] || [];
-	for (let fallbackLang of fallbacks) {
-		let fallbackMessages = allStrings[fallbackLang] || {};
-		if (fallbackLang === 'en') {
+	const fallbackList = [lang].concat(langFallbacks[lang] || []);
+	for (let language of fallbackList) {
+		let messages = allStrings[language] || {};
+		if (language === 'en') {
 			output['en'] = {};  // en messages are already available along with code
 			Object.assign(messagesIncluded, allStrings['en']);
 			continue;
 		}
-		output[fallbackLang] = Object.fromEntries(
-			Object.entries(fallbackMessages).filter(([key, value]) => {
+		output[language] = {}; // include an empty object always
+		const messagesToInclude = Object.fromEntries(
+			Object.entries(messages).filter(([key, value]) => {
 				return !messagesIncluded[key];
 			})
 		);
-		Object.assign(messagesIncluded, output[fallbackLang]);
+		if (Object.keys(messagesToInclude).length > 0) {
+			// If there are no messages to include, there's no point in including
+			// the pluralrules/digittransforms
+			Object.assign(
+				output[language],
+				{
+					'@pluralrules': langPluralRules[language],
+					'@digittransforms': langDigitTransforms[language]
+				},
+				messagesToInclude
+			);
+			Object.assign(messagesIncluded, messagesToInclude);
+		}
 	}
 
 	let json = JSON.stringify(output, null, '\t')

@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - 'i18n/**'
+      - 'scripts/build-i18n.js'
+      - '.github/workflows/i18n-deploy.yml'
   workflow_dispatch:
 
 jobs:

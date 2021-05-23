@@ -27,7 +27,7 @@
 	"license": "CC-BY-SA-3.0",
 	"dependencies": {
 		"@types/select2": "^4.0.53",
-		"orange-i18n": "^3.2.0",
+		"orange-i18n": "^4.0.2",
 		"types-mediawiki": "^1.1.0"
 	},
 	"devDependencies": {

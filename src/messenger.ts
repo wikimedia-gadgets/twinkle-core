@@ -233,6 +233,14 @@ function initBanana(json) {
 	banana.setFallbackLocales(json['@fallbacks']);
 	delete json['@fallbacks'];
 	delete json['@timestamp'];
+	for (let [lang, data] of obj_entries(json)) {
+		if (data['@pluralrules']) {
+			banana.setPluralRules(lang, data['@pluralrules']);
+		}
+		if (data['@digittransforms']) {
+			banana.setDigitTransforms(lang, data['@digittransforms']);
+		}
+	}
 	banana.load(json);
 }
 
