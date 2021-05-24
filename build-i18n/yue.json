@@ -1,6 +1,7 @@
 {
 	"@fallbacks": [],
 	"yue": {
+		"notify-self-skip": "呢版係你（$1）開嘅；�唔通知用戶",
 		"info": "資訊",
 		"note": "註",
 		"error": "錯誤",
@@ -162,7 +163,6 @@
 		"xfd-editreq-failed": "加唔到修改請求，討論版可能受保護",
 		"fetching-creator": "搵緊開版者",
 		"notifying-creator": "通知最初嘅貢獻者（$1）",
-		"notify-self-skip": "呢版係你（$1）開嘅；�唔通知用戶",
 		"pref-logxfdnominations-label": "提出刪版討論（XfD）嘅時候，喺用戶空間度留低紀錄",
 		"pref-logxfdnominations-tooltip": "用戶空間日誌可以幫你跟實自己提出咗幾多次刪版討論",
 		"pref-xfdlogpagename-label": "喺呢頁用戶細版度保留刪版討論用戶空間日誌",
