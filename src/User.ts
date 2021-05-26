@@ -15,8 +15,9 @@ export class User extends Morebits.wiki.user {
 			// checks out if changeTags is a non-empty string or a non-empty array
 			this.setChangeTags(Twinkle.changeTags);
 		} else {
-			this.setReason = (summary) => {
-				super.setReason(summary + Twinkle.summaryAd);
+			let setReasonOriginal = this.setReason.bind(this);
+			this.setReason = function (summary: string) {
+				setReasonOriginal(summary + Twinkle.summaryAd);
 			};
 		}
 

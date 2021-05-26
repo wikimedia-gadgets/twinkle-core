@@ -15,8 +15,9 @@ export class Page extends Morebits.wiki.page {
 			// checks out if changeTags is a non-empty string or a non-empty array
 			this.setChangeTags(Twinkle.changeTags);
 		} else {
-			this.setEditSummary = (summary) => {
-				super.setEditSummary(summary + Twinkle.summaryAd);
+			let setEditSummaryOriginal = this.setEditSummary.bind(this);
+			this.setEditSummary = function (summary: string) {
+				setEditSummaryOriginal(summary + Twinkle.summaryAd);
 			};
 		}
 
