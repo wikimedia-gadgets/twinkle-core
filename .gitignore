@@ -26,7 +26,9 @@ Icon
 node_modules/
 npm-debug.log*
 
-
-#Generated files
+# Generated files
 docs/
 build/
+js/
+build-i18n-temp/
+src/*.js
