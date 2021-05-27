@@ -5,6 +5,7 @@ import { msg } from '../messenger';
 import { TwinkleModule } from '../twinkleModule';
 import { getPref } from '../Config';
 import { User } from '../User';
+import type { ApiBlockParams } from 'types-mediawiki/api_params';
 import isInfinity = Morebits.string.isInfinity;
 
 export type BlockPresetInfo = {
@@ -1202,7 +1203,7 @@ export abstract class BlockCore extends TwinkleModule {
 		};
 		params.disabletalk = params.disabletalk || params.notalk;
 
-		var templateText = this.getBlockNoticeWikitext(params);
+		var templateText = this.getBlockNoticeWikitextAndSummary(params)[0];
 
 		form.previewer.beginRender(templateText, 'User_talk:' + this.relevantUserName); // Force wikitext/correct
 		// username
@@ -1214,7 +1215,7 @@ export abstract class BlockCore extends TwinkleModule {
 			toBlock = form.block.checked,
 			toWarn = form.tag.checked,
 			toPartial = $(form.partial).is(':checked'),
-			blockoptions = {},
+			blockoptions: ApiBlockParams = {},
 			templateoptions = {};
 
 		this.saveFieldset($form.find('[name=field_block_options]'));

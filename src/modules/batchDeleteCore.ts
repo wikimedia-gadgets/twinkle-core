@@ -129,9 +129,9 @@ class BatchDelete extends TwinkleModule {
 
 		var query = {
 			action: 'query',
-			prop: 'revisions|info|imageinfo',
+			prop: ['revisions', 'info', 'imageinfo'],
 			inprop: 'protection',
-			rvprop: 'size|user',
+			rvprop: ['size', 'user'],
 			format: 'json',
 		};
 
@@ -450,7 +450,7 @@ class BatchDelete extends TwinkleModule {
 			index,
 			element: HTMLInputElement
 		) {
-			return element.checked && element.nextElementSibling.style.color === 'red';
+			return element.checked && (element.nextElementSibling as HTMLLabelElement).style.color === 'red';
 		}).length;
 		if (numProtected > 0 && !confirm(msg('confirm-protected', numProtected))) {
 			return;

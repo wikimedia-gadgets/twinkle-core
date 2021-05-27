@@ -141,8 +141,8 @@ export class BatchUndeleteCore extends TwinkleModule {
 		let form = event.target;
 		Morebits.wiki.actionCompleted.notice = msg('undbatch-complete');
 
-		var numProtected = Morebits.quickForm.getElements(form, 'pages').filter((element) => {
-			return element.checked && element.nextElementSibling.style.color === 'red';
+		var numProtected = Morebits.quickForm.getElements(form, 'pages').filter((element: HTMLInputElement) => {
+			return element.checked && (element.nextElementSibling as HTMLLabelElement).style.color === 'red';
 		}).length;
 		if (numProtected > 0 && !confirm(msg('undbatch-confirm-protected', numProtected))) {
 			return;

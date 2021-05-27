@@ -211,9 +211,7 @@ function loadTwinkleCoreMessages() {
 					window
 						.atob(base64text)
 						.split('')
-						.map(function (character) {
-							return '%' + ('00' + character.charCodeAt(0).toString(16)).slice(-2);
-						})
+						.map((char) => '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2))
 						.join('')
 				)
 			);
