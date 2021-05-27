@@ -10,7 +10,7 @@ export * from './twinkleModule';
 // Utilities
 export * from './utils';
 export * from './messenger';
-export * from './Api';
+export { Api, mwApi } from './Api';
 export * from './Page';
 export * from './User';
 export * from './Dialog';

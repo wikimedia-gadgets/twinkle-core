@@ -1,6 +1,7 @@
 import Banana, { Messages } from 'orange-i18n';
 import { obj_entries, urlParamValue } from './utils';
 import { Twinkle } from './twinkle';
+import { mwApi } from './Api';
 
 import coreMwMessages from './mw-messages';
 import enMessages from '../i18n/en.json';
@@ -162,7 +163,7 @@ function loadMediaWikiMessages(msgList: string[]): Promise<void> {
 		promises.push(
 			// Mediawiki namespace-based overrides of MW messages do get taken
 			// into account
-			new mw.Api()
+			mwApi
 				.getMessages(msgList.slice(i, i + 50), {
 					amlang: language,
 					// cache them, as messages are not going to change that often

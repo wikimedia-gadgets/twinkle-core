@@ -1,9 +1,11 @@
 import './test_base';
 
 import { msg, addMessages, initMessaging } from '../src/messenger';
+import { initialiseMwApi } from '../src/Api';
 
 describe('messenger', () => {
 	beforeAll(() => {
+		initialiseMwApi();
 		return initMessaging().then(() => {
 			addMessages({
 				'test-msg-1': 'Test message 1',

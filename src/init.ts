@@ -4,6 +4,7 @@ import { Config, getPref, loadUserConfig } from './Config';
 import { setPortletConfig } from './portlet';
 import { registerModule } from './twinkleModule';
 import { SiteConfig } from './siteConfig';
+import { initialiseMwApi } from './Api';
 
 /**
  * List of names of modules disabled by user. Populated in init()
@@ -37,6 +38,9 @@ export function init() {
 	if (typeof SiteConfig.signatureTimestampFormat === 'function') {
 		Morebits.l10n.signatureTimestampFormat = SiteConfig.signatureTimestampFormat;
 	}
+
+	// Initialise mw.Api, first used in initMessaging()
+	initialiseMwApi();
 
 	Twinkle.preModuleInitHooks.push(
 		// Get messages
