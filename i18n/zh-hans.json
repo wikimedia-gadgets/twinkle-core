@@ -3,7 +3,8 @@
 		"authors": [
 			"94rain",
 			"Wzl19371",
-			"Xiplus"
+			"Xiplus",
+			"Zhang8569"
 		]
 	},
 	"tooltip-mark": "？",
@@ -40,6 +41,11 @@
 	"batch-progress": "完成（$1/$2操作已成功完成）",
 	"submit": "提交",
 	"bullet-separator": "•",
+	"revert-mismatch": "获得的修订与要求的修正版本不符。",
+	"revert-curid-fail": "恢复当前修正ID失败了",
+	"revert-user-fail": "寻找修订此版本的用户失败了",
+	"revert-summary": "$2已将修订版本恢复到$1",
+	"hidden-user": "一名未知用户",
 	"querying-user": "查询用户“$1”",
 	"fetching-userinfo": "正在查询用户信息……",
 	"failed-timestamp": "查询当前时间戳失败。",
