@@ -364,6 +364,9 @@
 		"pref-xfdwatchlist-tooltip": "Ceci ne s’applique qu’aux endroits où la discussion a lieu sur une page nouvellement créée et qui est incluse dans un journal ou une page de liste.",
 		"pref-xfdwatchuser-label": "Ajouter la page de discussion de l’utilisateur du contributeur initial à la liste de suivi (lors de la notification)"
 	},
-	"es": {},
+	"es": {
+		"revert-mismatch": "La revisión recuperada no coincide con la revisión solicitada.",
+		"hidden-user": "un usuario desconocido"
+	},
 	"ru": {}
 }

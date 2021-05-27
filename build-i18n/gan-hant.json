@@ -385,5 +385,11 @@
 		"pref-xfdwatchlist-tooltip": "這僅適用於討論是位於新建立的頁面，且該頁面嵌入包含在每日日誌或列表頁面。",
 		"pref-xfdwatchuser-label": "加入建立者的使用者討論頁到監視清單（在通知時）"
 	},
-	"zh-hans": {}
+	"zh-hans": {
+		"revert-mismatch": "获得的修订与要求的修正版本不符。",
+		"revert-curid-fail": "恢复当前修正ID失败了",
+		"revert-user-fail": "寻找修订此版本的用户失败了",
+		"revert-summary": "$2已将修订版本恢复到$1",
+		"hidden-user": "一名未知用户"
+	}
 }
