@@ -9,7 +9,7 @@ export * from './twinkleModule';
 
 // Utilities
 export * from './utils';
-export * from './messenger';
+export { language, msg, addMessages, loadAdditionalMediaWikiMessages } from './messenger';
 export { Api, mwApi } from './Api';
 export * from './Page';
 export * from './User';

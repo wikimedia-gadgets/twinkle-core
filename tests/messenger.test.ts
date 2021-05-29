@@ -1,22 +1,35 @@
 import './test_base';
 
-import { msg, addMessages, initMessaging } from '../src/messenger';
+import { msg, addMessages, initMessaging, loadTwinkleCoreMessages, banana } from '../src/messenger';
 import { initialiseMwApi } from '../src/Api';
 
 describe('messenger', () => {
-	beforeAll(() => {
+	beforeAll(async () => {
 		initialiseMwApi();
-		return initMessaging().then(() => {
-			addMessages({
-				'test-msg-1': 'Test message 1',
-				'and': ' and',
-				'word-separator': ' ',
-				'comma-separator': ', ',
-			});
-		});
+		await initMessaging();
+		// check if mediawiki messages were fetched
+		expect(msg('word-separator')).toBe(' ');
 	});
 
+	test('loadTwinkleCoreMessages', async () => {
+		await loadTwinkleCoreMessages('fr'); // slow
+		banana.setLocale('fr');
+		expect(msg('info')).toBe('Infos'); // verify message is loaded
+		const cachedObject = mw.storage.getObject('tw-i18n-fr');
+		expect(cachedObject).not.toBeNull();
+		expect(cachedObject['fr']['info']).toBe('Infos');
+
+		// call it again, 2nd call should be much quicker as data is retrieved from localStorage
+		let startTime = new Date().getTime();
+		loadTwinkleCoreMessages('fr');
+		let endTime = new Date().getTime();
+		expect(endTime - startTime).toBeLessThan(20); // shouldn't take more than 20 ms
+	}, 4000);
+
 	test('addMessages and msg', () => {
+		addMessages({
+			'test-msg-1': 'Test message 1',
+		});
 		expect(msg('test-msg-1')).toEqual('Test message 1');
 		addMessages({
 			'test-msg-2': 'Test message 2',
@@ -40,6 +53,4 @@ describe('messenger', () => {
 		expect(msg('{{lcfirst:Hello}}')).toEqual('hello');
 		expect(msg('{{lcfirst:hello}}')).toEqual('hello');
 	});
-
-	// TODO: spy on mw.Api and add test for loadAdditionalMediaWikiMessages
 });

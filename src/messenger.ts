@@ -1,3 +1,6 @@
+// Some members in this module are exported but only for testing
+// See index.ts for members actually exported out of the package.
+
 import Banana, { Messages } from 'orange-i18n';
 import { obj_entries, urlParamValue } from './utils';
 import { Twinkle } from './twinkle';
@@ -9,7 +12,7 @@ import enMessages from '../i18n/en.json';
 /**
  * Orange-i18n object
  */
-let banana: Banana;
+export let banana: Banana;
 
 /**
  * The language used for all messages in twinkle-core.
@@ -143,7 +146,7 @@ export function initMessaging() {
 		banana.load(enMessages, 'en');
 	}
 	const mwMessageList = coreMwMessages.concat(Twinkle.extraMwMessages);
-	return Promise.all([loadMediaWikiMessages(mwMessageList), loadTwinkleCoreMessages()])
+	return Promise.all([loadMediaWikiMessages(mwMessageList, language), loadTwinkleCoreMessages(language)])
 		.catch((e) => {
 			mw.notify('Failed to load messages needed for Twinkle', { type: 'error' });
 		})
@@ -157,7 +160,7 @@ export function initMessaging() {
  * These will include generic items such as month/day names, etc.
  * See mw-messages.ts for the list of keys.
  */
-function loadMediaWikiMessages(msgList: string[]): Promise<void> {
+function loadMediaWikiMessages(msgList: string[], language: string): Promise<void> {
 	let promises = [];
 	for (let i = 0; i < msgList.length; i += 50) {
 		promises.push(
@@ -187,7 +190,7 @@ function loadMediaWikiMessages(msgList: string[]): Promise<void> {
  * Note: getting and setting data to/from localStorage (which mw.storage uses under the hood)
  * is synchronous.
  */
-function loadTwinkleCoreMessages() {
+export function loadTwinkleCoreMessages(language: string) {
 	if (language === 'en' && EnglishMessagesAvailable) {
 		// English messages are already available as the final fallback
 		return Promise.resolve();
@@ -200,7 +203,7 @@ function loadTwinkleCoreMessages() {
 		initBanana(json);
 		return Promise.resolve();
 	}
-	$.get(
+	return $.get(
 		'https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/gadgets/TwinkleCore/+/i18n/build-i18n/' +
 			language +
 			'.json?format=text'
@@ -251,5 +254,5 @@ function initBanana(json) {
  * @deprecated
  */
 export function loadAdditionalMediaWikiMessages(messageList: string[]) {
-	return loadMediaWikiMessages(messageList);
+	return loadMediaWikiMessages(messageList, language);
 }
