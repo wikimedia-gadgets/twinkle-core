@@ -21,7 +21,7 @@ describe('messenger', () => {
 
 		// call it again, 2nd call should be much quicker as data is retrieved from localStorage
 		let startTime = new Date().getTime();
-		loadTwinkleCoreMessages('fr');
+		await loadTwinkleCoreMessages('fr');
 		let endTime = new Date().getTime();
 		expect(endTime - startTime).toBeLessThan(20); // shouldn't take more than 20 ms
 	}, 4000);
