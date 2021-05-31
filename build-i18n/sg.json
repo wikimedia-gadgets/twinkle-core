@@ -41,6 +41,7 @@
 		"batch-progress": "Fait ($1/$2 actions bien terminées)",
 		"submit": "Soumettre la requête",
 		"bullet-separator": " • ",
+		"hidden-user": "Un utilisateur inconnu",
 		"fetching-userinfo": "Récupération des informations de l’utilisateur",
 		"notify-self-skip": "Vous ($1) avez créé cette page ; saute la notification de l’utilisateur",
 		"info": "Infos",

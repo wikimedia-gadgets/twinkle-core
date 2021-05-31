@@ -43,6 +43,7 @@
 		"batch-progress": "Fait ($1/$2 actions bien terminées)",
 		"submit": "Soumettre la requête",
 		"bullet-separator": " • ",
+		"hidden-user": "Un utilisateur inconnu",
 		"fetching-userinfo": "Récupération des informations de l’utilisateur",
 		"notify-self-skip": "Vous ($1) avez créé cette page ; saute la notification de l’utilisateur",
 		"info": "Infos",
@@ -365,8 +366,7 @@
 		"pref-xfdwatchuser-label": "Ajouter la page de discussion de l’utilisateur du contributeur initial à la liste de suivi (lors de la notification)"
 	},
 	"es": {
-		"revert-mismatch": "La revisión recuperada no coincide con la revisión solicitada.",
-		"hidden-user": "un usuario desconocido"
+		"revert-mismatch": "La revisión recuperada no coincide con la revisión solicitada."
 	},
 	"ru": {}
 }
