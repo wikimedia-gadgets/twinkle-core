@@ -1,6 +1,7 @@
 {
 	"@fallbacks": [],
 	"yue": {
+		"done": "搞掂",
 		"notify-self-skip": "呢版係你（$1）開嘅；�唔通知用戶",
 		"info": "資訊",
 		"note": "註",
