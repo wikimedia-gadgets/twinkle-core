@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"MITO"
+			"MITO",
+			"Pyscowicz"
 		]
 	},
 	"tooltip-mark": "?",
+	"relative-other": "DD-MM-YYYY",
 	"done": "Valmis",
 	"opening-page": "Avataan sivua \"$1\"",
 	"saving-page": "Tallennetaan sivua...",
