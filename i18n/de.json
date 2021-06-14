@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"DraconicDark",
 			"FF-11",
 			"Falwye"
 		]
@@ -11,11 +12,14 @@
 	"invalid-token-retrying": "Ungültiges Token. Abrufen eines neuen Tokens und erneutes Versuchen...",
 	"getting-token": "Token abrufen...",
 	"opening-page": "Seite „$1“ wird geöffnet",
+	"retrieving-page": "Seite abrufen...",
 	"protected-edit-warning": "Du bist dabei, die vollgeschützte Seite \"$1\" (Schutz läuft ab {{date:$1|relative|utc}} (UTC)) zu bearbeiten.\n\nKlicke OK, um forzufahren oder Abbrechen, um die Bearbeitung zu überspringen",
 	"protected-indef-edit-warning": "Du bist dabei, die vollgeschützte Seite \"$1\" (unbeschränkt geschützt) zu bearbeiten.\n\nKlicke OK, um forzufahren oder Abbrechen, um die Bearbeitung zu überspringen",
 	"protected-aborted": "Bearbeitung einer vollgeschützten Seite wurde abgebrochen.",
 	"saving-page": "Seite speichern...",
+	"getting-creator": "Abrufen von Informationen zur Seitenerstellung",
 	"token-fetch-fail": "Bearbeitungs-Token konnte nicht abgerufen werden.",
+	"invalid-title": "Der Seitentitel ist ungültig: $1",
 	"cross-redirect-abort": "$1 ist eine Weiterleitung zwichen Namensräumen nach $2, abgebrochen",
 	"redirected": "Weitergeleitet von $1 nach $2",
 	"redirect-resolution-fail": "Weiterleitungen für folgende Seite konnten nicht aufgelöst werden: $1",
