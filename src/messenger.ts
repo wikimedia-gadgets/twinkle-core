@@ -2,7 +2,7 @@
 // See index.ts for members actually exported out of the package.
 
 import Banana, { Messages } from 'orange-i18n';
-import { obj_entries, urlParamValue } from './utils';
+import { obj_entries, str_startsWith, urlParamValue } from './utils';
 import { Twinkle } from './twinkle';
 import { mwApi } from './Api';
 
@@ -220,8 +220,8 @@ export function loadTwinkleCoreMessages(language: string) {
 				)
 			);
 			json['@timestamp'] = new Date().toISOString();
-			mw.storage.setObject(storageKey, json);
 			initBanana(json);
+			mw.requestIdleCallback(() => mw.storage.setObject(storageKey, json));
 		},
 		// If messages are requested for a language for which we don't have an i18n file,
 		// Gerrit raises a CORS error due to some reason.
@@ -236,6 +236,9 @@ function initBanana(json) {
 	delete json['@fallbacks'];
 	delete json['@timestamp'];
 	for (let [lang, data] of obj_entries(json)) {
+		if (str_startsWith(lang, '@')) {
+			continue;
+		}
 		if (data['@pluralrules']) {
 			banana.setPluralRules(lang, data['@pluralrules']);
 		}
