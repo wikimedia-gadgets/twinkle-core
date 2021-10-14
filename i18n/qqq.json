@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"FF-11",
 			"Jack who built the house",
 			"McDutchie",
@@ -36,7 +37,7 @@
 	"revert-summary": "Restored revision $1 by $2",
 	"hidden-user": "Placeholder for the username for a revision whose username has been revision-deleted or suppressed. This message should be able to fit into other messages that expect a username as parameter, for example the 2nd param ($2) of {{msg|revert-summary}}.",
 	"fetching-userinfo": "Status message indicating that user information is being fetched.",
-	"info": "Short label for an informational message",
+	"info": "Short label for an informational message\n\n{{Identical|Info}}",
 	"note": "{{identical|Note}}",
 	"error": "Short label for an error message\n{{identical|Error}}",
 	"link-rollback": "Text for the button which performs a rollback",
