@@ -16,7 +16,7 @@ import { getPref } from '../Config';
  *
  * Localisation: Should work without any configuration.
  */
-class BatchDelete extends TwinkleModule {
+export class BatchDeleteCore extends TwinkleModule {
 	moduleName = 'batchdelete';
 	static moduleName = 'batchdelete';
 
@@ -746,5 +746,3 @@ class BatchDelete extends TwinkleModule {
 		},
 	};
 }
-
-export { BatchDelete as BatchDeleteCore };

@@ -46,9 +46,16 @@ export class TwinkleModule {
 	}
 
 	/**
+	 * Executes just before the menu is added, suitable place for tweaking
+	 * portlet configurations.
+	 */
+	beforeAddMenu() {}
+
+	/**
 	 * Add menu portlet
 	 */
 	addMenu() {
+		this.beforeAddMenu();
 		addPortletLink(
 			() => this.makeWindow(),
 			this.portletName,
