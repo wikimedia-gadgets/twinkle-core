@@ -45,7 +45,7 @@ export function init() {
 	Twinkle.preModuleInitHooks.push(
 		// Get messages
 		() => {
-			initMessaging();
+			return initMessaging().then(() => {});
 		},
 
 		// Get user config and perform init actions that rely on the config
