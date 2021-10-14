@@ -220,8 +220,8 @@ export function loadTwinkleCoreMessages(language: string) {
 				)
 			);
 			json['@timestamp'] = new Date().toISOString();
-			initBanana(json);
 			mw.requestIdleCallback(() => mw.storage.setObject(storageKey, json));
+			initBanana(json);
 		},
 		// If messages are requested for a language for which we don't have an i18n file,
 		// Gerrit raises a CORS error due to some reason.
