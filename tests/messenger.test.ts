@@ -2,6 +2,7 @@ import './test_base';
 
 import { msg, addMessages, initMessaging, loadTwinkleCoreMessages, banana } from '../src/messenger';
 import { initialiseMwApi } from '../src/Api';
+import { sleep } from 'mwn/build/utils';
 
 describe('messenger', () => {
 	beforeAll(async () => {
@@ -12,16 +13,20 @@ describe('messenger', () => {
 	});
 
 	test('loadTwinkleCoreMessages', async () => {
-		await loadTwinkleCoreMessages('fr'); // slow
-		banana.setLocale('fr');
+		const language = 'fr';
+		await loadTwinkleCoreMessages(language); // slow
+		banana.setLocale(language);
 		expect(msg('info')).toBe('Infos'); // verify message is loaded
-		const cachedObject = mw.storage.getObject('tw-i18n-fr');
+		const cachedObject = mw.storage.getObject(`tw-i18n-${language}`);
 		expect(cachedObject).not.toBeNull();
-		expect(cachedObject['fr']['info']).toBe('Infos');
+		expect(cachedObject[language]['info']).toBe('Infos');
+
+		// make sure there's time for idle callback to trigger
+		sleep(5);
 
 		// call it again, 2nd call should be much quicker as data is retrieved from localStorage
 		let startTime = new Date().getTime();
-		await loadTwinkleCoreMessages('fr');
+		await loadTwinkleCoreMessages(language);
 		let endTime = new Date().getTime();
 		expect(endTime - startTime).toBeLessThan(20); // shouldn't take more than 20 ms
 	}, 4000);
