@@ -378,7 +378,11 @@ export class BatchDeleteCore extends TwinkleModule {
 
 								var title = page.title;
 								subpageList.push({
-									label: title + (metadata.length ? ' (' + metadata.join('; ') + ')' : ''),
+									label:
+										title +
+										(metadata.length
+											? msg('word-separator') + msg('parentheses', metadata.join(msg('semicolon-separator')))
+											: ''),
 									value: title,
 									checked: true,
 									style: isProtected ? 'color: red' : '',
