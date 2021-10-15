@@ -192,7 +192,7 @@ export class BatchDeleteCore extends TwinkleModule {
 
 		var statelem = new Morebits.status(msg('fetching-list'));
 		var wikipedia_api = new Morebits.wiki.api(
-			'loading...',
+			msg('loading'),
 			query,
 			(apiobj) => {
 				var response = apiobj.getResponse();
