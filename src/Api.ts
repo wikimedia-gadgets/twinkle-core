@@ -1,5 +1,4 @@
 import { Twinkle } from './twinkle';
-import { language } from './messenger';
 
 /**
  * Wrapper around Morebits.wiki.api that preset the commonly used
@@ -12,8 +11,8 @@ export class Api extends Morebits.wiki.api {
 				action: 'query',
 				format: 'json',
 				formatversion: '2',
-				uselang: language,
-				errorlang: language,
+				uselang: Twinkle.language,
+				errorlang: Twinkle.language,
 				errorsuselocal: true,
 				// tags isn't applicable for all API actions, it gives a warning but that's harmless
 				tags: Twinkle.changeTags,
@@ -38,8 +37,8 @@ export class Api extends Morebits.wiki.api {
 export let mwApi: mw.Api;
 
 /**
- * Called from init(). Can't initialise at top level, since values of language,
- * Twinkle.changeTags and Twinkle.userAgent aren't final by that stage.
+ * Called from init(). Can't initialise at top level, since values of
+ * Twinkle.* aren't final by that stage.
  * @private
  */
 export function initialiseMwApi() {
@@ -48,8 +47,8 @@ export function initialiseMwApi() {
 			action: 'query',
 			format: 'json',
 			formatversion: '2',
-			uselang: language,
-			errorlang: language,
+			uselang: Twinkle.language,
+			errorlang: Twinkle.language,
 			errorsuselocal: true,
 			// tags isn't applicable for all API actions, it gives a warning but that's harmless
 			tags: Twinkle.changeTags,

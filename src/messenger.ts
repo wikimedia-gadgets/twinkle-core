@@ -15,13 +15,8 @@ import enMessages from '../i18n/en.json';
 export let banana: Banana;
 
 /**
- * The language used for all messages in twinkle-core.
- * This includes interface messages as well as edits made to the wiki.
- * Ideally the interface messages should have been in wgUserLanguage
- * and edits in wgContentLanguage, but this duality is not presently
- * supported.
+ * @deprecated - use {@link Twinkle.language} instead.
  */
-// I believe this is the only use of mw.* at the top level
 export let language = urlParamValue('uselang') || mw.config.get('wgContentLanguage');
 
 let qqxMode: boolean;
@@ -94,7 +89,7 @@ const i18nParserPlugins = {
  * @param messages
  */
 export function addMessages(messages: Messages) {
-	banana.load(messages, language);
+	banana.load(messages, Twinkle.language);
 }
 
 /**
@@ -124,7 +119,7 @@ let EnglishMessagesAvailable = typeof EXCLUDE_ENGLISH_MESSAGES === 'undefined' |
  * Initialize the message store. Called from init.ts.
  */
 export function initMessaging() {
-	banana = new Banana(language);
+	banana = new Banana(Twinkle.language);
 
 	// Register plugins
 	obj_entries(i18nParserPlugins).forEach(([name, plugin]) => {
@@ -136,7 +131,7 @@ export function initMessaging() {
 
 	// QQX is a dummy "language" for documenting messages
 	// No need to load anything when in qqxMode
-	qqxMode = language === 'qqx';
+	qqxMode = Twinkle.language === 'qqx';
 
 	if (qqxMode) {
 		return Promise.resolve();
@@ -146,7 +141,10 @@ export function initMessaging() {
 		banana.load(enMessages, 'en');
 	}
 	const mwMessageList = coreMwMessages.concat(Twinkle.extraMwMessages);
-	return Promise.all([loadMediaWikiMessages(mwMessageList, language), loadTwinkleCoreMessages(language)])
+	return Promise.all([
+		loadMediaWikiMessages(mwMessageList, Twinkle.language),
+		loadTwinkleCoreMessages(Twinkle.language),
+	])
 		.catch((e) => {
 			mw.notify('Failed to load messages needed for Twinkle', { type: 'error' });
 		})
@@ -260,5 +258,5 @@ function initBanana(json) {
  * @deprecated
  */
 export function loadAdditionalMediaWikiMessages(messageList: string[]) {
-	return loadMediaWikiMessages(messageList, language);
+	return loadMediaWikiMessages(messageList, Twinkle.language);
 }

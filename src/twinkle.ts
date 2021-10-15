@@ -1,4 +1,5 @@
 import type { TwinkleModule } from './twinkleModule';
+import { urlParamValue } from './utils';
 
 /**
  * Defined as a namespace: anything that's exported from here (such as
@@ -11,6 +12,15 @@ export namespace Twinkle {
 	 * Localised script name
 	 */
 	export let scriptName = 'Twinkle';
+
+	/**
+	 * The language used for all messages in twinkle-core.
+	 * This includes interface messages as well as edits made to the wiki.
+	 * Ideally the interface messages should have been in wgUserLanguage
+	 * and edits in wgContentLanguage, but this duality is not presently
+	 * supported.
+	 */
+	export let language = urlParamValue('uselang') || mw.config.get('wgContentLanguage');
 
 	/**
 	 * User agent
