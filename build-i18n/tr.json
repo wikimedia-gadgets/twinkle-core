@@ -144,6 +144,7 @@
 		"duration-label": "Süre:",
 		"protect-notes-label": "Notlar:",
 		"note-requested-label": "$1 istek",
+		"protect-tag-noinclude-tooltip": "Koruma şablonunu &lt;noinclude&gt; etiketlerine saracak, böylece yansıtmayacaktır",
 		"protect-request-type-label": "Tür ve sebep:",
 		"temporary": "Geçici",
 		"all-users": "Tümü",
@@ -185,6 +186,7 @@
 		"select-one": "En az bir etiket seçmelisiniz",
 		"untagging": "Etiket kaldırılıyor",
 		"tagging-status": "$1 etiketleme",
-		"fetching-creator": "Sayfa oluşturucusu bulunuyor"
+		"fetching-creator": "Sayfa oluşturucusu bulunuyor",
+		"pref-xfdwatchlist-tooltip": "Bu, yalnızca tartışmanın bir günlük veya liste sayfasına yansıtan yeni oluşturulmuş bir sayfada gerçekleştiği yerler için geçerlidir."
 	}
 }
