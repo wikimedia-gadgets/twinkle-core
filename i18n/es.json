@@ -3,11 +3,13 @@
 		"authors": [
 			"Agent",
 			"Coop987",
+			"DDPAT",
 			"Juan t2905",
 			"McDutchie",
 			"Mpayansilva"
 		]
 	},
+	"tooltip-mark": "?",
 	"revert-mismatch": "La revisión recuperada no coincide con la revisión solicitada.",
 	"hidden-user": "un usuario desconocido",
 	"fetching-userinfo": "Obteniendo información del usuario",
@@ -71,7 +73,7 @@
 	"deleting-subpage": "Eliminando subpágina $1",
 	"fetching-filelinks": "Agarrando enlaces de archivos",
 	"deleting-redirects": "Eliminando redireccionamientos a $1",
-	"delete-redirect-summary": "[[WP: CSD # G8 | G8]]: Redirigir a la página eliminada \"$1\"",
+	"delete-redirect-summary": "Redirigir a la página eliminada \"$1\"",
 	"deleting-talk": "Borrando la página de discusión $1",
 	"delete-talk-summary": "Página de discusión huérfana ($1)",
 	"unlink-on": "Desvinculando en $1",
@@ -220,7 +222,7 @@
 	"block-warn-noexpiry": "Por favor, proporcione una caducidad!",
 	"block-warn-indef-ip": "¡No se puede bloquear indefinidamente una dirección IP!",
 	"block-warn-partial-usertalk": "Los bloqueos parciales no pueden evitar el acceso a la página de conversación a menos que también les impida editar el espacio de conversación del usuario.",
-	"block-conflict-block": "Bloqueado por $ 1 con el comentario \"$2\". Caduca {{date:$3|relative|utc}}. ¿Quiere anular su configuración?",
+	"block-conflict-block": "Bloqueado por $1 con el comentario \"$2\". Caduca {{date:$3|relative|utc}}. ¿Quiere anular su configuración?",
 	"block-noop": "¡Por favor, dale a Twinkle algo que hacer!",
 	"search-tags": "Lista de etiqueta del filtro:",
 	"summary-added": "Agregado {{list:$1}} {{plural:$2|tag|tags}}",
