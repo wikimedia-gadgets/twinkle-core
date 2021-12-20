@@ -30,6 +30,7 @@
 		"api-error-unknown": "Während des Speicherns der Seite wurde ein ubekannter Fehler von der API empfangen",
 		"editconflict-retrying": "Bearbeitungskonflikt erkannt, Änderung wird erneut angewendet",
 		"save-failed-retrying": "Speichern fehlgeschlaen, neuer Versuch in $1 Sekunden",
+		"batch-no-pages": "Es wurden keine Seiten angegeben",
 		"batch-done-page": "abgeschlossen ([[$1]])",
 		"hidden-user": "ein unbekannter Benutzer",
 		"blocking": "Benutzer wird gesperrt...",
