@@ -18,6 +18,7 @@
 	"relative-thisweek": "Relative time. Text within [brackets] are used literally (it is NOT an external link). Here \"dddd\" gets transformed to the weekday name (eg. Sunday, Monday), \"h:mm A\" gets transformed to the time (eg. 9:34 AM). If you wish to change the datetime formats, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
 	"relative-pastweek": "Relative time. Text within [brackets] are used literally (it is NOT an external link). Here \"dddd\" gets transformed to the weekday name (eg. Sunday, Monday), \"h:mm A\" gets transformed to the time (eg. 9:34 AM). If you wish to change the datetime formats, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
 	"relative-other": "Date format used for rendering some dates. If you wish to change this date formats, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
+	"done": "{{Identical|Done}}",
 	"invalid-token-retrying": "Token here refers to [[mw:Manual:Edit token]]. Similar to messages like {{int:authform-wrongtoken}}",
 	"getting-token": "Token here refers to [[mw:Manual:Edit token]].",
 	"protected-edit-warning": "Here <code><nowiki>{{date:$1|relative|utc}}</nowiki></code> does not need to be modified. It expands into a translated string of the form \"Tomorrow at 5:43 PM\".",
