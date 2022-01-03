@@ -4,10 +4,16 @@
 	],
 	"lad": {},
 	"es": {
-		"tooltip-mark": "?",
+		"relative-today": "[Hoy a las] h:mm A",
+		"relative-prevday": "[Ayer a las] h:mm A",
+		"relative-nextday": "[Mañana a las] h:mm A",
+		"done": "Hecho",
+		"getting-token": "Obteniendo muestra...",
+		"retrieving-page": "Recuperando página...",
+		"protected-edit-warning": "Vas a realizar una edición a la página \"$1\" que está completamente protegida (la protección caduca el {{date:$1|relative|utc}} (UTC)).\n\nHaz clic en OK para seguir adelante con la edición, de lo contrario haz clic en cancelar.",
 		"revert-mismatch": "La revisión recuperada no coincide con la revisión solicitada.",
 		"hidden-user": "un usuario desconocido",
-		"fetching-userinfo": "Obteniendo información del usuario",
+		"fetching-userinfo": "Obteniendo información del usuario...",
 		"info": "Información",
 		"note": "Nota",
 		"error": "Error",
@@ -172,7 +178,7 @@
 		"block-partial-tooltip": "Permitir bloqueos parciales de usuarios y plantillas",
 		"block-tag": "Agregar plantilla de bloqueo a la página de discusión del usuario",
 		"block-tag-tooltip": "Agregar plantilla de bloqueo a la página de discusión del usuario",
-		"block-64-help": "Normalmente está bien, si no mejor,  [[WP:/64|simplemente bloquear el rango /64]]([[Special:Contributions/$1|$1]]).",
+		"block-64-help": "Es mejor bloquear el rango /64 ([[Special:Contributions/$1|$1]]).",
 		"block-64-label": "Bloquear el / 64 en su lugar",
 		"block-tag-options": "Opciones de la plantilla",
 		"block-block-options": "Opciones de bloqueo",
@@ -245,7 +251,7 @@
 		"notifying-creator": "Notificación al contribuyente inicial ($1)",
 		"pref-xfdlogpagename-tooltip": "Ingrese un nombre de subpágina en este cuadro. Encontrará su registro de XfD en Usuario:<i>username</i>/<i>subpage name</i>. Solo funciona si activa el registro del espacio de usuario de XfD.",
 		"pref-xfdwatchpage-label": "Agregar la página nominada a la lista de seguimiento",
-		"pref-xfdwatchlist-label": "Agregue la página de registro/lista diaria a la lista de seguimiento (AfD y MfD)",
+		"pref-xfdwatchlist-label": "Agregar la página de registro o la lista diaria a tu lista de seguimiento",
 		"pref-xfdwatchuser-label": "Agregue la página de discusión del usuario del contribuyente inicial a la lista de observación (al notificar)"
 	}
 }
