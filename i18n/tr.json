@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Aferinamca",
+			"Can",
 			"Hedda",
 			"Melissadilara",
 			"SaldırganSincap"
@@ -26,6 +27,7 @@
 	"invalid-title": "Geçersiz sayfa başlığı: $1",
 	"redirected": "$1 maddesinden $2 maddesine yönlendirildi",
 	"redirect-resolution-fail": "Şu madde yönlendirmesi çözümlendirilemedi: $1",
+	"api-error-unknown": "Dosya kaydedilirken API'de bilinmeyen bir hata gerçekleşti",
 	"save-failed-retrying": "Kaydedilemedi, $1 saniye içinde tekrar deneniyor ...",
 	"moving-page": "sayfa taşınıyor...",
 	"batch-no-pages": "sayfa belirtilmedi",
@@ -154,6 +156,7 @@
 	"protect-request-type-label": "Tür ve sebep:",
 	"temporary": "Geçici",
 	"all-users": "Tümü",
+	"custom-expiry-label": "Özel...",
 	"protect-tag-none-status": "Yapacak bir şey yok",
 	"nothing-to-do": "yapacak bir şey yok",
 	"block-self-warn": "Kendinizi engellemek üzeresiniz! Devam etmek istediğinizden emin misiniz?",
