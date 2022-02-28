@@ -127,7 +127,7 @@
 		"diff-error": "aucune version précédente appropriée trouvée, ou $1 est le seul contributeur. Abandon.",
 		"reason": "Motif :",
 		"reason-tooltip": "Vous pouvez utiliser le balisage wiki dans votre motif. Twinkle signera automatiquement votre publication.",
-		"loading": "Chargement...",
+		"loading": "Chargement en cours...",
 		"select-all": "Tout sélectionner",
 		"deselect-all": "Tout déselectionner",
 		"fetching-list": "Récupération d’une liste de pages",
