@@ -164,6 +164,7 @@ function addPortlet(navigation: string, id: string, text: string, type: string, 
 
 	if (skin === 'vector') {
 		ul.className = 'vector-menu-content-list';
+		h3.className = 'vector-menu-heading';
 
 		// add invisible checkbox to keep menu open when clicked
 		// similar to the p-cactions ("More") menu
