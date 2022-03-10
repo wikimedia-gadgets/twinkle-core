@@ -46,7 +46,7 @@
 	"already-blocked": "$1 zaten engelli (engel sonu: {{date:$2|relative}}; $3 tarafından), engelin üstüne yazmak ister misiniz?",
 	"reblock-aborted": "Tekrar engelleme iptal edildi",
 	"invalid-block-expiry": "Geçerli engel sonu tanımlanmalı.",
-	"ip-indef-confirm": "Tamam'a tıklayarak engelle devam edebilir, veya İptal'e basarak iptal edebilirsiniz.",
+	"ip-indef-confirm": "$1 bir IP adresi, gerçekten onu süresiz olarak engellemek istiyor musunuz?\n\nEngele devam etmek için Tamam'ı veya iptal etmek için İptal'i tıklayın.",
 	"admin-block-aborted": "Hizmetlinin uyguladığı engel iptal edildi.",
 	"blocking": "kullanıcı engelleniyor...",
 	"not-blocked": "Kullanıcı engellenmedi.",
