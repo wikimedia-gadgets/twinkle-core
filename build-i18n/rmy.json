@@ -41,6 +41,7 @@
 		"batch-done-page": "finalizat ([[$1]])",
 		"batch-progress": "Realizat ($1/$2 acțiuni finalizate cu succes)",
 		"submit": "Trimite Query",
+		"bullet-separator": " ",
 		"revert-mismatch": "Versiunea preluată nu se potrivește cu revizia cerută.",
 		"revert-curid-fail": "Nu a reușit preluarea ID-ului versiunii curente.",
 		"revert-user-fail": "Nu a reușit obținerea utilizatorului care a făcut versiunea.",
