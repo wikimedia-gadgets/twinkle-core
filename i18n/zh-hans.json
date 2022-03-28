@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"94rain",
+			"Lantx",
 			"Wzl19371",
 			"Xiplus",
 			"Zhang8569"
@@ -85,7 +86,7 @@
 	"prompt-reason-restore": "请指定回退理由：",
 	"reversion-complete": "回退完成",
 	"cant-edit-protected": "无法编辑此页面，它可能被保护了。",
-	"no-revisions": "我们没有额外的修订版本，因此无法回退。",
+	"no-revisions": "因没有其他修订版本，无法回退。",
 	"bad-revid": "从服务器接收最新的修订版本ID <strong>$1</strong>小于显示的修订版本ID，这可能表示当前的版本已被删除、服务器延迟或接收到错误的资料。正在停止回退。",
 	"revid-mismatch": "最新修订版本<strong>$1</strong>不同于我们的修订版本<strong>$2</strong>。",
 	"latest-rev-same-user": "最新的修订版本也是由<strong>$1</strong>做出，因为我们假定是破坏，所以继续回退。",
