@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"NguoiDungKhongDinhDanh",
 			"Vinhtantran"
 		]
 	},
@@ -37,6 +38,11 @@
 	"batch-done-page": "đã xong ([[$1]])",
 	"batch-progress": "Xong ($1/$2 tác vụ đã hoàn tất)",
 	"submit": "Gửi Truy Vấn",
+	"revert-mismatch": "Phiên bản lấy được không trùng khớp với phiên bản yêu cầu.",
+	"revert-curid-fail": "Không thể lấy ID của phiên bản hiện tại.",
+	"revert-user-fail": "Không thể lấy tên người dùng của phiên bản.",
+	"revert-summary": "Đã phục hồi phiên bản $1 của $2",
+	"hidden-user": "một người dùng không rõ",
 	"querying-user": "Đang truy vấn thành viên \"$1\"",
 	"fetching-userinfo": "Đang lấy thông tin thành viên...",
 	"failed-timestamp": "Thất bại khi lấy dấu thời gian hiện tại.",
