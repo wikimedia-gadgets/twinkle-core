@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Kly",
+			"Winston Sung",
 			"Xiplus"
 		]
 	},
@@ -79,7 +80,7 @@
 	"link-goodfaith-rollback": "回退（AGF）",
 	"restore-revision": "恢復此版本",
 	"fetching-data": "抓取較早修訂版本的資訊",
-	"saving-reverted": "保存回退內容",
+	"saving-reverted": "正在儲存回退內容",
 	"prompt-reason-restore": "請指定回退理由：",
 	"reversion-complete": "回退完成",
 	"cant-edit-protected": "無法編輯此頁面，它可能被保護了。",
