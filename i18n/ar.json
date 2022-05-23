@@ -11,6 +11,7 @@
 		]
 	},
 	"tooltip-mark": "?",
+	"done": "تم",
 	"bullet-separator": " •",
 	"hidden-user": "مستخدم غير معروف",
 	"querying-user": "الاستعلام عن المستخدم \" $1 \"",
