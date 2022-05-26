@@ -105,7 +105,7 @@
 	"revert-multiple-prompt": "$1 a réalisé {{formatnum:$2}} modifications d’affilé. Êtes-vous sûr{{GENDER:||e}} de vouloir toutes les annuler ?",
 	"stopping": "Arrêt du rétablissement.",
 	"revision-age": "la version <strong>$1</strong> a été réalisée avant <strong>{{formatnum:$2}}</strong> autres versions par $3",
-	"summary-prompt": "Commentaire facultatif pour le résumé de modification :",
+	"summary-prompt": "Commentaire facultatif pour le résumé des modifications :",
 	"user-aborted": "Avorté par l’utilisateur.",
 	"restore-summary": "Version $1 rétablie par %USER%",
 	"goodfaith-summary": "Modifications faites de bonne foi par %USER% annulées",
