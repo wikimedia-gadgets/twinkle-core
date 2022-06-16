@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"DDPAT",
-			"Ice bulldog"
+			"Ice bulldog",
+			"SD0001"
 		]
 	},
 	"tooltip-mark": "?",
@@ -245,8 +246,8 @@
 	"protect-select-tag": "Виберіть шаблон захисту:",
 	"protect-tag-small-label": "Іконіфікувати",
 	"protect-tag-small-tooltip": "Буде використовувати функцію |small = yes у шаблоні та відображатиме її лише як блокування клавіш",
-	"protect-tag-noinclude-label": "Загорнути шаблон захисту за допомогою <noinclude>",
-	"protect-tag-noinclude-tooltip": "Загорне шаблон захисту в теги <noinclude>, щоб він не включав",
+	"protect-tag-noinclude-label": "Загорнути шаблон захисту за допомогою &lt;noinclude&gt;",
+	"protect-tag-noinclude-tooltip": "Загорне шаблон захисту в теги &lt;noinclude&gt;, щоб він не включав",
 	"protect-request-preset-label": "Тип захисту",
 	"protect-request-type-label": "Тип і причина:",
 	"temporary": "Тимчасовий",

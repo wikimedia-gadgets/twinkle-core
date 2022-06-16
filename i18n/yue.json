@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hello903hello"
+			"Hello903hello",
+			"Z423x5c6"
 		]
 	},
 	"tooltip-mark": "？",
@@ -24,10 +25,12 @@
 	"batch-done-page": "搞掂（[[$1]]）",
 	"batch-progress": "搞掂（$1/$2項動作成功搞掂）",
 	"submit": "提交",
+	"hidden-user": "一個未知用戶",
 	"querying-user": "查詢緊用戶「$1」",
 	"fetching-userinfo": "查詢緊用戶資訊…",
 	"failed-token": "攞唔到權杖。",
 	"failed-userinfo": "查詢唔到$1嘅用戶資訊。",
+	"blocking": "封鎖緊用戶…",
 	"not-blocked": "用戶未被封鎖。",
 	"unblocking": "解封緊用戶…",
 	"notify-fail-iprange": "通知唔到IP範圍",
