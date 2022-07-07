@@ -385,7 +385,7 @@
 	"pref-logxfdnominations-label": "Garder un journal dans l’espace utilisateur de toutes les pages que vous nommez pour une discussion de suppression (XàS / ''XfD'').",
 	"pref-logxfdnominations-tooltip": "Le journal de l’espace utilisateur offre un bon moyen de garder la trace de toutes les pages que vous nommez en Pages à Discuter (XaS / ''XfD'') au moyen de Twinkle.",
 	"pref-xfdlogpagename-label": "Conserver le journal en espace utilisateur des discussions de suppression dans cette sous-page utilisateur.",
-	"pref-xfdlogpagename-tooltip": "Entrez un nom de sous-page dans ce champ. Vous trouverez votre journal des Pages en Discussion (PàS / ''XfD'') à « User:<i>Nom d'utilisateur/i>/<i>nom de sous-page</i> ». Ne fonctionne que si vous activez le journal en espace utilisateur des Pages en Discussion.",
+	"pref-xfdlogpagename-tooltip": "Saisissez un nom de sous-page dans ce champ. Vous trouverez votre journal des Pages à Supprimer (PàS / ''XfD'') à « User:<i>Nom d'utilisateur/i>/<i>nom de sous-page</i> ». Ne fonctionne que si vous activez le journal en espace utilisateur des Pages à Supprimer.",
 	"pref-xfdwatchpage-label": "Ajouter la page signalée à la liste de suivi",
 	"pref-xfdwatchdiscussion-label": "Ajouter la page de discussion de suppression à la liste de suivi",
 	"pref-xfdwatchlist-label": "Ajouter le journal quotidien ou la page de liste à la liste de suivi",

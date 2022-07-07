@@ -85,6 +85,7 @@
 	"undbatch-confirm-protected": "Displayed in a browser's default confirm dialog.",
 	"undeleting-page": "Status message indicating that the page is being undeleted.\n* $1 - page title",
 	"selected-namespaces": "{{Doc-important|1=Do not translate \"<nowiki>{{list:$1}}</nowiki>\".}}",
+	"protect-action-type": "{{Identical|Type of action}}",
 	"preset": "Label for the preset links, that when clicked will fill in the form with certain values.",
 	"sysops-contacted": "{{Doc-important|1=Do not translate \"<nowiki>{{list:$1}}</nowiki>\".}}",
 	"unprotected-time": "Indicates that the page was unprotected at the given time ($1).\n\nHere <nowiki>{{date:$1|relative|utc}}</nowiki> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
