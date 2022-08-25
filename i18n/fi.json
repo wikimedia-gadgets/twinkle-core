@@ -1,15 +1,30 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kyykaarme",
 			"MITO",
 			"Pyscowicz"
 		]
 	},
 	"tooltip-mark": "?",
+	"relative-today": "[Tänään klo] HH:mm",
+	"relative-prevday": "[Eilen klo] HH:mm",
+	"relative-nextday": "[Huomenna klo] HH:mm",
+	"relative-thisweek": "dddd [klo] HH:mm",
+	"relative-pastweek": "[Viime] dddd[na klo] HH:mm",
 	"relative-other": "DD-MM-YYYY",
 	"done": "Valmis",
+	"api-error": "$1 \"$2\" tapahtui otettaessa yhteyttä API:hin.",
+	"invalid-token-retrying": "Epäkelpo tunniste. Haetaan uusi tunniste ja yritetään uudelleen...",
+	"getting-token": "Haetaan tunnusta...",
 	"opening-page": "Avataan sivua \"$1\"",
+	"retrieving-page": "Haetaan sivua...",
+	"protected-edit-warning": "Olet tekemässä muokkauksen täyssuojatulle sivulle \"$1\" (suojaus päättyy {{date:$1|relative|utc}} (UTC)).\n\nKlikkaa OK jatkaaksesi muokkausta tai Peruuta ohittaaksesi tämän muokkauksen.",
+	"protected-indef-edit-warning": "Olet tekemässä muokkauksen täyssuojatulle sivulle \"$1\" (suojattu toistaiseksi).\n\nKlikkaa OK jatkaaksesi muokkausta tai Peruuta ohittaaksesi tämän muokkauksen.",
+	"protected-aborted": "Muokkaus täyssuojatulle sivulle keskeytettiin.",
 	"saving-page": "Tallennetaan sivua...",
+	"getting-creator": "Haetaan sivun luontitiedot",
+	"token-fetch-fail": "Muokkaustunnisteen hakeminen epäonnistui.",
 	"moving-page": "siirretään sivua...",
 	"batch-no-pages": "ei määritettyjä sivuja",
 	"batch-progress": "Tehty ($1/$2 toimintoa suoritettu onnistuneesti)",
