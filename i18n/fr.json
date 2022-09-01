@@ -66,7 +66,7 @@
 	"unblocking": "déblocage de l’utilisateur...",
 	"notify-fail-iprange": "Impossible de notifier des plages d’adresse IP",
 	"notify-self-skip": "Vous ($1) avez créé cette page ; saute la notification de l’utilisateur",
-	"notify-fail-noexist": "Impossible de notifier l’utilisateur parce qu’il n’existe pas.",
+	"notify-fail-noexist": "Impossible de notifier l’utilisateur ou l’utilisatrice parce qu’il ou elle n’existe pas.",
 	"notify-fail-template": "La page de discussion utilisateur inclut {{$1}}, annulant la notification",
 	"notify-fail-optout": "L’utilisateur s’est désinscrit de cette notification, annulation",
 	"notify-fail-bot": "L’utilisateur est un robot, annulation de la notification",
