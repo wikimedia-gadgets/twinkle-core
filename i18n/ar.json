@@ -3,6 +3,7 @@
 		"authors": [
 			"Dr-Taher",
 			"Dr. Mohammed",
+			"Meno25",
 			"Michel Bakni",
 			"NEHAOUA",
 			"Wahrani",
@@ -44,7 +45,7 @@
 	"batch-done-page": "مكتمل ([[$1]])",
 	"batch-progress": "تم ($1/$2 تم إكمال الإجراءات بنجاح)",
 	"submit": "إرسال الاستعلام",
-	"bullet-separator": " •",
+	"bullet-separator": " •&#32;",
 	"revert-mismatch": "المراجعة المستردة لا تتطابق مع المراجعة المطلوبة.",
 	"revert-curid-fail": "فشل استرداد معرف المراجعة الحالي.",
 	"revert-user-fail": "فشل استرداد المستخدم الذي أجرى المراجعة.",
