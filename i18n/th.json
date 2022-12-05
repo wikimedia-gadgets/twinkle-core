@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Bebiezaza",
+			"Ekminarin",
 			"Patsagorn Y.",
 			"Trisorn Triboon"
 		]
@@ -13,6 +14,7 @@
 	"relative-thisweek": "dddd เวลา HH:mm",
 	"relative-other": "DD/MM/YYYY",
 	"done": "สำเร็จ",
+	"opening-page": "กำลังเปิดหน้า \"$1\"",
 	"saving-page": "กำลังบันทึกข้อมูล...",
 	"redirected": "เปลี่ยนทางจาก $1 ไปยัง $2",
 	"save-failed-retrying": "ไม่สามารถบันทึกได้ ลองอีกครั้งใน $1 วินาที...",
@@ -20,6 +22,7 @@
 	"batch-done-page": "สำเร็จ ([[$1]])",
 	"batch-progress": "สำเร็จ ($1/$2 การกระทำเสร็จสมบูรณ์)",
 	"revert-mismatch": "พบข้อผิดพลาด รุ่นที่ดึงข้อมูลมาไม่ตรงกับรุ่นที่ต้องการ",
+	"revert-summary": "ย้อนกลับไปรุ่นที่ $1 โดย $2",
 	"hidden-user": "ผู้ใช้ที่ไม่รู้จัก",
 	"admin-block-confirm": "$1 คือผู้ดูแลระบบ คุณแน่ใจหรือไม่ที่จะบล็อกผู้ใช้คนนี้\n\nกด OK เพื่อบล็อกผู้ใช้คนนี้ หรือ Cancel เพื่อยกเลิกการบล็อก",
 	"admin-block-aborted": "ยกเลิกการบล็อกผู้ดูแลระบบแล้ว",
@@ -111,5 +114,12 @@
 	"undeleting-talk-summary": "กำลังกู้คืนหน้าพูดคุยของ \"$1\"",
 	"file-usage": "การใช้ไฟล์",
 	"protect-protect-label": "ป้องกันหน้า",
-	"temporary": "ชั่วคราว"
+	"protect-current": "<b>$1 : $2</b>",
+	"protect-notes-label": "หมายเหตุ:",
+	"temporary": "ชั่วคราว",
+	"all-users": "ทั้งหมด",
+	"custom-expiry-label": "กำหนดเอง...",
+	"block-action": "บล็อกผู้ใช้",
+	"unblock-label": "ปลดบล็อกผู้ใช้นี้",
+	"block-tag-nocreate-label": "ผู้ใช้ถูกบล็อกไม่ให้สร้างบัญชี"
 }
