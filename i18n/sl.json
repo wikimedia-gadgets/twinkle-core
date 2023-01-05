@@ -352,7 +352,7 @@
 	"status-added-removed": "{{PLURAL:$1|dodana|dodani|dodane|dodanih}} $1 {{plural:$1|oznaka|oznaki|oznake|oznak}}, {{PLURAL:$2|odstranjena|odstranjeni|odstranjene|odstranjenih}} $2 {{plural:$2|oznaka|oznaki|oznake|oznak}}",
 	"untag-from-read": "Za odstranitev obstoječih oznak v trenutni redakciji članka odprite meni Oznaka",
 	"tags-present-header": "Oznake so že prisotne",
-	"mark-patrolled": "Označi stran kot nadzorovano/pregledano",
+	"mark-patrolled": "Označi stran kot pregledano/prebrano",
 	"tag-complete": "Označevanje končano, ponovno nalaganje $1 v nekaj sekundah",
 	"select-one": "Izbrati morate vsaj eno oznako!",
 	"getting-redirects": "Pridobivanje preusmeritev predloge",
