@@ -381,7 +381,7 @@
 	"pref-logxfdnominations-label": "Vodite dnevnik v uporabniškem prostoru vseh strani, ki jih predlagate za razpravo o izbrisu (XfD)",
 	"pref-logxfdnominations-tooltip": "Dnevnik uporabniškega prostora je dober način za spremljanje vseh strani, ki jih predlagate za XfD z uporabo Twinkla.",
 	"pref-xfdlogpagename-label": "Dnevnik razprav o izbrisu v uporabniškem imenskem prostoru naj se vodi na tej uporabniški podstrani",
-	"pref-xfdlogpagename-tooltip": "V to polje vnesite ime podstrani. Dnevnik XfD boste našli na User: <i>username</i>/<i>subpage</i>. Deluje le, če vklopite dnevnik uporabniškega prostora XfD.",
+	"pref-xfdlogpagename-tooltip": "V to polje vnesite ime podstrani. Dnevnik XfD boste našli na User: <i>uporabniško ime</i>/<i>podstran</i>. Deluje le, če vklopite dnevnik uporabniškega prostora XfD.",
 	"pref-xfdwatchpage-label": "Dodaj predlagano stran na spisek nadzorov",
 	"pref-xfdwatchdiscussion-label": "Dodaj stran z razpravo o izbrisu na spisek nadzorov",
 	"pref-xfdwatchlist-label": "Dodaj dnevnik dneva ali stran s seznamom na spisek nadzorov",
