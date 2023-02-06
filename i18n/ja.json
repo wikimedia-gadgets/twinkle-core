@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Buehl",
 			"Marine-Blue",
 			"Omotecho",
 			"Shirayuki",
@@ -20,9 +21,11 @@
 	"saving-page": "ページを保存しています...",
 	"token-fetch-fail": "編集トークンを取得できませんでした。",
 	"cross-redirect-abort": "$1 は中止されており、名前空間を超えた $2 へのリダイレクト",
+	"redirected": "$1から$2に転送されました",
 	"editconflict-purging": "編集競合を検知し、サーバのキャッシュを更新しています",
 	"editconflict-retrying": "偏執狂号を検知したため、編集を再度、適用中です",
 	"moving-page": "ページを移動しています...",
+	"batch-done-page": "完了 ([[$1]])",
 	"submit": "クエリを送信",
 	"revert-mismatch": "取得した版は、リクエストされた版と一致しません。",
 	"revert-curid-fail": "現在のリビジョンIDを取得できませんでした。",
@@ -92,6 +95,8 @@
 	"option-subpages": "削除されたページのサブページを削除する",
 	"option-subpage-talks": "削除されたサブページのトークページを削除する",
 	"option-subpage-redirects": "削除されたサブページへのリダイレクトを削除します",
+	"pages-label": "削除するページ",
+	"deleting": "ページの削除",
 	"protect-protect-label": "ページを保護",
 	"protect-request-label": "保護依頼",
 	"protect-edit-modify": "編集保護の設定を変更する",
