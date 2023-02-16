@@ -102,6 +102,7 @@
 	"protect-edit-modify": "編集保護の設定を変更する",
 	"protect-edit-modify-tooltip": "これを無効にすると、編集保護のレベルと保護の期間は現状のまま保たれます。",
 	"note-requested-tooltip": "保護ログにメモを追加し、$1でリクエストされたことを明示",
+	"protect-tag-none-status": "実行できるものはありません。",
 	"block-tag": "利用者トークページにブロックテンプレートを追加",
 	"block-pages-label": "利用者の編集をブロックするページの指定",
 	"block-namespaces-tooltip": "これらの名前空間における編集をブロックする。",
