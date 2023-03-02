@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"AA800",
 			"Dr-Taher",
 			"Dr. Mohammed",
 			"Meno25",
@@ -37,7 +38,7 @@
 	"redirect-resolution-fail": "تعذر حل عمليات إعادة التوجيه لـ: $1",
 	"api-error-unknown": "تم تلقي خطأ غير معروف من API أثناء حفظ الصفحة",
 	"editconflict-purging": "تم اكتشاف تعارض في التعديل ، وإزالة ذاكرة التخزين المؤقت للخادم",
-	"editconflict-retrying": "تم كشف تعارض في التحرير، إعادة تطبيق التعديل",
+	"editconflict-retrying": "تم اكتشاف تضارب تحرير، أعد تطبيق التعديل",
 	"save-failed-retrying": "فشل الحفظ، إعادة المحاولة خلال $1 ثانية ...",
 	"moving-page": "نقل الصفحة ...",
 	"batch-starting": "تنفيذ عملية كمية",
