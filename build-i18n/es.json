@@ -196,6 +196,7 @@
 		"block-watch-label": "Ver usuatios y páginas de conversación de usuarios",
 		"block-reason-label": "Razón (para el registro de bloque):",
 		"block-reason-tooltip": "Considera añadir detalles útiles al mensaje predeterminado.",
+		"block-see-label": "Véase también:",
 		"block-see-tooltip": "Inserte un mensaje \"ver también\" para indicar si el registro de filtro o las contribuciones eliminadas jugaron un papel en la decisión de bloquear.",
 		"block-see-filter": "Registro de filtro",
 		"block-see-deleted": "Contribuciones eliminadas",

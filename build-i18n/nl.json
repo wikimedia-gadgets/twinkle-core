@@ -101,7 +101,7 @@
 		"summary-prompt": "Optionele opmerking voor de bewerkingssamenvatting:",
 		"user-aborted": "Afgebroken door gebruiker.",
 		"restore-summary": "Versie $1 van %USER% teruggeplaatst",
-		"goodfaith-summary": "Bewerkingen uit goede wil van %USER% teruggedraaid",
+		"goodfaith-summary": "Bewerkingen te goeder trouw van %USER% teruggedraaid",
 		"vandalism-summary": "{{formatnum:$1}} {{plural:$1|bewerking|bewerkingen}} door %USER% teruggedraaid tot laatste versie van $2",
 		"normal-summary": "{{formatnum:$1}} {{plural:$1|bewerking|bewerkingen}} door %USER% teruggedraaid",
 		"revert-confirm": "Terugdraaien: Weet je het zeker?",
