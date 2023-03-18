@@ -17,6 +17,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0   # all branches
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
       - run: npm ci
       - name: Sanitise strings and resolve fallback messages
         run: node scripts/build-i18n
@@ -32,7 +35,7 @@ jobs:
           git diff-index --quiet HEAD -- || git commit -m "Building i18n files"
 
       - name: Push to GitHub
-        uses: ad-m/github-push-action@v0.5.0
+        uses: ad-m/github-push-action@0fafdd62b84042d49ec0cb92d9cac7f7ce4ec79e
         with:
           github_token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           branch: i18n
