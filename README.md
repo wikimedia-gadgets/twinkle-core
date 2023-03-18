@@ -1,6 +1,6 @@
 # twinkle-core
 
-This is intended to be the "core" repository for [Twinkle](https://en.wikipedia.org/wiki/Wikipedia:Twinkle) using which Twinkle installations for different wikis can be created (for example: [twinkle-enwiki](https://github.com/wikimedia-gadgets/twinkle-starter))
+This is intended to be the "core" repository for [Twinkle](https://en.wikipedia.org/wiki/Wikipedia:Twinkle) using which Twinkle installations for different wikis can be created (for example: [twinkle-enwiki](https://github.com/wikimedia-gadgets/twinkle-enwiki))
 
 The [twinkle-starter repository](https://github.com/wikimedia-gadgets/twinkle-starter) provides a template using which a new Twinkle installation can be started off easily. Each twinkle installation relies on twinkle-core as an npm dependency. Please refer to the README of twinkle-starter for instructions on setting up twinkle for a new wiki.
 
