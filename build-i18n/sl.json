@@ -330,7 +330,7 @@
 		"unblocked-ago": "odblokiran_a {{date:$1|relative|utc}}",
 		"block-expired": "$1, preteklo {{datum:$2|relative|utc}}",
 		"block-log-current": "Prejšnja blokiranja",
-		"block-log-past": "Ta uporabnik je bil blokiran ze v preteklosti",
+		"block-log-past": "Ta uporabnik je bil blokiran že v preteklosti",
 		"block-partial-blank": "Izbrana ni bila nobena stran ali imenski prostor, prav tako niso bile uporabljene omejitve za ustvarjanje e-pošte ali računa; izberite vsaj eno možnost za uporabo delnega blokiranja!",
 		"block-warn-noexpiry": "Prosimo, navedite pretek!",
 		"block-warn-indef-ip": "IP-naslova ni mogoče trajno blokirati!",
