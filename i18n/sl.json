@@ -208,7 +208,7 @@
 	"preset": "Prednastavitev",
 	"choose-preset": "Izberite prednastavitev:",
 	"prev-protections": "Prejšnje zaščite",
-	"past-protected": "Ta stran je bila že zaščitena v preteklosti",
+	"past-protected": "Ta stran je že bila zaščitena v preteklosti",
 	"sysops-contacted": "Ste poskusili najprej vzpostaviti stik z administratorji, ki so uporabili zaščito ({{list:$1}})?",
 	"unprotected-time": "odzaščiteno {{date:$1|relative|utc}}",
 	"expired-time": "preteklo {{date:$1|relative|utc}}",
