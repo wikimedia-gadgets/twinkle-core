@@ -98,7 +98,7 @@
 	"ipv6-same-user": "Obravnava zaporednih naslovov IPv6 v istem /64 kot istega uporabnika",
 	"no-previous-revision": "Ni prejšnje redakcije. Morda je <strong>$1</strong> {{GENDER:|edini sodelavec|edina sodelavka|edini_a sodelavec_ka}} ali pa je ooravil_a več kot {{formatnum: $2 }} urejanj zaporedoma.",
 	"no-edits-revert": "Ničelnih redakcij ni mogoče vrniti, zato bomo to vrnitev ustavili. Morda je bilo urejanje že vrnjeno, vendar je ID redakcije še vedno enak.",
-	"revert-multiple-prompt": "$1 je {{GENDER:$1|opravil|opravila|opravil_a}} {{formatnum:$2}} urejanj zaporedoma. Ali ste prepričani, da jih želite vse vrniti?",
+	"revert-multiple-prompt": "$1 je {{GENDER:$1|opravil|opravila|opravil_a}} {{formatnum:$2}} urejanj zaporedoma. Ste prepričani, da jih želite vse vrniti?",
 	"stopping": "Ustavitev vračanja.",
 	"revision-age": "redakcija <strong>$1</strong>, ki jo je pred <strong>{{formatnum:$2}}</strong> redakcijami ustvaril_a $3",
 	"summary-prompt": "Izbirni komentar za povzetek urejanja:",
