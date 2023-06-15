@@ -179,7 +179,7 @@
 		"unlink-title": "Suppression des liens arrières",
 		"unlink-title-file": "Suppression des liens arrières et des utilisations de fichier",
 		"unlink-intro": "Cet outil vous permet de délier tous les liens entrants (« liens arrières ») qui pointent vers cette page. Par exemple, <code>[[$1|texte du lien]]</code> deviendrait <code>texte du lien</code> et <code>[[$1]]</code> deviendrait <code>$1</code>. À utiliser avec précaution.",
-		"unlink-intro-file": "Cet outil vous permet de délier tous les liens entrants (« liens arrière ») qui pointent vers cette page ou de masquer toutes les inclusions de ce fichier en les englobant dans des balises de commentaire <code>&lt;!-- --&gt;</code>. Par exemple, <code>[[:$1|texte du lien]]</code> deviendrait <code>texte du lien</code> et <code>[[$1]]</code> deviendrait <code>&lt;!-- [[$1]] --&gt;</code>. À utiliser avec précaution.",
+		"unlink-intro-file": "Cet outil vous permet de délier tous les liens entrants (« liens arrières ») qui pointent vers cette page ou de masquer toutes les inclusions de ce fichier en les englobant dans des balises de commentaire <code>&lt;!-- --&gt;</code>. Par exemple, <code>[[:$1|texte du lien]]</code> deviendrait <code>texte du lien</code> et <code>[[$1]]</code> deviendrait <code>&lt;!-- [[$1]] --&gt;</code>. À utiliser avec précaution.",
 		"unlink-give-reason": "Vous devez spécifier un motif pour la suppression de liens.",
 		"unlink-select-one": "Vous devez sélectionner au moins un élément à délier.",
 		"unlink-status-links-files": "Suppression des liens arrières et des instances d’utilisation de fichier",
