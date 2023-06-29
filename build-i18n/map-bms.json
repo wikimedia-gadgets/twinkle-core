@@ -378,6 +378,7 @@
 		"xfd-editreq-failed": "Tidak bisa menambahkan permintaan penyuntingan, halaman pembicaraan mungkin dilindungi",
 		"fetching-creator": "Mencari pembuat halaman",
 		"notifying-creator": "Memberitahukan kontributor awal ($1)",
+		"pref-logxfdnominations-tooltip": "Log ruang pengguna menawarkan cara terbaik untuk melacak semua halaman yang Anda pilih untuk KPC menggunakan Twinkle.",
 		"pref-xfdlogpagename-label": "Simpan log ruang pengguna diskusi penghapusan di subhalaman pengguna ini",
 		"pref-xfdwatchpage-label": "Tambahkan halaman yang dinominasikan ke daftar pantauan",
 		"pref-xfdwatchdiscussion-label": "Tambahkan halaman diskusi penghapusan ke daftar pantauan",
