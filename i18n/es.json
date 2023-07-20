@@ -9,13 +9,18 @@
 			"MarcoAurelio",
 			"McDutchie",
 			"Mpayansilva",
+			"No se",
 			"OriginReboot"
 		]
 	},
 	"relative-today": "[Hoy a las] h:mm A",
 	"relative-prevday": "[Ayer a las] h:mm A",
 	"relative-nextday": "[Mañana a las] h:mm A",
+	"relative-thisweek": "dddd [a las] HH:MM",
+	"relative-pastweek": "[Último] dddd [a las] HH:MM",
+	"relative-other": "DD-MM-AAAA",
 	"done": "Hecho",
+	"api-error": "$1 \"$2\" ocurrió mientras se contactaba con la API.",
 	"getting-token": "Obteniendo muestra...",
 	"retrieving-page": "Recuperando página...",
 	"protected-edit-warning": "Vas a realizar una edición a la página \"$1\" que está completamente protegida (la protección caduca el {{date:$1|relative|utc}} (UTC)).\n\nHaz clic en OK para seguir adelante con la edición, de lo contrario haz clic en cancelar.",
