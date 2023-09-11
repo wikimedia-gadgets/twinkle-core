@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Eduardoaddad",
-			"Isabelle Belato"
+			"Isabelle Belato",
+			"VasbXBR"
 		]
 	},
 	"tooltip-mark": "?",
@@ -13,6 +14,7 @@
 	"relative-pastweek": "dddd [anterior às] H:mm",
 	"relative-other": "YYYY-MM-DD",
 	"done": "Feito",
+	"api-error": "$1 \"$2\" ocorreu enquanto entrava em contato com a API.",
 	"invalid-token-retrying": "Token inválido. Obtendo um novo token e tentando novamente...",
 	"getting-token": "Recuperando token...",
 	"opening-page": "Abrindo página \"$1\"",
