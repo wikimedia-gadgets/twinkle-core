@@ -121,5 +121,5 @@
 	"custom-expiry-label": "กำหนดเอง...",
 	"block-action": "บล็อกผู้ใช้",
 	"unblock-label": "ปลดบล็อกผู้ใช้นี้",
-	"block-tag-nocreate-label": "ผู้ใช้ถูกบล็อกไม่ให้สร้างบัญชี"
+	"block-tag-nocreate-label": "ผู้ใช้ถูกบล็อกจากการสร้างบัญชี"
 }
