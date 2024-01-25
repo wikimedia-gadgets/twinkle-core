@@ -373,11 +373,14 @@
 		"xfd-editreq-failed": "Tidak bisa menambahkan permintaan penyuntingan, halaman pembicaraan mungkin dilindungi",
 		"fetching-creator": "Mencari pembuat halaman",
 		"notifying-creator": "Memberitahukan kontributor awal ($1)",
+		"pref-logxfdnominations-label": "Simpan sebuah catatan semua halaman yang Anda usulkan untuk dihapus di ruang pengguna (XfD)",
 		"pref-logxfdnominations-tooltip": "Log ruang pengguna menawarkan cara terbaik untuk melacak semua halaman yang Anda pilih untuk KPC menggunakan Twinkle.",
 		"pref-xfdlogpagename-label": "Simpan log ruang pengguna diskusi penghapusan di subhalaman pengguna ini",
+		"pref-xfdlogpagename-tooltip": "Masukkan nama subhalaman di kotak ini. Anda akan menemukan log XfD Anda di Pengguna:<i>nama pengguna</i>/<i>nama subhalaman</i>. Hanya berfungsi jika Anda mengaktifkan log ruang pengguna XfD.",
 		"pref-xfdwatchpage-label": "Tambahkan halaman yang dinominasikan ke daftar pantauan",
 		"pref-xfdwatchdiscussion-label": "Tambahkan halaman diskusi penghapusan ke daftar pantauan",
 		"pref-xfdwatchlist-label": "Tambahkan halaman daftar atau catatan harian ke daftar pantauan",
+		"pref-xfdwatchlist-tooltip": "Hal ini hanya berlaku untuk tempat diskusi yang berlangsung pada halaman yang baru dibuat dan ditransklusikan ke halaman log atau daftar.",
 		"pref-xfdwatchuser-label": "Tambahkan halaman pembicaraan pengguna kontributor awal ke daftar pantauan (ketika memberitahukan)"
 	}
 }
