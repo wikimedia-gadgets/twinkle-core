@@ -12,7 +12,7 @@
 			"many": "n % 100 = 11..99"
 		},
 		"@digittransforms": "٠١٢٣٤٥٦٧٨٩",
-		"tooltip-mark": "?",
+		"tooltip-mark": "؟",
 		"relative-today": "[اليوم في] h:mm A",
 		"relative-prevday": "[أمس في] h:mm A",
 		"relative-nextday": "[غدًا في] h:mm A",
