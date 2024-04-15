@@ -8,12 +8,13 @@
 			"Michel Bakni",
 			"NEHAOUA",
 			"Wahrani",
+			"أيوب",
 			"علاء",
 			"فيصل",
 			"محمد أحمد عبد الفتاح"
 		]
 	},
-	"tooltip-mark": "?",
+	"tooltip-mark": "؟",
 	"relative-today": "[اليوم في] h:mm A",
 	"relative-prevday": "[أمس في] h:mm A",
 	"relative-nextday": "[غدًا في] h:mm A",
