@@ -426,9 +426,9 @@ export abstract class TagMode {
 				this.flatObject[item.tag] = item;
 			});
 		} else {
-			obj_values(this.tagList).forEach((group: tagData[] | Record<string, tagData[]>) => {
+			Object.values(this.tagList).forEach((group: tagData[] | Record<string, tagData[]>) => {
 				//  what's wrong with this type?
-				obj_values(group).forEach((subgroup: tagData | tagData[]) => {
+				Object.values(group).forEach((subgroup: tagData | tagData[]) => {
 					if (Array.isArray(subgroup)) {
 						subgroup.forEach((item) => {
 							this.flatObject[item.tag] = item;

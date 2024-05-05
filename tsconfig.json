@@ -1,12 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "ES2020",
     "lib": [
       "dom",
-      "es5",
-      "es2015.collection"
-      // Only Map and Set from this are supported in IE 11.
+      "es6",
     ],
     "outDir": "./js",
     "sourceMap": true,

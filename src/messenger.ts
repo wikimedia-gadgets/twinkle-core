@@ -122,7 +122,7 @@ export function initMessaging() {
 	banana = new Banana(Twinkle.language);
 
 	// Register plugins
-	obj_entries(i18nParserPlugins).forEach(([name, plugin]) => {
+	Object.entries(i18nParserPlugins).forEach(([name, plugin]) => {
 		banana.registerParserPlugin(name, plugin);
 	});
 

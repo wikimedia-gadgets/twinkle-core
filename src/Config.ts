@@ -422,7 +422,7 @@ export class Config {
 			container.style.width = '100%';
 			contentform.appendChild(container);
 
-			obj_values(Config.sections).forEach((section) => {
+			Object.values(Config.sections).forEach((section) => {
 				if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
 					return true; // i.e. "continue" in this context
 				}
@@ -746,7 +746,7 @@ export class Config {
 		var wantedpref = e.target.id.substring(21); // "twinkle-config-reset-" prefix is stripped
 
 		// search tactics
-		obj_values(Config.sections).forEach(function (section) {
+		Object.values(Config.sections).forEach(function (section) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
 				return true; // continuze: skip impossibilities
 			}
@@ -802,7 +802,7 @@ export class Config {
 
 	static resetAllPrefs() {
 		// no confirmation message - the user can just refresh/close the page to abort
-		obj_values(Config.sections).forEach(function (section: PreferenceGroup) {
+		Object.values(Config.sections).forEach(function (section: PreferenceGroup) {
 			if (section.hidden || (section.adminOnly && !Morebits.userIsSysop)) {
 				return true; // continue: skip impossibilities
 			}
@@ -866,7 +866,7 @@ export class Config {
 			return a === b;
 		};
 
-		obj_values(Config.sections).forEach(function (section: PreferenceGroup) {
+		Object.values(Config.sections).forEach(function (section: PreferenceGroup) {
 			if (section.adminOnly && !Morebits.userIsSysop) {
 				return; // i.e. "continue" in this context
 			}

@@ -148,6 +148,7 @@ export function makeTemplate(name: string, parameters: Record<string | number, s
 /**
  * Shim for Object.values
  * @param obj
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function obj_values<T>(obj: { [s: string]: T } | ArrayLike<T>): T[] {
 	// @ts-ignore
@@ -157,6 +158,7 @@ export function obj_values<T>(obj: { [s: string]: T } | ArrayLike<T>): T[] {
 /**
  * Shim for Object.entries
  * @param obj
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function obj_entries<T>(obj: { [s: string]: T } | ArrayLike<T>): [string, T][] {
 	// @ts-ignore
@@ -166,6 +168,7 @@ export function obj_entries<T>(obj: { [s: string]: T } | ArrayLike<T>): [string,
 /**
  * Shim for Object.fromEntries
  * @param entries
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function obj_fromEntries<T>(entries: [string, T][]): Record<string, T> {
 	// @ts-ignore
@@ -184,7 +187,7 @@ export function obj_fromEntries<T>(entries: [string, T][]): Record<string, T> {
  * Shim for Array.prototype.includes
  * @param arr
  * @param item
- * @deprecated as this is now shimmed in MediaWiki
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function arr_includes<T>(arr: Array<T>, item: T): boolean {
 	return arr.indexOf(item) !== -1;
@@ -194,7 +197,7 @@ export function arr_includes<T>(arr: Array<T>, item: T): boolean {
  * Shim for Array.prototype.find
  * @param arr
  * @param predicate
- * @deprecated as this is now shimmed in MediaWiki
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function arr_find<T>(arr: Array<T>, predicate: (value: T, index: number, obj: T[]) => boolean) {
 	return Array.prototype.find ? arr.find(predicate) : arr.filter(predicate)[0];
@@ -221,6 +224,7 @@ export function arr_flatMap<T>(
  * Shim for String.prototype.includes
  * @param str
  * @param item
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function str_includes(str: string, item: string): boolean {
 	return str.indexOf(item) !== -1;
@@ -230,6 +234,7 @@ export function str_includes(str: string, item: string): boolean {
  * Shim for String.prototype.startsWith
  * @param str
  * @param text
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function str_startsWith(str: string, text: string): boolean {
 	// @ts-ignore
@@ -240,6 +245,7 @@ export function str_startsWith(str: string, text: string): boolean {
  * Shim for String.prototype.endsWith
  * @param str
  * @param text
+ * @deprecated as ES6 is now supported in most browsers
  */
 export function str_endsWith(str: string, text: string): boolean {
 	// @ts-ignore
