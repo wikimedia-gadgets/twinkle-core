@@ -17,7 +17,7 @@ export default [
 	'duration-hours',
 	'duration-days',
 	'duration-weeks',
-	// for some reason MW doesn't have a duration-months message, we have to provide that separately
+	'duration-months',
 	'duration-years',
 	'protect-expiry-indefinite',
 	'group-autoconfirmed',

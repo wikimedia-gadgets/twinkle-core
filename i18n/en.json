@@ -226,7 +226,6 @@
 	"expired-time": "expired {{date:$1|relative|utc}}",
 	"expires-time": "expires {{date:$1|relative|utc}}",
 	"reset-time": "reset {{date:$1|relative|utc}}",
-	"duration-months": "$1 {{plural:$1|month|months}}",
 	"protect-options": "Protection options",
 	"protect-edit-modify": "Modify edit protection",
 	"protect-edit-modify-tooltip": "If this is turned off, the edit protection level, and expiry time, will be left as is.",

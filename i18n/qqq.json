@@ -86,7 +86,6 @@
 	"expired-time": "Indicates that the page's protection expired at the given time.\n\nHere <nowiki>{{date:$1|relative|utc}}</nowiki> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
 	"expires-time": "Indicates that the page's protection is going to expire at the given time.\n\nHere <nowiki>{{date:$1|relative|utc}}</nowiki> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
 	"reset-time": "Indicates that the FlaggedRevs protection (pending changes protection) level was reset at the given time.\n\nHere <nowiki>{{date:$1|relative|utc}}</nowiki> does not need to be modified. It expands into a translated string of the form \"Yesterday at 5:43 PM\".",
-	"duration-months": "As in \"3 months\"",
 	"protect-move-label": "\"Move protection\" is protection against renaming the page. '''So this message is not about moving any protection;''' it is about protection against moving (renaming).\n\nCheck how other messages in your language translate \"move\", as some languages translate it as \"rename\".",
 	"note-requested-label": "* $1 - short name of the page where page protection requests are made. For example: \"RfPP request\".",
 	"note-requested-tooltip": "* $1 - name of the page where page protection requests are made.",
