@@ -105,6 +105,16 @@
 		"vandalism-summary": "{{formatnum:$1}} {{plural:$1|suntingan}} yang dibatalkan oleh %USER% kepada semakan terakhir pada $2",
 		"normal-summary": "{{formatnum:$1}} {{plural:$1|suntingan}} yang dibatalkan oleh %USER%",
 		"revert-confirm": "Membatalkan laman: adakah anda pasti?",
-		"revert-complete": "Pembalikan suntingan selesai"
+		"revert-complete": "Pembalikan suntingan selesai",
+		"opening-talk": "Membuka borang sunting laman perbincangan pengguna untuk pengguna <strong>$1</strong>",
+		"pcreview-comment": "Menyemak pembalikan secara automatik",
+		"pcreview-accepting": "Menerima perubahan anda secara automatik",
+		"diff-last": "Terkini",
+		"diff-last-tooltip": "Tunjukkan perbezaan terkini",
+		"diff-since": "Sejak",
+		"diff-since-tooltip": "Tunjukkan perbezaan antara semakan terkini dan semakan yang dibuat oleh pengguna sebelumnya",
+		"diff-sincemine": "Sejak suntingan saya",
+		"diff-sincemine-tooltip": "Tunjukkan perbezaan antara semakan terakhir dan semakan sebelum ini oleh diri saya",
+		"diff-current": "Semasa"
 	}
 }
