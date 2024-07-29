@@ -6,6 +6,7 @@
 			"Mainframe98",
 			"McDutchie",
 			"Mitsjol",
+			"Siebrand",
 			"Vistaus"
 		]
 	},
@@ -281,10 +282,10 @@
 	"block-tag-expiry-tooltip": "De duur van de op te leggen blokkade, bijvoorbeeld 24 uur, 2 weken, onbepaalde tijd, etc…",
 	"block-tag-reason-label": "U bent geblokkeerd gedurende…",
 	"block-tag-reason-tooltip": "Een optionele reden, ter vervanging van de algemene standaardreden. Alleen beschikbaar voor generieke blokkadesjablonen.",
-	"block-tag-noexpiry-label": "Geen vervaldatum tonen op sjabloon",
+	"block-tag-noexpiry-label": "Geen vervaldatum weergeven op sjabloon",
 	"block-tag-noexpiry-tooltip": "In plaats van de duur op te nemen, kunt u op het blokkadesjabloon de tekst 'U bent tijdelijk geblokkeerd…' laten staan.",
 	"block-tag-notalk-label": "Toegang tot overlegpagina uitgeschakeld",
-	"block-tag-notalk-tooltip": "Meldingen tonen op blokkadesjabloon dat de overlegpagina van gebruiker verwijderd is",
+	"block-tag-notalk-tooltip": "Meldingen weergeven op blokkadesjabloon dat de overlegpagina van gebruiker verwijderd is",
 	"block-tag-noemail-label": "De gebruiker kan geen e-mails versturen",
 	"block-tag-nocreate-label": "Gebruiker is geblokkeerd voor het maken van accounts",
 	"select2-badsearch": "Onvolledige of ongeldige zoekopdracht",
