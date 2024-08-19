@@ -60,7 +60,7 @@
 		"notify-fail-iprange": "Tidak dapat memberitahu julat IP",
 		"notify-self-skip": "Anda ($1) mencipta halaman ini; melangkaui pemberitahuan pengguna",
 		"notify-fail-noexist": "Tidak boleh memberitahu pengguna kerana pengguna tidak wujud.",
-		"notify-fail-template": "Halaman perbincangan pengguna mentransklusikan {{$1}}, menggugurkan pemberitahuan",
+		"notify-fail-template": "Laman perbincangan pengguna mentransklusi {{$1}}, menggugurkan pemberitahuan",
 		"notify-fail-optout": "Pengguna telah menarik diri daripada pemberitahuan ini, tengah memberhenti",
 		"notify-fail-bot": "Pengguna ialah bot, menghentikan pemberitahuan",
 		"notify-fail-blocked": "Pengguna disekat selama-lamanya, menghentikan pemberitahuan",
