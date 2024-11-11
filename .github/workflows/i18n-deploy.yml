@@ -14,12 +14,12 @@ jobs:
   deployi18n:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0   # all branches
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: 22
       - run: npm ci
       - name: Sanitise strings and resolve fallback messages
         run: node scripts/build-i18n
