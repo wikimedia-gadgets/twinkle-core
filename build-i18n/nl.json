@@ -32,7 +32,7 @@
 		"batch-starting": "Uitvoeren batch-bewerking",
 		"batch-no-pages": "Geen pagina opgegeven",
 		"batch-done-page": "voltooid ([[$1]])",
-		"batch-progress": "Voltooid ($1/$2 handelingen succesvol uitgevoerd)",
+		"batch-progress": "Voltooid ($1/$2 handelingen met succes verricht)",
 		"submit": "Query versturen",
 		"bullet-separator": " • ",
 		"revert-mismatch": "De opgehaalde versie komt niet overeen met de gevraagde versie.",
