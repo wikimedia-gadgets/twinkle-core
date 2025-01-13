@@ -7,6 +7,7 @@
 			"McDutchie",
 			"Robby",
 			"SD0001",
+			"Stjn",
 			"Verdy p",
 			"Xiplus"
 		]
@@ -27,7 +28,7 @@
 	"cross-redirect-abort": "* $1 - redirect page name\n* $2 - target page name",
 	"redirected": "* $1 - redirect page name\n* $2 - target page name",
 	"redirect-resolution-fail": "* $1 - page name",
-	"editconflict-purging": "See message {{msg|edit-conflict}} for the translation of edit conflict.",
+	"editconflict-purging": "See message {{msg-mw|edit-conflict}} for the translation of edit conflict.",
 	"editconflict-retrying": "See message {{int:edit-conflict}} for the translation of edit conflict.",
 	"save-failed-retrying": "*$1 - number of seconds delay before a retry is automatically attempted",
 	"batch-no-pages": "Indicates that no pages were specified to act upon.",
@@ -36,7 +37,7 @@
 	"submit": "Used as the default label for the submit button on forms.",
 	"bullet-separator": "Bullet separator (for separating multiple items in a horizontal list). Should ideally begin and end with a space. (Please use &amp;#32; for the final space.)",
 	"revert-summary": "Restored revision $1 by $2",
-	"hidden-user": "Placeholder for the username for a revision whose username has been revision-deleted or suppressed. This message should be able to fit into other messages that expect a username as parameter, for example the 2nd param ($2) of {{msg|revert-summary}}.",
+	"hidden-user": "Placeholder for the username for a revision whose username has been revision-deleted or suppressed. This message should be able to fit into other messages that expect a username as parameter, for example the 2nd param ($2) of {{msg-wikimedia|Twinkle-revert-summary}}.",
 	"fetching-userinfo": "Status message indicating that user information is being fetched.",
 	"info": "Short label for an informational message\n\n{{Identical|Info}}",
 	"note": "{{identical|Note}}",
