@@ -3,11 +3,12 @@
 		"authors": [
 			"Nemoralis",
 			"Toghrul Rahimli",
-			"Şeyx Şamil"
+			"Şeyx Şamil",
+			"Əkrəm"
 		]
 	},
 	"tooltip-mark": "?",
-	"relative-today": "[Bugün] h:mm A",
+	"relative-today": "[Bu gün saat] h:mm A",
 	"relative-prevday": "[Dünən] h:mm A",
 	"relative-nextday": "[Sabah] h:mm A",
 	"relative-thisweek": "dddd h:mm A",
