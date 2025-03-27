@@ -107,7 +107,7 @@
 		"diff-sincemine-tooltip": "Son fark ile benim son sürümüm arasındaki farkı göster",
 		"diff-current": "Güncel",
 		"diff-current-tooltip": "Güncel versiyonla farkını göster",
-		"reason": "Sebep:",
+		"reason": "Gerekçe:",
 		"reason-tooltip": "Gerekçeniz için viki işaretlemesini kullanabilirsiniz. Twinkle, gönderinizi otomatik olarak imzalayacaktır.",
 		"loading": "Yükleniyor...",
 		"select-all": "Tümünü seç",
