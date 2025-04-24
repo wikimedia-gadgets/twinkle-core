@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
+			"Aram",
 			"FF-11",
 			"Jack who built the house",
 			"McDutchie",
@@ -18,7 +19,7 @@
 	"relative-nextday": "Relative time. Here the brackets are NOT for external links! Usually only \"Tomorrow at\" will need to be translated. \"h:mm A\" is the time format which is expanded to something like \"4:34 PM\" (12-hour notation with the abbreviated half-day). You may prefer for your translations the \"HH:MM\" time format which is expanded instead to something like \"16:34\" (24-hour notation, preferable in languages that don't commonly use the abbreviated half-day which could be ambiguous). If you wish to change the time format, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
 	"relative-thisweek": "Relative time. Text within [brackets] are used literally (it is NOT an external link). Here \"dddd\" gets transformed to the weekday name (eg. Sunday, Monday), \"h:mm A\" is the time format which is expanded to something like \"4:34 PM\" (12-hour notation with the abbreviated half-day). You may prefer for your translations the \"HH:MM\" time format which is expanded instead to something like \"16:34\" (24-hour notation, preferable in languages that don't commonly use the abbreviated half-day which could be ambiguous). If you wish to change the time format, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
 	"relative-pastweek": "Relative time. Text within [brackets] are used literally (it is NOT an external link). Here \"dddd\" gets transformed to the weekday name (eg. Sunday, Monday),\"h:mm A\" is the time format which is expanded to something like \"4:34 PM\" (12-hour notation with the abbreviated half-day). You may prefer for your translations the \"HH:MM\" time format which is expanded instead to something like \"16:34\" (24-hour notation, preferable in languages that don't commonly use the abbreviated half-day which could be ambiguous). If you wish to change the time format, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
-	"relative-other": "Date format used for rendering some dates. If you wish to change this date formats, please see the syntax '''[http://wikimedia-gadgets.github.io/twinkle/Morebits.date.html#format here]'''.",
+	"relative-other": "Date format used for rendering some dates. If you wish to change this date formats, please see the syntax '''[https://github.com/wikimedia-gadgets/twinkle/wiki/morebits#Morebits.date+format here]'''.",
 	"done": "{{Identical|Done}}",
 	"invalid-token-retrying": "Token here refers to [[mw:Manual:Edit token]]. Similar to messages like {{int:authform-wrongtoken}}",
 	"getting-token": "Token here refers to [[mw:Manual:Edit token]].",
