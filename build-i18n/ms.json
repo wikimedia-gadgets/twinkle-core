@@ -96,7 +96,7 @@
 		"no-previous-revision": "Tiada semakan terdahulu ditemui. Mungkin <strong>$1</strong> adalah satu-satunya penyumbang, atau mereka telah membuat lebih daripada {{formatnum:$2}} suntingan berturut-turut.",
 		"no-edits-revert": "Memandangkan tidak mungkin untuk membalikkan sifar semakan, kami akan menghentikan pembalikan suntingan ini. Ada kemungkinan yang suntingan tersebut telah dibalikkan, tetapi ID semakan masih sama.",
 		"revert-multiple-prompt": "$1 telah membuat {{formatnum:$2}} suntingan berturut-turut. Adakah anda pasti mahu membalikkan kesemuanya?",
-		"stopping": "Berhenti pembalikan.",
+		"stopping": "Hentikan pembalikan.",
 		"revision-age": "semakan <strong>$1</strong> yang telah dibuat pada <strong>{{formatnum:$2}}</strong> semakan lalu oleh $3",
 		"summary-prompt": "Komen pilihan untuk ringkasan suntingan:",
 		"user-aborted": "Dihentikan oleh pengguna.",
