@@ -159,7 +159,7 @@
 		"unlink-page": "Odstranjevanje povratnih povezav na $1",
 		"unlink-on": "Odstranjevanje povezav na $1",
 		"unlink-summary": "Odstranjevanje povezav(e) na izbrisano stran $1",
-		"unlink-img-on": "Odstranjevanje uporabe datotek na $1",
+		"unlink-img-on": "Odstranjevanje uporabe datoteke na $1",
 		"img-comment": "Iykomentirano, ker je bila slika iybrisana",
 		"unlink-img-summary": "Odstranjevanje pojavitve datoteke $1, ki je bila izbrisana z razlogom: »$2«",
 		"undbatch-restore-talks": "Obnovi pogovorne strani neizbrisanih strani, če so obstajale",
