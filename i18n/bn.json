@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Sàádî",
 			"Yahya",
 			"আজিজ",
 			"আফতাবুজ্জামান",
@@ -63,11 +64,18 @@
 	"error": "ত্রুটি",
 	"link-rollback": "রোলব্যাক করুন",
 	"link-vandalism": "ধ্বংসপ্রবণতা",
+	"link-goodfaith-rollback": "রোলব্যাক (AGF)",
 	"restore-revision": "এই সংস্করণ পুনরুদ্ধার করুন",
 	"fetching-data": "পূর্বের সংস্করণগুলোর উপাত্ত আনা হচ্ছে",
 	"saving-reverted": "পুনর্বহালকৃত বিষয়বস্তু সংরক্ষণ করা হচ্ছে",
+	"prompt-reason-restore": "অনুগ্রহ করে পুনরুদ্ধারের জন্য একটি কারণ উল্লেখ করুন:",
+	"reversion-complete": "প্রত্যাবর্তন সম্পন্ন হয়েছে",
+	"cant-edit-protected": "পৃষ্ঠাটি সম্পাদনা করা যাচ্ছে না, সম্ভবত এটি সুরক্ষিত।",
+	"no-revisions": "আমাদের কাছে একটিরও কম অতিরিক্ত সংশোধন রয়েছে,তাই এটি পুনরুদ্ধার অসম্ভব।",
+	"stopping": "পুনরুদ্ধার থামানো হচ্ছে।",
 	"user-aborted": "ব্যবহারকারী দ্বারা বাতিল করা হয়েছে।",
 	"restore-summary": "%USER% দ্বারা $1 পুনরুদ্ধার করা হয়েছে",
+	"revert-confirm": "পাতা পুনরুদ্ধার: আপনি কি নিশ্চিত?",
 	"diff-last": "সর্বশেষ",
 	"diff-current": "বর্তমান",
 	"reason": "কারণ:",
@@ -84,6 +92,7 @@
 	"file-usage": "ফাইলের ব্যবহার",
 	"protect-action-type": "কাজের ধরন",
 	"protect-protect-label": "পাতাটি সুরক্ষিত করুন",
+	"protect-request-label": "পাতা সুরক্ষার অনুরোধ",
 	"duration-months": "$1 {{plural:$1|মাস}}",
 	"protect-current-label": "বর্তমান সুরক্ষার স্তর",
 	"protect-current-none": "<b>সুরক্ষাহীন</b>",
@@ -118,5 +127,6 @@
 	"block-doing": "বাধাদানের কার্যনির্বাহিত হচ্ছে",
 	"summary-added": "{{list:$1}} {{plural:$2|ট্যাগ}} যোগ করা হয়েছে",
 	"xfd-venue-label": "অপসারণ আলোচনা স্থান:",
-	"notify-creator-label": "সম্ভব হলে পাতা সৃষ্টিকারীকে অবহিত করুন"
+	"notify-creator-label": "সম্ভব হলে পাতা সৃষ্টিকারীকে অবহিত করুন",
+	"fetching-creator": "পাতার নির্মাতাকে খোঁজা হচ্ছে"
 }
