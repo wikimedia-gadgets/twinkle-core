@@ -96,7 +96,7 @@
 		"bot-revert-previous": "<strong>$1</strong> üzerinde normal geri alma seçildi. Bu güvenilir bir bot, ve onayınız üzerine önceki revizyonu geri alacağız.",
 		"bot-revert-selected": "<strong>$1</strong> üzerinde normal geri alma seçildi. Bu güvenilir bir bot, fakat onayınız üzerine bu revizyondaki geri alıma devam edeceğiz.",
 		"ipv6-same-user": "Aynı /64'teki ardışık IPv6 adreslerinin aynı kullanıcı olarak ele alınması",
-		"no-previous-revision": "Önceki revizyon bulunamadı. Belki <strong>$1</strong> tek katkı sağlayandır, belki de arka arkaya {{formatnum:$1,2}}'den daha fazla değişiklik yapmıştır.",
+		"no-previous-revision": "Önceki revizyon bulunamadı. Belki de tek katkıda bulunan <strong>$1</strong> kullanıcıdır veya üst üste {{formatnum:$2}} sayıdan fazla değişiklik yapmıştır.",
 		"stopping": "Geri alım durduruluyor",
 		"summary-prompt": "Düzenleme özeti için opsiyonel bir yorum:",
 		"user-aborted": "Kullanıcı tarafından sonlandırıldı.",
