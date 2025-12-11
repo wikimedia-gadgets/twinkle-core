@@ -262,7 +262,7 @@
 		"block-action": "Blokir pengguna",
 		"block-action-tooltip": "Blokir pengguna yang relevan dengan pilihan-pilihan berikut. Jika blokir parsial tidak dicentang, pemblokiran akan berlaku di seluruh situs.",
 		"block-partial": "Pemblokiran sebagian",
-		"block-partial-tooltip": "Aktifkan pemblokiran sebagian dan templatnya.",
+		"block-partial-tooltip": "Nyalakan pemblokiran sebagian dan templatnya.",
 		"block-tag": "Tambahkan templat pemblokiran ke halaman pembicaraan pengguna",
 		"block-tag-tooltip": "Tambahkan templat pemblokiran ke halaman pembicaraan pengguna",
 		"block-64-field-label": "Konversikan ke pemblokiran rangka /64",
