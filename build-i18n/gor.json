@@ -156,7 +156,7 @@
 		"deleting-talk": "Menghapus halaman pembicaraan dari halaman $1",
 		"delete-talk-summary": "Halaman pembicaraan dari halaman yang dihapus \"$1\"",
 		"unlink-page": "Menonaktifkan pranala luar ke $1",
-		"unlink-on": "Menonaktifkan link $1",
+		"unlink-on": "Mencabut penautan $1",
 		"unlink-summary": "Menghapus pranala ke halaman yang dihapus $1",
 		"unlink-img-on": "Menghapus penggunaan berkas pada $1",
 		"img-comment": "Dikomentari karena gambar telah dihapus",
