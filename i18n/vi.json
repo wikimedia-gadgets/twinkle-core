@@ -352,7 +352,7 @@
 	"status-added": "Đã thêm $1 thẻ",
 	"status-removed": "Đã xóa $1 thẻ",
 	"status-added-removed": "Đã thêm $1 thẻ; Xóa $2 thẻ",
-	"untag-from-read": "Để xóa các thẻ hiện hành, vui lòng mở trình đơn Thẻ trong phiên bản bài viết hiện tại",
+	"untag-from-read": "Để xóa các thẻ hiện hành, vui lòng mở bảng chọn Thẻ trong phiên bản bài viết hiện tại",
 	"tags-present-header": "Thẻ đã tồn tại",
 	"mark-patrolled": "Đánh dấu trang là đã tuần tra/đã duyệt",
 	"tag-complete": "Gắn thẻ đã xong, đang tải lại $1 trong giây lát",
