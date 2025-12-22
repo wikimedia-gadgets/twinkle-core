@@ -367,7 +367,7 @@
 		"tagging-status": "Menandai $1",
 		"tag-fetching-redirects": "Mendapatkan pengalihan untuk {{list:$1}}",
 		"xfd-venue-label": "Lokasi pembicaraan penghapusan:",
-		"xfd-venue-tooltip": "Saat diaktifkan, pilihan tetapan akan dijalankan, berdasarkan ruang nama dimana Anda berada. Tetapan ini harusnya sudah sesuai.",
+		"xfd-venue-tooltip": "Saat diaktifkan, pilihan baku akan dibuat, berdasarkan ruang nama tempat Anda berada. Pilihan baku ini harusnya sudah sesuai.",
 		"notify-creator-label": "Beritahu pembuat halaman jika bisa",
 		"notify-creator-tooltip": "Templat pemberitahuan akan ditempatkan di halaman pembicaraan pembuat jika ini benar.",
 		"deletion-reason-here": "Alasan penghapusan Anda disediakan di bawah ini, yang dapat Anda salin dan tempel ke dialog XFD baru jika Anda ingin mencoba lagi:",
