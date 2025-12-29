@@ -246,7 +246,7 @@
 		"protect-tag-small-label": "Ikonifikasikan",
 		"protect-tag-small-tooltip": "Akan menggunakan fitur |small=yes dari templat, dan hanya akan menampilkannya sebagai gembok",
 		"protect-tag-noinclude-label": "Bungkus templat perlindungan dengan &lt;noinclude&gt;",
-		"protect-tag-noinclude-tooltip": "Akan membungkus templat perlindungan di dalam tag &lt;noinclude&gt;, sehingga tidak akan ditransklusikan",
+		"protect-tag-noinclude-tooltip": "Akan membungkus templat perlindungan di dalam tanda &lt;noinclude&gt;, sehingga tidak akan ditransklusikan",
 		"protect-request-preset-label": "Jenis perlindungan:",
 		"protect-request-type-label": "Jenis dan alasan:",
 		"temporary": "Sementara",
