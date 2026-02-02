@@ -115,6 +115,9 @@
 		"diff-since-tooltip": "Tunjukkan perbezaan antara semakan terkini dan semakan yang dibuat oleh pengguna sebelumnya",
 		"diff-sincemine": "Sejak suntingan saya",
 		"diff-sincemine-tooltip": "Tunjukkan perbezaan antara semakan terakhir dan semakan sebelum ini oleh diri saya",
-		"diff-current": "Semasa"
+		"diff-current": "Semasa",
+		"diff-current-tooltip": "Tunjukkan perbezaan berbanding semakan semasa",
+		"diff-error": "tiada semakan terdahulu yang sesuai ditemui, atau hanya $1 penyumbang satu-satunya. Hentikan proses ini.",
+		"reason": "Sebab:"
 	}
 }
