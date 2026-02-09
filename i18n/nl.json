@@ -202,7 +202,7 @@
 	"no-links-found": "Er zijn geen backlinks gevonden op de pagina.",
 	"no-files-found": "Geen bestandsgebruik gevonden op de pagina.",
 	"summary-links-files": "Gebruik van de bestanden wordt uitgecommentarieerd / Koppelingen naar \"$1\" worden verwijderd",
-	"summary-links": "Link(s) naar \"$1\" worden verwijderd",
+	"summary-links": "Koppeling(en) naar \"$1\" worden verwijderd",
 	"summary-files": "Gebruik van de bestanden wordt uitgecommentarieerd op \"$1\"",
 	"protect-action-type": "Soort handeling",
 	"protect-protect-label": "Pagina beveiligen",
