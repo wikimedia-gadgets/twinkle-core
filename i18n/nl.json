@@ -29,7 +29,7 @@
 	"saving-page": "Bezig met opslaan…",
 	"getting-creator": "Informatie over aanmaker ophalen",
 	"token-fetch-fail": "Ophalen bewerkingstoken mistlukt.",
-	"invalid-title": "De paginatitel is ongeldig: $1",
+	"invalid-title": "De paginatitel is onjuist: $1",
 	"cross-redirect-abort": "$1 is een cross-naamruimte doorverwijzing naar $2, afgebroken",
 	"redirected": "Doorverwezen van $1 naar $2",
 	"redirect-resolution-fail": "Kan doorverwijzingen niet verwerken voor: $1",

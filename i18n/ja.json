@@ -6,6 +6,7 @@
 			"Marine-Blue",
 			"Omotecho",
 			"Shirayuki",
+			"Ska101~translate",
 			"Tmv",
 			"春春眠眠"
 		]
@@ -44,6 +45,7 @@
 	"revert-user-fail": "版を作成した利用者を取得できませんでした。",
 	"revert-summary": "$2による版を第$1版に復元しました",
 	"hidden-user": "不明な利用者",
+	"fetching-userinfo": "ユーザー情報を取得しています...",
 	"failed-timestamp": "現在のタイムスタンプを取得できませんでした。",
 	"failed-token": "トークンの取得に失敗しました。",
 	"failed-userinfo": "$1の利用者情報を取得できませんでした。",
@@ -61,6 +63,7 @@
 	"unblocking": "利用者のブロックを解除しています...",
 	"notify-self-skip": "あなた ($1) がこのページを作成しました。利用者への通知をスキップします。",
 	"notify-fail-noexist": "利用者が存在しないため、利用者に通知できません。",
+	"notify-fail-optout": "ユーザーがこの通知を拒否したため、処理を中止します。",
 	"notify-fail-bot": "利用者はボットです。通知を中止します。",
 	"notify-fail-blocked": "利用者は無期限ブロックされています。通知を中止します",
 	"notifying-user": "$1に通知",
@@ -77,6 +80,7 @@
 	"reversion-complete": "復元完了",
 	"cant-edit-protected": "ページの編集ができません。おそらくページが保護されています。",
 	"no-revisions": "改版がこのほかに1版ないため、差し戻しは不可能です。",
+	"latest-rev-other-user-goodfaith": "最新の版は<strong>$1</strong>によって編集されたものです。問題が修正された可能性があることから、差し戻しを停止します。",
 	"bot-revert-prompt": "普通の差し戻しが選択されましたが、最新の版は信頼できるボット（$1）が実施しています。代わりに、もう1版前の編集を差し戻しますか？",
 	"ipv6-same-user": "同一の/64にある連続したIPv6アドレスを同一利用者と見なして処理",
 	"no-previous-revision": "これより古い改版は見つかりませんでした。おそらく<strong>$1</strong>は唯一の貢献者、もしくは連続して{{formatnum:$2}}件超の編集を実施したかのどちらかに該当するようです。",
