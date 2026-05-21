@@ -84,7 +84,7 @@
 	"link-goodfaith-rollback": "terugdraaien (GW)",
 	"restore-revision": "deze versie terugplaatsen",
 	"fetching-data": "Data ophalen van eerdere revisies",
-	"saving-reverted": "Teruggedraaide content opslaan",
+	"saving-reverted": "Teruggedraaide inhoud opslaan",
 	"prompt-reason-restore": "Geef een reden voor het terugdraaien:",
 	"reversion-complete": "Terugdraaien voltooid",
 	"cant-edit-protected": "Kan de pagina niet bewerken, deze is waarschijnlijk beveiligd.",
