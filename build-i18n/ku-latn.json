@@ -76,7 +76,7 @@
 		"restore-revision": "vê guhartoyê dîsa bîne",
 		"fetching-data": "Daneyên guhartoyên kevntir tê wergirtin",
 		"saving-reverted": "Naverokên vegerandî tê tomarkirin",
-		"prompt-reason-restore": "Ji kerema xwe sedemeke ji bo vegerandinê diyar bike:",
+		"prompt-reason-restore": "Ji kerema xwe sebebeke ji bo vegerandinê diyar bike:",
 		"reversion-complete": "Vegerandin temam e",
 		"cant-edit-protected": "Rûpel nikare were guhartin, ihtîmalen parastî ye.",
 		"no-revisions": "Ji yekî kêmtir guharto hene, loma ne mimkûn e ku were vegerandin.",
@@ -106,7 +106,7 @@
 		"diff-last": "Herî dawî",
 		"diff-last-tooltip": "Cudahiya herî nû nîşan bide",
 		"diff-since": "Jê ve",
-		"reason": "Sedem:",
+		"reason": "Sebeb:",
 		"summary-added": "{{list:$1}} {{plural:$2|etîketek|$2 etîketan}} lê hat zêdekirin",
 		"summary-removed": "{{list:$1}} {{plural:$2|etîketek|$2 etîketan}} jê hat rakirin"
 	}
