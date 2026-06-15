@@ -118,6 +118,12 @@
 		"diff-current": "Semasa",
 		"diff-current-tooltip": "Tunjukkan perbezaan berbanding semakan semasa",
 		"diff-error": "tiada semakan terdahulu yang sesuai ditemui, atau hanya $1 penyumbang satu-satunya. Hentikan proses ini.",
-		"reason": "Sebab:"
+		"reason": "Sebab:",
+		"reason-tooltip": "Anda boleh guna penanda wiki apabila mengulas. Twinkle akan menandatangani catatan anda secara automatik.",
+		"loading": "Memuatkan...",
+		"select-all": "Pilih Semua",
+		"deselect-all": "Nyahpilih Semua",
+		"fetching-list": "Dapatkan senarai laman",
+		"option-delete": "Hapus laman"
 	}
 }
