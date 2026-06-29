@@ -5,7 +5,7 @@
 		"relative-today": "[오늘] h:mm A",
 		"relative-prevday": "[어제] h:mm A",
 		"relative-nextday": "[내일] h:mm A",
-		"relative-thisweek": "dddd [at] h:mm A",
+		"relative-thisweek": "dddd[,] h:mm A[에]",
 		"relative-pastweek": "[마지막] dddd[,] h:mm A[에]",
 		"relative-other": "YYYY-MM-DD",
 		"done": "완료",
