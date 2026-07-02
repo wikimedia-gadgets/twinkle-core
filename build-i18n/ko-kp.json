@@ -135,7 +135,7 @@
 		"option-subpage-redirects": "삭제된 하위 문서로의 넘겨주기를 삭제",
 		"option-subpage-unlink": "삭제된 각 하위 문서에 대한 백링크를 해제 (일반 및 포털 이름공간에만 해당)",
 		"option-unlink": "삭제된 각 문서에 대한 백링크를 해제 (일반 및 포털 이름공간에만 해당)",
-		"option-unlink-file": "각 파일의 사용 삭제 (모든 이름공간에서)",
+		"option-unlink-file": "각 파일의 사용 제거 (모든 이름공간에서)",
 		"pages-label": "삭제할 문서",
 		"complete": "일괄 삭제가 완료되었습니다",
 		"confirm-protected": "완전히 보호된 문서 {{formatnum:$1}}개를 삭제하려고 합니다. 확실합니까?",
