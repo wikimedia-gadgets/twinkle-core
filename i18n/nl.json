@@ -295,7 +295,7 @@
 	"block-disabletalk-label": "Voorkom dat deze gebruiker de eigen overlegpagina kan bewerken zolang de blokkade geldt",
 	"block-partial-disabletalk-tooltip": "Als u een gedeeltelijke blokkade oplegt, MOET u dit uitgeschakeld laten, tenzij u ook verhindert dat de overlegpagina van de gebruiker bewerkt kan worden",
 	"block-auto-label": "Automatisch alle gebruikte ip-adressen blokkeren (hardblock)",
-	"block-hard-label": "Voorkomen dat ingelogde gebruikers dit ip-adres gebruiken (hardblock)",
+	"block-hard-label": "Voorkomen dat aangemelde gebruikers dit IP-adres gebruiken (harde blokkade)",
 	"block-watch-label": "Gebruikerspagina en gebruikersoverlegpagina volgen",
 	"block-reason-label": "Reden (voor logboek):",
 	"block-reason-tooltip": "Overweeg nuttige informatie toe te voegen aan het standaardbericht.",
