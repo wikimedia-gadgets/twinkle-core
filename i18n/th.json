@@ -16,7 +16,7 @@
 	"relative-other": "DD/MM/YYYY",
 	"done": "สำเร็จ",
 	"api-error": "เกิดข้อผิดพลาด $1 \"$2\" ขณะติดต่อ API",
-	"invalid-token-retrying": "โทเค็นไม่ถูกต้อง กำลังขอโทเค็นใหม่...",
+	"invalid-token-retrying": "โทเคนไม่ถูกต้อง กำลังขอโทเคนใหม่...",
 	"getting-token": "กำลังดึงโทเค็น...",
 	"opening-page": "กำลังเปิดหน้า \"$1\"",
 	"retrieving-page": "กำลังดึงข้อมูลหน้า...",
